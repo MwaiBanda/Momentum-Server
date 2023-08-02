@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,5 +23,9 @@ func main() {
 		return c.Send(res)
 	})
 
-	log.Fatal(app.Listen(":80"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(app.Listen(":" + port))
 }
