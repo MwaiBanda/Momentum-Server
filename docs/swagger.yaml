@@ -1,0 +1,16 @@
+basePath: /
+host: services.momentumchurch.dev
+info:
+  contact:
+    email: mwai.developer@gmail.com
+    name: Mwai Banda
+  description: This is a backend service to process payments and provide some CRUD
+    functionality
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Momentum API
+  version: "1.0"
+paths: {}
+swagger: "2.0"
