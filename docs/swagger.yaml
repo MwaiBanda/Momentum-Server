@@ -1,4 +1,27 @@
 basePath: /
+definitions:
+  httputil.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  model.Post:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      published:
+        type: boolean
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
 host: services.momentumchurch.dev
 info:
   contact:
@@ -11,6 +34,62 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
   title: Momentum API
-  version: "1.0"
-paths: {}
+  version: v1
+paths:
+  /api/v1/post:
+    get:
+      consumes:
+      - application/json
+      description: get a hello post
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Show a post
+      tags:
+      - Posts
+  /api/v1/posts:
+    get:
+      consumes:
+      - application/json
+      description: get a list of posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Post'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Show a list of posts
+      tags:
+      - Posts
 swagger: "2.0"
