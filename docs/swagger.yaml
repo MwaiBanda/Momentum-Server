@@ -22,20 +22,76 @@ definitions:
       updatedAt:
         type: string
     type: object
+  model.TransactionRequest:
+    properties:
+      amount:
+        type: string
+      email:
+        type: string
+      fullname:
+        type: string
+      phone:
+        type: string
+    type: object
+  model.TransactionResponse:
+    properties:
+      customer:
+        type: string
+      ephemeralKey:
+        type: string
+      paymentIntent:
+        type: string
+      publishableKey:
+        type: string
+    type: object
 host: services.momentumchurch.dev
 info:
   contact:
-    email: mwai.developer@gmail.com
+    email: bandamwai@gmail.com
     name: Mwai Banda
   description: This is a backend service to process payments and provide some CRUD
     functionality
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
+  termsOfService: https://momentumindiana.org/statement-of-faith/
   title: Momentum API
   version: v1
 paths:
+  /api/v1/payment:
+    get:
+      consumes:
+      - application/json
+      description: Used to initiate stripe transactions
+      parameters:
+      - description: Post a transaction
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.TransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Post a payment
+      tags:
+      - Posts
   /api/v1/post:
     get:
       consumes:

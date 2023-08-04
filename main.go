@@ -16,13 +16,13 @@ import (
 )
 
 // @title			Momentum API
-// @version			v1
-// @description		This is a backend service to process payments and provide some CRUD functionality
-// @termsOfService	http://swagger.io/terms/
+// @version		v1
+// @description	This is a backend service to process payments and provide some CRUD functionality
+// @termsOfService	https://momentumindiana.org/statement-of-faith/
 // @contact.name	Mwai Banda
-// @contact.email	mwai.developer@gmail.com
+// @contact.email	bandamwai@gmail.com
 // @license.name	Apache 2.0
-// @license.url		http://www.apache.org/licenses/LICENSE-2.0.html
+// @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 // @host			services.momentumchurch.dev
 // @BasePath		/
 func main() {
@@ -43,7 +43,7 @@ func main() {
 	v1 := api.Group("/v1")
 	v1.Get("/post", controllerInstance.GetPost)
 	v1.Get("/posts", controllerInstance.GetPosts)
-
+	v1.Post("/payment", controllerInstance.PostPayment)
 	app.Get("/*", swagger.HandlerDefault)
 
 	app.Get("/*", swagger.New(swagger.Config{
