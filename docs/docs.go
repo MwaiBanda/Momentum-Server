@@ -25,7 +25,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/api/v1/payment": {
-            "get": {
+            "post": {
                 "description": "Used to initiate stripe transactions",
                 "consumes": [
                     "application/json"
@@ -34,7 +34,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Posts"
+                    "Payments"
                 ],
                 "summary": "Post a payment",
                 "parameters": [

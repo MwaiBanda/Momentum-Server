@@ -15,7 +15,7 @@ import (
 //
 //	@Summary		Post a payment
 //	@Description	Used to initiate stripe transactions
-//	@tags			Posts
+//	@tags			Payments
 //	@Param			data	body	model.TransactionRequest	true	"Post a transaction"
 //	@Accept			json
 //	@Produce		json
@@ -23,7 +23,7 @@ import (
 //	@Failure		400	{object}	httputil.HTTPError
 //	@Failure		404	{object}	httputil.HTTPError
 //	@Failure		500	{object}	httputil.HTTPError
-//	@Router			/api/v1/payment [get]
+//	@Router			/api/v1/payment [post]
 func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	transaction := new(model.TransactionRequest)
 	if err := context.BodyParser(transaction); err != nil {
