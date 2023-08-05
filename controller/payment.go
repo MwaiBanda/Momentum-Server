@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"strconv"
 )
 
 // PostPayment godoc
@@ -58,7 +59,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 
 	params = url.Values{}
 	params.Add("customer", customer.ID)
-	params.Add("amount", transaction.Amount)
+	params.Add("amount", strconv.Itoa(transaction.Amount))
 	params.Add("receipt_email", transaction.Email)
 	params.Add("currency", "usd")
 	params.Add("automatic_payment_methods[enabled]", "true")

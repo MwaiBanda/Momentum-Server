@@ -25,7 +25,7 @@ definitions:
   model.TransactionRequest:
     properties:
       amount:
-        type: string
+        type: integer
       email:
         type: string
       fullname:

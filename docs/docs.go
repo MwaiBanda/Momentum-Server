@@ -200,7 +200,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "email": {
                     "type": "string"

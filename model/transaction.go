@@ -1,7 +1,7 @@
 package model
 
 type TransactionRequest struct {
-	Amount   string `json:"amount"`
+	Amount   int    `json:"amount"`
 	Fullname string `json:"fullname"`
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
