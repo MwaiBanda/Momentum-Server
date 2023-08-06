@@ -45,7 +45,7 @@ func (controller *Controller) GetPost(context *fiber.Ctx) error {
 //	@Router			/api/v1/posts [get]
 func (controller *Controller) GetPosts(fiberContext *fiber.Ctx) error {
 	var posts []model.Post
-	post, err := controller.prismaClient.Post.FindMany().Exec(controller.context)
+	post, err := controller.prisma.Post.FindMany().Exec(controller.context)
 	if err != nil {
 		fmt.Println(err)
 	}

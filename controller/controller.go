@@ -3,6 +3,7 @@ package controller
 import (
 	"Momentum/prisma/db"
 	b64 "encoding/base64"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
 	"io/ioutil"
 	"log"
@@ -13,9 +14,10 @@ import (
 )
 
 type Controller struct {
-	httpClient   *http.Client
-	prismaClient *db.PrismaClient
-	context      context.Context
+	httpClient *http.Client
+	prisma     *db.PrismaClient
+	context    context.Context
+	redis      *redis.Client
 }
 
 func GetControllerInstance() *Controller {
@@ -24,10 +26,13 @@ func GetControllerInstance() *Controller {
 	}
 }
 
-func (controller *Controller) SetClient(client *db.PrismaClient) {
-	controller.prismaClient = client
+func (controller *Controller) SetPrismaClient(client *db.PrismaClient) {
+	controller.prisma = client
 }
 
+func (controller *Controller) SetRedisClient(client *redis.Client) {
+	controller.redis = client
+}
 func (controller *Controller) StripeRequest(endpoint string) ([]byte, error) {
 	req, err := http.NewRequest("POST", "https://api.stripe.com/v1"+endpoint, nil)
 	if err != nil {

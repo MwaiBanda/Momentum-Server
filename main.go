@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/swagger"
+	"github.com/redis/go-redis/v9"
 	"log"
 	"os"
 
@@ -44,6 +45,7 @@ func main() {
 	v1.Get("/post", controllerInstance.GetPost)
 	v1.Get("/posts", controllerInstance.GetPosts)
 	v1.Post("/payment", controllerInstance.PostPayment)
+	v1.Get("/sermons", controllerInstance.GetSermon)
 	app.Get("/*", swagger.HandlerDefault)
 
 	app.Get("/*", swagger.New(swagger.Config{
@@ -51,7 +53,6 @@ func main() {
 		DeepLinking:  false,
 		DocExpansion: "none",
 	}))
-
 	client := db.NewClient()
 	if err := client.Prisma.Connect(); err != nil {
 		fmt.Println(err)
@@ -61,9 +62,10 @@ func main() {
 			panic(err)
 		}
 	}()
-
+	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
 	backgroundContext := context.Background()
-	controllerInstance.SetClient(client)
+	controllerInstance.SetPrismaClient(client)
+	controllerInstance.SetRedisClient(redis.NewClient(opt))
 	controllerInstance.SetContext(backgroundContext)
 
 	log.Fatal(app.Listen(":" + port))

@@ -160,6 +160,58 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/sermons": {
+            "get": {
+                "description": "get a list of sermons",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sermons"
+                ],
+                "summary": "Show a list of sermons",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Provide a page number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SermonResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -192,6 +244,142 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Sermon": {
+            "type": "object",
+            "properties": {
+                "categories": {},
+                "date": {
+                    "type": "object",
+                    "properties": {
+                        "carbon": {
+                            "type": "string"
+                        },
+                        "date": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "detail_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "interactions": {
+                    "type": "object",
+                    "properties": {
+                        "likes": {
+                            "type": "integer"
+                        },
+                        "shares": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "interactive_note": {},
+                "keywords": {},
+                "media": {
+                    "type": "object",
+                    "properties": {
+                        "audio": {},
+                        "embed": {},
+                        "image": {},
+                        "notes": {},
+                        "video": {
+                            "type": "string"
+                        },
+                        "video_thumbnail": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "passages": {
+                    "type": "array",
+                    "items": {}
+                },
+                "preacher": {
+                    "type": "string"
+                },
+                "series": {
+                    "type": "object",
+                    "properties": {
+                        "description": {},
+                        "image": {},
+                        "slug": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "summary": {},
+                "text": {},
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SermonResponse": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Sermon"
+                    }
+                },
+                "first_page_url": {
+                    "type": "string"
+                },
+                "from": {
+                    "type": "integer"
+                },
+                "last_page": {
+                    "type": "integer"
+                },
+                "last_page_url": {
+                    "type": "string"
+                },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "active": {
+                                "type": "boolean"
+                            },
+                            "label": {
+                                "type": "string"
+                            },
+                            "url": {}
+                        }
+                    }
+                },
+                "next_page_url": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "prev_page_url": {},
+                "to": {
+                    "type": "integer"
+                },
+                "total": {
                     "type": "string"
                 }
             }
