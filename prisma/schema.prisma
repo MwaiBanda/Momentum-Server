@@ -1,11 +1,92 @@
+generator db {
+  provider        = "go run github.com/steebchen/prisma-client-go"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-generator db {
-  provider = "go run github.com/steebchen/prisma-client-go"
+model User {
+  id                 String            @id
+  email              String
+  fullname           String
+  phone              String
+  createdOn          DateTime          @default(now())
+  organisedMeal      Meal[]
+  transactions       Transaction[]
+  mealParticipations UsersOnMeals[]
+  volunteeredMeals   VolunteeredMeal[]
+}
+
+model Meal {
+  id              String            @id @default(cuid())
+  receipent       String
+  reason          String
+  email           String
+  phone           String
+  city            String
+  numOfAdults     Int
+  numberOfKids    Int
+  street          String
+  preferredTime   String
+  favourites      String
+  leastFavourites String
+  allergies       String
+  instructions    String
+  userId          String?
+  user            User?             @relation(fields: [userId], references: [id])
+  participants    UsersOnMeals[]
+  meals           VolunteeredMeal[]
+
+  @@index([userId])
+}
+
+model VolunteeredMeal {
+  id          String        @id @default(cuid())
+  date        String
+  description String
+  notes       String
+  userId      String?
+  mealId      String?
+  updates     MealUpdates[]
+  meal        Meal?         @relation(fields: [mealId], references: [id])
+  user        User?         @relation(fields: [userId], references: [id])
+
+  @@index([userId, mealId])
+}
+
+model MealUpdates {
+  id      String          @id @default(cuid())
+  message String
+  mealId  String
+  meal    VolunteeredMeal @relation(fields: [mealId], references: [id])
+
+  @@index([mealId])
+}
+
+model UsersOnMeals {
+  userId     String
+  mealId     String
+  assignedAt DateTime @default(now())
+  meal       Meal     @relation(fields: [mealId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, mealId])
+}
+
+model Transaction {
+  id         String   @id @default(cuid())
+  amount     Decimal
+  date       String
+  Decription String
+  createdOn  DateTime @default(now())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Post {

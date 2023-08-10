@@ -37,7 +37,7 @@ func (controller *Controller) GetSermon(context *fiber.Ctx) error {
 		if err := json.Unmarshal(body, sermons); err != nil {
 			log.Println("[GetSermon]", err.Error())
 		}
-		if err = controller.redis.Set(controller.context, "sermon-page-"+pageNumber, string(body), time.Hour*4).Err(); err != nil {
+		if err = controller.redis.Set(controller.context, "sermon-page-"+pageNumber, string(body), time.Hour*6).Err(); err != nil {
 			log.Println("[GetSermon]", err.Error())
 		}
 	} else if err != nil {
