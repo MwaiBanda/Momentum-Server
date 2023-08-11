@@ -24,7 +24,7 @@ import (
 //	@Failure		400	{object}	httputil.HTTPError
 //	@Failure		404	{object}	httputil.HTTPError
 //	@Failure		500	{object}	httputil.HTTPError
-//	@Router			/api/v1/payment [post]
+//	@Router			/api/v1/payments [post]
 func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	transaction := new(model.PaymentRequest)
 	if err := context.BodyParser(transaction); err != nil {

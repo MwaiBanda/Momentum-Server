@@ -2,19 +2,21 @@ package main
 
 import (
 	"Momentum/controller"
+	_ "Momentum/docs"
+	_ "Momentum/httputil"
+	"Momentum/prisma/db"
 	"context"
 	"fmt"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/swagger"
 	"github.com/redis/go-redis/v9"
 	"log"
 	"os"
-
-	_ "Momentum/docs"
-	_ "Momentum/httputil"
-	"Momentum/prisma/db"
-	"github.com/gofiber/fiber/v2"
 )
+
+/* PROD host			services.momentumchurch.dev */
+/* DEV host				localhost:8085 */
 
 // @title			Momentum API
 // @version		v1
@@ -24,8 +26,8 @@ import (
 // @contact.email	bandamwai@gmail.com
 // @license.name	Apache 2.0
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-// @host			services.momentumchurch.dev
-// @BasePath		/
+// @host		services.momentumchurch.dev
+// @BasePath	/
 func main() {
 	app := fiber.New()
 	app.Use(cors.New())
@@ -37,19 +39,20 @@ func main() {
 	controllerInstance := controller.GetControllerInstance()
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8085"
 	}
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
-	v1.Post("/user/:userId", controllerInstance.PostPayment)
-	v1.Post("/payment", controllerInstance.PostPayment)
+	v1.Post("/users", controllerInstance.PostUser)
+	v1.Get("/users/:userId", controllerInstance.GetUserById)
+	v1.Post("/payments", controllerInstance.PostPayment)
 	v1.Get("/sermons", controllerInstance.GetSermon)
 
 	app.Get("/*", swagger.HandlerDefault)
 
 	app.Get("/*", swagger.New(swagger.Config{
-		URL:          "http://services.momentumchurch.dev/doc.json",
+		URL:          "https://services.momentumchurch.dev/doc.json",
 		DeepLinking:  false,
 		DocExpansion: "none",
 	}))

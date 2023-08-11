@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/payment": {
+        "/api/v1/payments": {
             "post": {
                 "description": "Used to initiate stripe transactions",
                 "consumes": [
@@ -128,7 +128,59 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/user": {
+        "/api/v1/users": {
+            "post": {
+                "description": "Used to post a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Post a user",
+                "parameters": [
+                    {
+                        "description": "Post a user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.PaymentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{userId}": {
             "get": {
                 "description": "get a user information by providing an Id",
                 "consumes": [
@@ -141,13 +193,22 @@ const docTemplate = `{
                     "Users"
                 ],
                 "summary": "Get user information by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "provide user Id",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.User"
+                                "$ref": "#/definitions/model.UserResponse"
                             }
                         }
                     },
@@ -233,7 +294,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/model.User"
+                    "$ref": "#/definitions/model.UserResponse"
                 },
                 "user_id": {
                     "type": "string"
@@ -410,7 +471,24 @@ const docTemplate = `{
                 }
             }
         },
-        "model.User": {
+        "model.UserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserResponse": {
             "type": "object",
             "properties": {
                 "createdOn": {

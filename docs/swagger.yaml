@@ -40,7 +40,7 @@ definitions:
       street:
         type: string
       user:
-        $ref: '#/definitions/model.User'
+        $ref: '#/definitions/model.UserResponse'
       user_id:
         type: string
     type: object
@@ -159,7 +159,18 @@ definitions:
       total:
         type: string
     type: object
-  model.User:
+  model.UserRequest:
+    properties:
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
+    type: object
+  model.UserResponse:
     properties:
       createdOn:
         type: string
@@ -190,7 +201,7 @@ info:
   title: Momentum API
   version: v1
 paths:
-  /api/v1/payment:
+  /api/v1/payments:
     post:
       consumes:
       - application/json
@@ -258,11 +269,51 @@ paths:
       summary: Show a list of sermons
       tags:
       - Sermons
-  /api/v1/user:
+  /api/v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Used to post a user
+      parameters:
+      - description: Post a user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PaymentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Post a user
+      tags:
+      - Users
+  /api/v1/users/{userId}:
     get:
       consumes:
       - application/json
       description: get a user information by providing an Id
+      parameters:
+      - description: provide user Id
+        in: path
+        name: userId
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -270,7 +321,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.User'
+              $ref: '#/definitions/model.UserResponse'
             type: array
         "400":
           description: Bad Request
