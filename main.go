@@ -42,10 +42,10 @@ func main() {
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
-	v1.Get("/post", controllerInstance.GetPost)
-	v1.Get("/posts", controllerInstance.GetPosts)
+	v1.Post("/user/:userId", controllerInstance.PostPayment)
 	v1.Post("/payment", controllerInstance.PostPayment)
 	v1.Get("/sermons", controllerInstance.GetSermon)
+
 	app.Get("/*", swagger.HandlerDefault)
 
 	app.Get("/*", swagger.New(swagger.Config{
@@ -53,6 +53,7 @@ func main() {
 		DeepLinking:  false,
 		DocExpansion: "none",
 	}))
+
 	client := db.NewClient()
 	if err := client.Prisma.Connect(); err != nil {
 		fmt.Println(err)

@@ -37,7 +37,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.TransactionRequest"
+                            "$ref": "#/definitions/model.PaymentRequest"
                         }
                     }
                 ],
@@ -45,92 +45,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.TransactionResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/post": {
-            "get": {
-                "description": "get a hello post",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Show a post",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Post"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/posts": {
-            "get": {
-                "description": "get a list of posts",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Show a list of posts",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Post"
-                            }
+                            "$ref": "#/definitions/model.PaymentResponse"
                         }
                     },
                     "400": {
@@ -205,6 +120,50 @@
                     }
                 }
             }
+        },
+        "/api/v1/user": {
+            "get": {
+                "description": "get a user information by providing an Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user information by Id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -221,22 +180,89 @@
                 }
             }
         },
-        "model.Post": {
+        "model.Meal": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "allergies": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "favourites": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "published": {
-                    "type": "boolean"
-                },
-                "title": {
+                "instructions": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "least_favourites": {
+                    "type": "string"
+                },
+                "num_of_adults": {
+                    "type": "integer"
+                },
+                "number_of_kids": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "preferred_time": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PaymentRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PaymentResponse": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "type": "string"
+                },
+                "ephemeralKey": {
+                    "type": "string"
+                },
+                "paymentIntent": {
+                    "type": "string"
+                },
+                "publishableKey": {
                     "type": "string"
                 }
             }
@@ -377,11 +403,11 @@
                 }
             }
         },
-        "model.TransactionRequest": {
+        "model.User": {
             "type": "object",
             "properties": {
-                "amount": {
-                    "type": "integer"
+                "createdOn": {
+                    "type": "string"
                 },
                 "email": {
                     "type": "string"
@@ -389,24 +415,16 @@
                 "fullname": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Meal"
+                    }
+                },
                 "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.TransactionResponse": {
-            "type": "object",
-            "properties": {
-                "customer": {
-                    "type": "string"
-                },
-                "ephemeralKey": {
-                    "type": "string"
-                },
-                "paymentIntent": {
-                    "type": "string"
-                },
-                "publishableKey": {
                     "type": "string"
                 }
             }

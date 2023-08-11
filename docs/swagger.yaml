@@ -9,17 +9,61 @@ definitions:
         example: status bad request
         type: string
     type: object
-  model.Post:
+  model.Meal:
     properties:
-      createdAt:
+      allergies:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      favourites:
         type: string
       id:
         type: string
-      published:
-        type: boolean
-      title:
+      instructions:
         type: string
-      updatedAt:
+      least_favourites:
+        type: string
+      num_of_adults:
+        type: integer
+      number_of_kids:
+        type: integer
+      phone:
+        type: string
+      preferred_time:
+        type: string
+      reason:
+        type: string
+      recipient:
+        type: string
+      street:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      user_id:
+        type: string
+    type: object
+  model.PaymentRequest:
+    properties:
+      amount:
+        type: integer
+      email:
+        type: string
+      fullname:
+        type: string
+      phone:
+        type: string
+    type: object
+  model.PaymentResponse:
+    properties:
+      customer:
+        type: string
+      ephemeralKey:
+        type: string
+      paymentIntent:
+        type: string
+      publishableKey:
         type: string
     type: object
   model.Sermon:
@@ -115,26 +159,21 @@ definitions:
       total:
         type: string
     type: object
-  model.TransactionRequest:
+  model.User:
     properties:
-      amount:
-        type: integer
+      createdOn:
+        type: string
       email:
         type: string
       fullname:
         type: string
+      id:
+        type: string
+      meals:
+        items:
+          $ref: '#/definitions/model.Meal'
+        type: array
       phone:
-        type: string
-    type: object
-  model.TransactionResponse:
-    properties:
-      customer:
-        type: string
-      ephemeralKey:
-        type: string
-      paymentIntent:
-        type: string
-      publishableKey:
         type: string
     type: object
 host: services.momentumchurch.dev
@@ -162,14 +201,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.TransactionRequest'
+          $ref: '#/definitions/model.PaymentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.TransactionResponse'
+            $ref: '#/definitions/model.PaymentResponse'
         "400":
           description: Bad Request
           schema:
@@ -185,62 +224,6 @@ paths:
       summary: Post a payment
       tags:
       - Payments
-  /api/v1/post:
-    get:
-      consumes:
-      - application/json
-      description: get a hello post
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Post'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-      summary: Show a post
-      tags:
-      - Posts
-  /api/v1/posts:
-    get:
-      consumes:
-      - application/json
-      description: get a list of posts
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Post'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-      summary: Show a list of posts
-      tags:
-      - Posts
   /api/v1/sermons:
     get:
       consumes:
@@ -275,4 +258,33 @@ paths:
       summary: Show a list of sermons
       tags:
       - Sermons
+  /api/v1/user:
+    get:
+      consumes:
+      - application/json
+      description: get a user information by providing an Id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get user information by Id
+      tags:
+      - Users
 swagger: "2.0"

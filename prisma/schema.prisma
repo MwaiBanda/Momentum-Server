@@ -23,7 +23,6 @@ model User {
 
 model Meal {
   id              String            @id @default(cuid())
-  receipent       String
   reason          String
   email           String
   phone           String
@@ -37,6 +36,7 @@ model Meal {
   allergies       String
   instructions    String
   userId          String?
+  recipient       String
   user            User?             @relation(fields: [userId], references: [id])
   participants    UsersOnMeals[]
   meals           VolunteeredMeal[]

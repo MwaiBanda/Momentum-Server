@@ -17,16 +17,16 @@ import (
 //	@Summary		Post a payment
 //	@Description	Used to initiate stripe transactions
 //	@tags			Payments
-//	@Param			data	body	model.TransactionRequest	true	"Post a transaction"
+//	@Param			data	body	model.PaymentRequest	true	"Post a transaction"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	model.TransactionResponse
+//	@Success		200	{object}	model.PaymentResponse
 //	@Failure		400	{object}	httputil.HTTPError
 //	@Failure		404	{object}	httputil.HTTPError
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/payment [post]
 func (controller *Controller) PostPayment(context *fiber.Ctx) error {
-	transaction := new(model.TransactionRequest)
+	transaction := new(model.PaymentRequest)
 	if err := context.BodyParser(transaction); err != nil {
 		log.Panic(err.Error())
 	}
@@ -73,7 +73,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 		log.Panic(err)
 	}
 
-	return context.JSON(model.TransactionResponse{
+	return context.JSON(model.PaymentResponse{
 		PublishableKey: os.Getenv("STRIPE_PUBLISHABLE_KEY"),
 		Customer:       customer.ID,
 		EphemeralKey:   ephemeralKey.Secret,
