@@ -17,7 +17,8 @@ import (
 //	@Summary		Post a payment
 //	@Description	Used to initiate stripe transactions
 //	@tags			Payments
-//	@Param			data	body	model.PaymentRequest	true	"Post a transaction"
+//	@Param			Authorization	header	string					true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.PaymentRequest	true	"Post a transaction"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.PaymentResponse

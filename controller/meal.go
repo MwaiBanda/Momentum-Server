@@ -14,7 +14,8 @@ import (
 //	@Summary		Post a Meal
 //	@Description	Used to post a meal
 //	@tags			Meals
-//	@Param			data	body	model.MealRequest	true	"Post a meal"
+//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.MealRequest	true	"Post a meal"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.MealRequest
@@ -56,7 +57,8 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 //	@Summary		Post a meal participate
 //	@Description	Used to post a meal participate
 //	@tags			Meals
-//	@Param			data	body	model.ParticipantRequest	true	"Post participant information"
+//	@Param			Authorization	header	string						true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.ParticipantRequest	true	"Post participant information"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.ParticipantRequest
@@ -85,7 +87,8 @@ func (controller *Controller) PostMealParticipant(context *fiber.Ctx) error {
 //	@Summary		Post a meal participate
 //	@Description	Used to post a meal participate
 //	@tags			Meals
-//	@Param			data	body	model.VolunteeredRequest	true	"Post participant information"
+//	@Param			Authorization	header	string						true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.VolunteeredRequest	true	"Post participant information"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.VolunteeredRequest
@@ -115,6 +118,8 @@ func (controller *Controller) PostMealForMeal(context *fiber.Ctx) error {
 //	@Summary		Get all Meals
 //	@Description	Used to get all meals
 //	@tags			Meals
+//
+//	@Param			Authorization	header	string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.MealResponse

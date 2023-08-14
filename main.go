@@ -6,9 +6,12 @@ import (
 	_ "Momentum/httputil"
 	"Momentum/prisma/db"
 	"context"
+	"crypto/sha256"
+	"crypto/subtle"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/gofiber/swagger"
 	"github.com/redis/go-redis/v9"
 	"log"
@@ -26,7 +29,7 @@ import (
 // @contact.email	bandamwai@gmail.com
 // @license.name	Apache 2.0
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-// @host			services.momentumchurch.dev
+// @host			localhost:8085
 // @BasePath		/
 func main() {
 	app := fiber.New()
@@ -42,8 +45,20 @@ func main() {
 		port = "8085"
 	}
 
+	authMiddleware := keyauth.New(keyauth.Config{
+		Validator: func(c *fiber.Ctx, key string) (bool, error) {
+			hashedAPIKey := sha256.Sum256([]byte(os.Getenv("API_KEY")))
+			hashedKey := sha256.Sum256([]byte(key))
+
+			if subtle.ConstantTimeCompare(hashedAPIKey[:], hashedKey[:]) == 1 {
+				return true, nil
+			}
+			return false, keyauth.ErrMissingOrMalformedAPIKey
+		},
+	})
+
 	api := app.Group("/api")
-	v1 := api.Group("/v1")
+	v1 := api.Group("/v1", authMiddleware)
 
 	v1.Post("/meals", controllerInstance.PostMeal)
 	v1.Get("/meals", controllerInstance.GetMeals)

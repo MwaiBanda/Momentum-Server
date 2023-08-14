@@ -37,6 +37,16 @@ const docTemplate = `{
                     "Meals"
                 ],
                 "summary": "Get all Meals",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -77,6 +87,14 @@ const docTemplate = `{
                 ],
                 "summary": "Post a Meal",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Post a meal",
                         "name": "data",
@@ -130,6 +148,14 @@ const docTemplate = `{
                 "summary": "Post a meal participate",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Post participant information",
                         "name": "data",
                         "in": "body",
@@ -181,6 +207,14 @@ const docTemplate = `{
                 ],
                 "summary": "Post a meal participate",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Post participant information",
                         "name": "data",
@@ -234,6 +268,14 @@ const docTemplate = `{
                 "summary": "Post a payment",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Post a transaction",
                         "name": "data",
                         "in": "body",
@@ -285,6 +327,14 @@ const docTemplate = `{
                 ],
                 "summary": "Show a list of sermons",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "number",
                         "description": "Provide a page number",
@@ -338,6 +388,14 @@ const docTemplate = `{
                 "summary": "Update a user",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Post a user",
                         "name": "data",
                         "in": "body",
@@ -387,6 +445,14 @@ const docTemplate = `{
                 ],
                 "summary": "Post a user",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Post a user",
                         "name": "data",
@@ -441,6 +507,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "provide user Id",
                         "name": "userId",
                         "in": "path",
@@ -490,6 +564,14 @@ const docTemplate = `{
                 ],
                 "summary": "Delete user information by Id",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "provide user Id",
@@ -945,7 +1027,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "v1",
-	Host:             "services.momentumchurch.dev",
+	Host:             "localhost:8085",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Momentum API",

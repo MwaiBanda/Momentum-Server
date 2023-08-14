@@ -271,7 +271,7 @@ definitions:
       user_id:
         type: string
     type: object
-host: services.momentumchurch.dev
+host: localhost:8085
 info:
   contact:
     email: bandamwai@gmail.com
@@ -290,6 +290,13 @@ paths:
       consumes:
       - application/json
       description: Used to get all meals
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -317,6 +324,12 @@ paths:
       - application/json
       description: Used to post a meal
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Post a meal
         in: body
         name: data
@@ -351,6 +364,12 @@ paths:
       - application/json
       description: Used to post a meal participate
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Post participant information
         in: body
         name: data
@@ -385,6 +404,12 @@ paths:
       - application/json
       description: Used to post a meal participate
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Post participant information
         in: body
         name: data
@@ -419,6 +444,12 @@ paths:
       - application/json
       description: Used to initiate stripe transactions
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Post a transaction
         in: body
         name: data
@@ -453,6 +484,12 @@ paths:
       - application/json
       description: get a list of sermons
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Provide a page number
         in: query
         name: page
@@ -487,6 +524,12 @@ paths:
       - application/json
       description: Used to post a user
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Post a user
         in: body
         name: data
@@ -520,6 +563,12 @@ paths:
       - application/json
       description: Used to update a user
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Post a user
         in: body
         name: data
@@ -554,6 +603,12 @@ paths:
       - application/json
       description: Delete a user's information by providing an Id
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: provide user Id
         in: path
         name: userId
@@ -588,6 +643,12 @@ paths:
       - application/json
       description: get a user information by providing an Id
       parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: provide user Id
         in: path
         name: userId

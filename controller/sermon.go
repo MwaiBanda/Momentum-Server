@@ -17,11 +17,12 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@tags			Sermons
-//	@Param			page	query		number	false	"Provide a page number"
-//	@Success		200		{array}		model.SermonResponse
-//	@Failure		400		{object}	httputil.HTTPError
-//	@Failure		404		{object}	httputil.HTTPError
-//	@Failure		500		{object}	httputil.HTTPError
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			page			query		number	false	"Provide a page number"
+//	@Success		200				{array}		model.SermonResponse
+//	@Failure		400				{object}	httputil.HTTPError
+//	@Failure		404				{object}	httputil.HTTPError
+//	@Failure		500				{object}	httputil.HTTPError
 //	@Router			/api/v1/sermons [get]
 func (controller *Controller) GetSermon(context *fiber.Ctx) error {
 	pageNumber := context.Query("page", "1")

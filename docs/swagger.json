@@ -14,7 +14,7 @@
         },
         "version": "v1"
     },
-    "host": "services.momentumchurch.dev",
+    "host": "localhost:8085",
     "basePath": "/",
     "paths": {
         "/api/v1/meals": {
@@ -30,6 +30,16 @@
                     "Meals"
                 ],
                 "summary": "Get all Meals",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -70,6 +80,14 @@
                 ],
                 "summary": "Post a Meal",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Post a meal",
                         "name": "data",
@@ -123,6 +141,14 @@
                 "summary": "Post a meal participate",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Post participant information",
                         "name": "data",
                         "in": "body",
@@ -174,6 +200,14 @@
                 ],
                 "summary": "Post a meal participate",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Post participant information",
                         "name": "data",
@@ -227,6 +261,14 @@
                 "summary": "Post a payment",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Post a transaction",
                         "name": "data",
                         "in": "body",
@@ -278,6 +320,14 @@
                 ],
                 "summary": "Show a list of sermons",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "number",
                         "description": "Provide a page number",
@@ -331,6 +381,14 @@
                 "summary": "Update a user",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Post a user",
                         "name": "data",
                         "in": "body",
@@ -380,6 +438,14 @@
                 ],
                 "summary": "Post a user",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Post a user",
                         "name": "data",
@@ -434,6 +500,14 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "provide user Id",
                         "name": "userId",
                         "in": "path",
@@ -483,6 +557,14 @@
                 ],
                 "summary": "Delete user information by Id",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "provide user Id",

@@ -16,11 +16,12 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@tags			Users
-//	@Param			userId	path		string	true	"provide user Id"
-//	@Success		200		{array}		model.UserResponse
-//	@Failure		400		{object}	httputil.HTTPError
-//	@Failure		404		{object}	httputil.HTTPError
-//	@Failure		500		{object}	httputil.HTTPError
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			userId			path		string	true	"provide user Id"
+//	@Success		200				{array}		model.UserResponse
+//	@Failure		400				{object}	httputil.HTTPError
+//	@Failure		404				{object}	httputil.HTTPError
+//	@Failure		500				{object}	httputil.HTTPError
 //	@Router			/api/v1/users/{userId} [get]
 func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 	var user model.UserResponse
@@ -44,7 +45,8 @@ func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 //	@Summary		Post a user
 //	@Description	Used to post a user
 //	@tags			Users
-//	@Param			data	body	model.UserRequest	true	"Post a user"
+//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.UserRequest	true	"Post a user"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.UserRequest
@@ -75,7 +77,8 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 //	@Summary		Update a user
 //	@Description	Used to update a user
 //	@tags			Users
-//	@Param			data	body	model.UserRequest	true	"Post a user"
+//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.UserRequest	true	"Post a user"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.UserRequest
@@ -109,11 +112,12 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@tags			Users
-//	@Param			userId	path		string	true	"provide user Id"
-//	@Success		200		{array}		model.UserResponse
-//	@Failure		400		{object}	httputil.HTTPError
-//	@Failure		404		{object}	httputil.HTTPError
-//	@Failure		500		{object}	httputil.HTTPError
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			userId			path		string	true	"provide user Id"
+//	@Success		200				{array}		model.UserResponse
+//	@Failure		400				{object}	httputil.HTTPError
+//	@Failure		404				{object}	httputil.HTTPError
+//	@Failure		500				{object}	httputil.HTTPError
 //	@Router			/api/v1/users/{userId} [delete]
 func (controller *Controller) DeleteUserById(context *fiber.Ctx) error {
 	var user model.UserResponse
