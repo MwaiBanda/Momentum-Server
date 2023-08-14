@@ -29,7 +29,7 @@ import (
 // @contact.email	bandamwai@gmail.com
 // @license.name	Apache 2.0
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-// @host			localhost:8085
+// @host			services.momentumchurch.dev
 // @BasePath		/
 func main() {
 	app := fiber.New()

@@ -14,7 +14,7 @@
         },
         "version": "v1"
     },
-    "host": "localhost:8085",
+    "host": "services.momentumchurch.dev",
     "basePath": "/",
     "paths": {
         "/api/v1/meals": {
@@ -44,7 +44,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.MealResponse"
+                            }
                         }
                     },
                     "400": {
@@ -994,6 +997,9 @@
                     "items": {
                         "$ref": "#/definitions/model.MealUpdates"
                     }
+                },
+                "user": {
+                    "$ref": "#/definitions/model.UserResponse"
                 }
             }
         },

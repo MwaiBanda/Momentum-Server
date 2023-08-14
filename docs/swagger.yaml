@@ -259,6 +259,8 @@ definitions:
         items:
           $ref: '#/definitions/model.MealUpdates'
         type: array
+      user:
+        $ref: '#/definitions/model.UserResponse'
     type: object
   model.VolunteeredRequest:
     properties:
@@ -271,7 +273,7 @@ definitions:
       user_id:
         type: string
     type: object
-host: localhost:8085
+host: services.momentumchurch.dev
 info:
   contact:
     email: bandamwai@gmail.com
@@ -303,7 +305,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.MealResponse'
+            items:
+              $ref: '#/definitions/model.MealResponse'
+            type: array
         "400":
           description: Bad Request
           schema:

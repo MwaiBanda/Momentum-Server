@@ -122,14 +122,14 @@ func (controller *Controller) PostMealForMeal(context *fiber.Ctx) error {
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	model.MealResponse
+//	@Success		200	{array}	model.MealResponse
 //	@Failure		400	{object}	httputil.HTTPError
 //	@Failure		404	{object}	httputil.HTTPError
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/meals [get]
 func (controller *Controller) GetMeals(context *fiber.Ctx) error {
 	var meal []model.MealResponse
-	res, err := controller.prisma.Meal.FindMany().With(db.Meal.User.Fetch()).With(db.Meal.Participants.Fetch().With(db.UsersOnMeals.User.Fetch())).With(db.Meal.Meals.Fetch()).Exec(controller.context)
+	res, err := controller.prisma.Meal.FindMany().With(db.Meal.User.Fetch()).With(db.Meal.Participants.Fetch().With(db.UsersOnMeals.User.Fetch())).With(db.Meal.Meals.Fetch().With(db.VolunteeredMeal.User.Fetch())).Exec(controller.context)
 	if err != nil {
 		fmt.Println(err)
 	}

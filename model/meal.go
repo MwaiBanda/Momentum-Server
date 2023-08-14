@@ -49,6 +49,7 @@ type VolunteeredMeal struct {
 	CreatedOn   string        `json:"created_on"`
 	Description string        `json:"description"`
 	Notes       string        `json:"notes"`
+	User        UserResponse  `json:"user"`
 	Updates     []MealUpdates `json:"updates"`
 }
 

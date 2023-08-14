@@ -51,7 +51,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.MealResponse"
+                            }
                         }
                     },
                     "400": {
@@ -1001,6 +1004,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/model.MealUpdates"
                     }
+                },
+                "user": {
+                    "$ref": "#/definitions/model.UserResponse"
                 }
             }
         },
@@ -1027,7 +1033,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "v1",
-	Host:             "localhost:8085",
+	Host:             "services.momentumchurch.dev",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Momentum API",
