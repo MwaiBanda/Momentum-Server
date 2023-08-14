@@ -26,8 +26,8 @@ import (
 // @contact.email	bandamwai@gmail.com
 // @license.name	Apache 2.0
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-// @host		services.momentumchurch.dev
-// @BasePath	/
+// @host			services.momentumchurch.dev
+// @BasePath		/
 func main() {
 	app := fiber.New()
 	app.Use(cors.New())
@@ -44,9 +44,17 @@ func main() {
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
+
+	v1.Post("/meals", controllerInstance.PostMeal)
+	v1.Get("/meals", controllerInstance.GetMeals)
+	v1.Post("/meals/participant", controllerInstance.PostMealParticipant)
+	v1.Post("/meals/meal", controllerInstance.PostMealForMeal)
+
 	v1.Post("/users", controllerInstance.PostUser)
 	v1.Get("/users/:userId", controllerInstance.GetUserById)
+
 	v1.Post("/payments", controllerInstance.PostPayment)
+
 	v1.Get("/sermons", controllerInstance.GetSermon)
 
 	app.Get("/*", swagger.HandlerDefault)

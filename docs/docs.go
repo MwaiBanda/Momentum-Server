@@ -24,6 +24,201 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/meals": {
+            "get": {
+                "description": "Used to get all meals",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Meals"
+                ],
+                "summary": "Get all Meals",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.MealResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Used to post a meal",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Meals"
+                ],
+                "summary": "Post a Meal",
+                "parameters": [
+                    {
+                        "description": "Post a meal",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.MealRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.MealRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/meals/meal": {
+            "post": {
+                "description": "Used to post a meal participate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Meals"
+                ],
+                "summary": "Post a meal participate",
+                "parameters": [
+                    {
+                        "description": "Post participant information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.VolunteeredRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.VolunteeredRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/meals/participant": {
+            "post": {
+                "description": "Used to post a meal participate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Meals"
+                ],
+                "summary": "Post a meal participate",
+                "parameters": [
+                    {
+                        "description": "Post participant information",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ParticipantRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.ParticipantRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/payments": {
             "post": {
                 "description": "Used to initiate stripe transactions",
@@ -248,7 +443,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Meal": {
+        "model.MealRequest": {
             "type": "object",
             "properties": {
                 "allergies": {
@@ -261,9 +456,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "favourites": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 },
                 "instructions": {
@@ -293,8 +485,103 @@ const docTemplate = `{
                 "street": {
                     "type": "string"
                 },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.MealResponse": {
+            "type": "object",
+            "properties": {
+                "allergies": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "favourites": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "instructions": {
+                    "type": "string"
+                },
+                "least_favourites": {
+                    "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.VolunteeredMeal"
+                    }
+                },
+                "num_of_adults": {
+                    "type": "integer"
+                },
+                "number_of_kids": {
+                    "type": "integer"
+                },
+                "participants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Participant"
+                    }
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "preferred_time": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
                 "user": {
                     "$ref": "#/definitions/model.UserResponse"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.MealUpdates": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Participant": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.UserResponse"
+                }
+            }
+        },
+        "model.ParticipantRequest": {
+            "type": "object",
+            "properties": {
+                "meal_id": {
+                    "type": "string"
                 },
                 "user_id": {
                     "type": "string"
@@ -506,10 +793,50 @@ const docTemplate = `{
                 "meals": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Meal"
+                        "$ref": "#/definitions/model.MealResponse"
                     }
                 },
                 "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.VolunteeredMeal": {
+            "type": "object",
+            "properties": {
+                "created_on": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "updates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.MealUpdates"
+                    }
+                }
+            }
+        },
+        "model.VolunteeredRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "meal_id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

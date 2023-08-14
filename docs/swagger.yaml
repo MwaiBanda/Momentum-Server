@@ -9,7 +9,7 @@ definitions:
         example: status bad request
         type: string
     type: object
-  model.Meal:
+  model.MealRequest:
     properties:
       allergies:
         type: string
@@ -18,8 +18,6 @@ definitions:
       email:
         type: string
       favourites:
-        type: string
-      id:
         type: string
       instructions:
         type: string
@@ -39,8 +37,70 @@ definitions:
         type: string
       street:
         type: string
+      user_id:
+        type: string
+    type: object
+  model.MealResponse:
+    properties:
+      allergies:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      favourites:
+        type: string
+      id:
+        type: string
+      instructions:
+        type: string
+      least_favourites:
+        type: string
+      meals:
+        items:
+          $ref: '#/definitions/model.VolunteeredMeal'
+        type: array
+      num_of_adults:
+        type: integer
+      number_of_kids:
+        type: integer
+      participants:
+        items:
+          $ref: '#/definitions/model.Participant'
+        type: array
+      phone:
+        type: string
+      preferred_time:
+        type: string
+      reason:
+        type: string
+      recipient:
+        type: string
+      street:
+        type: string
       user:
         $ref: '#/definitions/model.UserResponse'
+      user_id:
+        type: string
+    type: object
+  model.MealUpdates:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  model.Participant:
+    properties:
+      id:
+        type: string
+      user:
+        $ref: '#/definitions/model.UserResponse'
+    type: object
+  model.ParticipantRequest:
+    properties:
+      meal_id:
+        type: string
       user_id:
         type: string
     type: object
@@ -182,9 +242,35 @@ definitions:
         type: string
       meals:
         items:
-          $ref: '#/definitions/model.Meal'
+          $ref: '#/definitions/model.MealResponse'
         type: array
       phone:
+        type: string
+    type: object
+  model.VolunteeredMeal:
+    properties:
+      created_on:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      updates:
+        items:
+          $ref: '#/definitions/model.MealUpdates'
+        type: array
+    type: object
+  model.VolunteeredRequest:
+    properties:
+      description:
+        type: string
+      meal_id:
+        type: string
+      notes:
+        type: string
+      user_id:
         type: string
     type: object
 host: services.momentumchurch.dev
@@ -201,6 +287,134 @@ info:
   title: Momentum API
   version: v1
 paths:
+  /api/v1/meals:
+    get:
+      consumes:
+      - application/json
+      description: Used to get all meals
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.MealResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Get all Meals
+      tags:
+      - Meals
+    post:
+      consumes:
+      - application/json
+      description: Used to post a meal
+      parameters:
+      - description: Post a meal
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.MealRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.MealRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Post a Meal
+      tags:
+      - Meals
+  /api/v1/meals/meal:
+    post:
+      consumes:
+      - application/json
+      description: Used to post a meal participate
+      parameters:
+      - description: Post participant information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.VolunteeredRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.VolunteeredRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Post a meal participate
+      tags:
+      - Meals
+  /api/v1/meals/participant:
+    post:
+      consumes:
+      - application/json
+      description: Used to post a meal participate
+      parameters:
+      - description: Post participant information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ParticipantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ParticipantRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Post a meal participate
+      tags:
+      - Meals
   /api/v1/payments:
     post:
       consumes:

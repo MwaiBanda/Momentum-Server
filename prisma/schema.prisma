@@ -37,6 +37,7 @@ model Meal {
   instructions    String
   userId          String?
   recipient       String
+  createdOn       DateTime          @default(now())
   user            User?             @relation(fields: [userId], references: [id])
   participants    UsersOnMeals[]
   meals           VolunteeredMeal[]
@@ -46,11 +47,11 @@ model Meal {
 
 model VolunteeredMeal {
   id          String        @id @default(cuid())
-  date        String
   description String
   notes       String
   userId      String?
   mealId      String?
+  createdOn   DateTime      @default(now())
   updates     MealUpdates[]
   meal        Meal?         @relation(fields: [mealId], references: [id])
   user        User?         @relation(fields: [userId], references: [id])
@@ -59,10 +60,11 @@ model VolunteeredMeal {
 }
 
 model MealUpdates {
-  id      String          @id @default(cuid())
-  message String
-  mealId  String
-  meal    VolunteeredMeal @relation(fields: [mealId], references: [id])
+  id        String          @id @default(cuid())
+  message   String
+  mealId    String
+  createdOn DateTime        @default(now())
+  meal      VolunteeredMeal @relation(fields: [mealId], references: [id])
 
   @@index([mealId])
 }
@@ -71,10 +73,11 @@ model UsersOnMeals {
   userId     String
   mealId     String
   assignedAt DateTime @default(now())
+  id         String   @default(cuid())
   meal       Meal     @relation(fields: [mealId], references: [id])
   user       User     @relation(fields: [userId], references: [id])
 
-  @@id([userId, mealId])
+  @@id([id, userId, mealId])
 }
 
 model Transaction {
@@ -87,13 +90,4 @@ model Transaction {
   user       User?    @relation(fields: [userId], references: [id])
 
   @@index([userId])
-}
-
-model Post {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  published Boolean
-  desc      String?
 }
