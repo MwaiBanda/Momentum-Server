@@ -34,7 +34,6 @@ type MealResponse struct {
 	Instructions    string            `json:"instructions"`
 	Participants    []Participant     `json:"participants"`
 	Meals           []VolunteeredMeal `json:"meals"`
-	UserId          string            `json:"user_id"`
 	User            UserResponse      `json:"user"`
 }
 

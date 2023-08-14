@@ -69,7 +69,14 @@ func (controller *Controller) PostMealParticipant(context *fiber.Ctx) error {
 	if err := context.BodyParser(meal); err != nil {
 		log.Panic(err.Error())
 	}
-	controller.prisma.UsersOnMeals.CreateOne(db.UsersOnMeals.Meal.Link(db.Meal.ID.Equals(meal.MealId)), db.UsersOnMeals.User.Link(db.User.ID.Equals(meal.UserId)))
+	_, err := controller.prisma.UsersOnMeals.CreateOne(
+		db.UsersOnMeals.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
+		db.UsersOnMeals.User.Link(db.User.ID.Equals(meal.UserId)),
+	).Exec(controller.context)
+
+	if err != nil {
+		log.Panic(err.Error())
+	}
 	return context.JSON(meal)
 }
 
@@ -91,12 +98,15 @@ func (controller *Controller) PostMealForMeal(context *fiber.Ctx) error {
 	if err := context.BodyParser(meal); err != nil {
 		log.Panic(err.Error())
 	}
-	controller.prisma.VolunteeredMeal.CreateOne(
+	_, err := controller.prisma.VolunteeredMeal.CreateOne(
 		db.VolunteeredMeal.Description.Set(meal.Description),
 		db.VolunteeredMeal.Notes.Set(meal.Notes),
 		db.VolunteeredMeal.MealID.Set(meal.MealId),
 		db.VolunteeredMeal.UserID.Set(meal.UserId),
-	)
+	).Exec(controller.context)
+	if err != nil {
+		fmt.Println(err)
+	}
 	return context.JSON(meal)
 }
 
@@ -113,8 +123,8 @@ func (controller *Controller) PostMealForMeal(context *fiber.Ctx) error {
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/meals [get]
 func (controller *Controller) GetMeals(context *fiber.Ctx) error {
-	var meal model.MealResponse
-	res, err := controller.prisma.Meal.FindMany().With(db.Meal.Participants.Fetch()).Exec(controller.context)
+	var meal []model.MealResponse
+	res, err := controller.prisma.Meal.FindMany().With(db.Meal.User.Fetch()).With(db.Meal.Participants.Fetch().With(db.UsersOnMeals.User.Fetch())).With(db.Meal.Meals.Fetch()).Exec(controller.context)
 	if err != nil {
 		fmt.Println(err)
 	}

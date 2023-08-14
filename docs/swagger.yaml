@@ -80,8 +80,6 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/model.UserResponse'
-      user_id:
-        type: string
     type: object
   model.MealUpdates:
     properties:
@@ -501,7 +499,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.PaymentResponse'
+            $ref: '#/definitions/model.UserRequest'
         "400":
           description: Bad Request
           schema:
@@ -517,7 +515,74 @@ paths:
       summary: Post a user
       tags:
       - Users
+    put:
+      consumes:
+      - application/json
+      description: Used to update a user
+      parameters:
+      - description: Post a user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Update a user
+      tags:
+      - Users
   /api/v1/users/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user's information by providing an Id
+      parameters:
+      - description: provide user Id
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete user information by Id
+      tags:
+      - Users
     get:
       consumes:
       - application/json

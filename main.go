@@ -47,11 +47,13 @@ func main() {
 
 	v1.Post("/meals", controllerInstance.PostMeal)
 	v1.Get("/meals", controllerInstance.GetMeals)
-	v1.Post("/meals/participant", controllerInstance.PostMealParticipant)
 	v1.Post("/meals/meal", controllerInstance.PostMealForMeal)
+	v1.Post("/meals/participant", controllerInstance.PostMealParticipant)
 
 	v1.Post("/users", controllerInstance.PostUser)
 	v1.Get("/users/:userId", controllerInstance.GetUserById)
+	v1.Put("/users", controllerInstance.UpdateUser)
+	v1.Delete("/users/:userId", controllerInstance.DeleteUserById)
 
 	v1.Post("/payments", controllerInstance.PostPayment)
 
