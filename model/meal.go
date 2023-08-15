@@ -43,6 +43,7 @@ type VolunteeredRequest struct {
 	Notes       string `json:"notes"`
 	MealId      string `json:"meal_id"`
 	UserId      string `json:"user_id"`
+	Date        string `json:"date"`
 }
 
 type VolunteeredMeal struct {

@@ -52,6 +52,7 @@ model VolunteeredMeal {
   userId      String?
   mealId      String?
   createdOn   DateTime      @default(now())
+  date        String        @default("")
   updates     MealUpdates[]
   meal        Meal?         @relation(fields: [mealId], references: [id])
   user        User?         @relation(fields: [userId], references: [id])

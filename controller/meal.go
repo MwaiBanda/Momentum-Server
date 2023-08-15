@@ -35,10 +35,10 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	var volunteered []transaction.Param
 	for _, meal := range mealRequest.Meals {
 		volunteered = append(volunteered, controller.prisma.VolunteeredMeal.CreateOne(
-			db.VolunteeredMeal.Description.Set(meal.Description),
-			db.VolunteeredMeal.Notes.Set(meal.Notes),
+			db.VolunteeredMeal.Description.Set(""),
+			db.VolunteeredMeal.Notes.Set(""),
+			db.VolunteeredMeal.Date.Set(meal.Date),
 			db.VolunteeredMeal.MealID.Set(mealID),
-			db.VolunteeredMeal.UserID.Set(""),
 		).Tx())
 	}
 
