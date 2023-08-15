@@ -32,23 +32,8 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	if err := context.BodyParser(mealRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	var volunteered []transaction.Param
-	for _, meal := range mealRequest.Meals {
-		volunteered = append(volunteered, controller.prisma.VolunteeredMeal.CreateOne(
-			db.VolunteeredMeal.Description.Set(""),
-			db.VolunteeredMeal.Notes.Set(""),
-			db.VolunteeredMeal.Date.Set(meal.Date),
-			db.VolunteeredMeal.MealID.Set(mealID),
-		).Tx())
-	}
-
-	err := controller.prisma.Prisma.Transaction(volunteered...).Exec(controller.context)
-	if err != nil {
-		log.Panic(err.Error())
-	}
-	mealResponse := new(model.MealResponse)
-
-	res, _ := controller.prisma.Meal.CreateOne(
+	var transactions []transaction.Param
+	transactions = append(transactions, controller.prisma.Meal.CreateOne(
 		db.Meal.Reason.Set(mealRequest.Reason),
 		db.Meal.Email.Set(mealRequest.Email),
 		db.Meal.Phone.Set(mealRequest.Phone),
@@ -65,14 +50,22 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 		db.Meal.UserID.Set(mealRequest.UserId),
 		db.Meal.ID.Set(mealID),
 		db.Meal.Meals.Link(db.VolunteeredMeal.MealID.Equals(mealID)),
-	).Exec(controller.context)
-
-	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, &mealResponse); err != nil {
-		fmt.Println(err)
+	).Tx())
+	for _, meal := range mealRequest.Meals {
+		transactions = append(transactions, controller.prisma.VolunteeredMeal.CreateOne(
+			db.VolunteeredMeal.Description.Set(""),
+			db.VolunteeredMeal.Notes.Set(""),
+			db.VolunteeredMeal.Date.Set(meal.Date),
+			db.VolunteeredMeal.MealID.Set(mealID),
+		).Tx())
 	}
 
-	return context.JSON(mealResponse)
+	err := controller.prisma.Prisma.Transaction(transactions...).Exec(controller.context)
+	if err != nil {
+		log.Panic(err.Error())
+	}
+
+	return context.JSON(mealRequest)
 }
 
 // PostMealParticipant godoc
