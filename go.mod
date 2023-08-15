@@ -7,8 +7,11 @@ require (
 	github.com/gofiber/swagger v0.1.12
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/joho/godotenv v1.5.1
+	github.com/lucsky/cuid v1.2.1
+	github.com/redis/go-redis/v9 v9.0.5
 	github.com/shopspring/decimal v1.3.1
 	github.com/steebchen/prisma-client-go v0.21.0
+	github.com/stripe/stripe-go/v74 v74.29.0
 	github.com/swaggo/swag v1.16.1
 	github.com/takuoki/gocase v1.0.0
 	golang.org/x/net v0.13.0
@@ -31,10 +34,8 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/redis/go-redis/v9 v9.0.5 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
-	github.com/stripe/stripe-go/v74 v74.29.0 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.48.0 // indirect

@@ -23,6 +23,10 @@ definitions:
         type: string
       least_favourites:
         type: string
+      meals:
+        items:
+          $ref: '#/definitions/model.VolunteeredRequest'
+        type: array
       num_of_adults:
         type: integer
       number_of_kids:
@@ -346,7 +350,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.MealRequest'
+            $ref: '#/definitions/model.MealResponse'
         "400":
           description: Bad Request
           schema:

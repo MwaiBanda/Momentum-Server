@@ -14,6 +14,7 @@ type MealRequest struct {
 	LeastFavourites string `json:"least_favourites"`
 	Allergies       string `json:"allergies"`
 	Instructions    string `json:"instructions"`
+	Meals           []VolunteeredRequest
 	UserId          string `json:"user_id"`
 }
 

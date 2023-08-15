@@ -112,7 +112,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealRequest"
+                            "$ref": "#/definitions/model.MealResponse"
                         }
                     },
                     "400": {
@@ -649,6 +649,12 @@ const docTemplate = `{
                 },
                 "least_favourites": {
                     "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.VolunteeredRequest"
+                    }
                 },
                 "num_of_adults": {
                     "type": "integer"
