@@ -49,7 +49,6 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 		db.Meal.Recipient.Set(mealRequest.Recipient),
 		db.Meal.UserID.Set(mealRequest.UserId),
 		db.Meal.ID.Set(mealID),
-		db.Meal.Meals.Link(db.VolunteeredMeal.MealID.Equals(mealID)),
 	).Tx())
 	for _, meal := range mealRequest.Meals {
 		transactions = append(transactions, controller.prisma.VolunteeredMeal.CreateOne(
