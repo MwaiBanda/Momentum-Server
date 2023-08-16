@@ -67,60 +67,37 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	return context.JSON(mealRequest)
 }
 
-// PostMealParticipant godoc
+// PostVolunteeredMealForMeal godoc
 //
 //	@Summary		Post a meal participate
 //	@Description	Used to post a meal participate
 //	@tags			Meals
-//	@Param			Authorization	header	string						true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			data			body	model.ParticipantRequest	true	"Post participant information"
+//	@Param			Authorization	header	string							true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.VolunteeredMealRequest	true	"Post participant information"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	model.ParticipantRequest
-//	@Failure		400	{object}	httputil.HTTPError
-//	@Failure		404	{object}	httputil.HTTPError
-//	@Failure		500	{object}	httputil.HTTPError
-//	@Router			/api/v1/meals/participant [post]
-func (controller *Controller) PostMealParticipant(context *fiber.Ctx) error {
-	meal := new(model.ParticipantRequest)
-	if err := context.BodyParser(meal); err != nil {
-		log.Panic(err.Error())
-	}
-	_, err := controller.prisma.UsersOnMeals.CreateOne(
-		db.UsersOnMeals.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
-		db.UsersOnMeals.User.Link(db.User.ID.Equals(meal.UserId)),
-	).Exec(controller.context)
-
-	if err != nil {
-		log.Panic(err.Error())
-	}
-	return context.JSON(meal)
-}
-
-// PostMealForMeal godoc
-//
-//	@Summary		Post a meal participate
-//	@Description	Used to post a meal participate
-//	@tags			Meals
-//	@Param			Authorization	header	string						true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			data			body	model.VolunteeredRequest	true	"Post participant information"
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	model.VolunteeredRequest
+//	@Success		200	{object}	model.VolunteeredMealRequest
 //	@Failure		400	{object}	httputil.HTTPError
 //	@Failure		404	{object}	httputil.HTTPError
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/meals/meal [post]
-func (controller *Controller) PostMealForMeal(context *fiber.Ctx) error {
-	meal := new(model.VolunteeredRequest)
+func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) error {
+	meal := new(model.VolunteeredMealRequest)
 	if err := context.BodyParser(meal); err != nil {
 		log.Panic(err.Error())
 	}
-	_, err := controller.prisma.VolunteeredMeal.CreateOne(
-		db.VolunteeredMeal.Description.Set(meal.Description),
-		db.VolunteeredMeal.Notes.Set(meal.Notes),
-		db.VolunteeredMeal.MealID.Set(meal.MealId),
-		db.VolunteeredMeal.UserID.Set(meal.UserId),
+	err := controller.prisma.Prisma.Transaction(
+		controller.prisma.UsersOnMeals.UpsertOne(
+			db.UsersOnMeals.UserIDMealID(db.UsersOnMeals.UserID.Equals(meal.MealId), db.UsersOnMeals.MealID.Equals(meal.VolunteeredMeal.User.Id)),
+		).Create(
+			db.UsersOnMeals.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
+			db.UsersOnMeals.User.Link(db.User.ID.Equals(meal.VolunteeredMeal.User.Id)),
+		).Update().Tx(),
+		controller.prisma.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
+			db.VolunteeredMeal.Description.Set(meal.VolunteeredMeal.Description),
+			db.VolunteeredMeal.Notes.Set(meal.VolunteeredMeal.Notes),
+			db.VolunteeredMeal.UserID.Set(meal.VolunteeredMeal.User.Id),
+		).Tx(),
 	).Exec(controller.context)
 	if err != nil {
 		fmt.Println(err)
@@ -137,7 +114,7 @@ func (controller *Controller) PostMealForMeal(context *fiber.Ctx) error {
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	model.MealResponse
+//	@Success		200	{array}		model.MealResponse
 //	@Failure		400	{object}	httputil.HTTPError
 //	@Failure		404	{object}	httputil.HTTPError
 //	@Failure		500	{object}	httputil.HTTPError

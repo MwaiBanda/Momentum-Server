@@ -99,13 +99,6 @@ definitions:
       user:
         $ref: '#/definitions/model.UserResponse'
     type: object
-  model.ParticipantRequest:
-    properties:
-      meal_id:
-        type: string
-      user_id:
-        type: string
-    type: object
   model.PaymentRequest:
     properties:
       amount:
@@ -253,6 +246,8 @@ definitions:
     properties:
       created_on:
         type: string
+      date:
+        type: string
       description:
         type: string
       id:
@@ -266,8 +261,17 @@ definitions:
       user:
         $ref: '#/definitions/model.UserResponse'
     type: object
+  model.VolunteeredMealRequest:
+    properties:
+      meal_id:
+        type: string
+      volunteered_meal:
+        $ref: '#/definitions/model.VolunteeredMeal'
+    type: object
   model.VolunteeredRequest:
     properties:
+      date:
+        type: string
       description:
         type: string
       meal_id:
@@ -383,54 +387,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.VolunteeredRequest'
+          $ref: '#/definitions/model.VolunteeredMealRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.VolunteeredRequest'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httputil.HTTPError'
-      summary: Post a meal participate
-      tags:
-      - Meals
-  /api/v1/meals/participant:
-    post:
-      consumes:
-      - application/json
-      description: Used to post a meal participate
-      parameters:
-      - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Post participant information
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.ParticipantRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.ParticipantRequest'
+            $ref: '#/definitions/model.VolunteeredMealRequest'
         "400":
           description: Bad Request
           schema:

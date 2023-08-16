@@ -62,8 +62,7 @@ func main() {
 
 	v1.Post("/meals", controllerInstance.PostMeal)
 	v1.Get("/meals", controllerInstance.GetMeals)
-	v1.Post("/meals/meal", controllerInstance.PostMealForMeal)
-	v1.Post("/meals/participant", controllerInstance.PostMealParticipant)
+	v1.Post("/meals/meal", controllerInstance.PostVolunteeredMealForMeal)
 
 	v1.Post("/users", controllerInstance.PostUser)
 	v1.Get("/users/:userId", controllerInstance.GetUserById)

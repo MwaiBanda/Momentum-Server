@@ -164,7 +164,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteeredRequest"
+                            "$ref": "#/definitions/model.VolunteeredMealRequest"
                         }
                     }
                 ],
@@ -172,67 +172,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteeredRequest"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/meals/participant": {
-            "post": {
-                "description": "Used to post a meal participate",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Meals"
-                ],
-                "summary": "Post a meal participate",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
-                        "description": "Provide a bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "Post participant information",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ParticipantRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.ParticipantRequest"
+                            "$ref": "#/definitions/model.VolunteeredMealRequest"
                         }
                     },
                     "400": {
@@ -766,17 +706,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ParticipantRequest": {
-            "type": "object",
-            "properties": {
-                "meal_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "model.PaymentRequest": {
             "type": "object",
             "properties": {
@@ -996,6 +925,9 @@ const docTemplate = `{
                 "created_on": {
                     "type": "string"
                 },
+                "date": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -1016,9 +948,23 @@ const docTemplate = `{
                 }
             }
         },
+        "model.VolunteeredMealRequest": {
+            "type": "object",
+            "properties": {
+                "meal_id": {
+                    "type": "string"
+                },
+                "volunteered_meal": {
+                    "$ref": "#/definitions/model.VolunteeredMeal"
+                }
+            }
+        },
         "model.VolunteeredRequest": {
             "type": "object",
             "properties": {
+                "date": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
