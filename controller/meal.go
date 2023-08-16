@@ -87,17 +87,17 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 		log.Panic(err.Error())
 	}
 	err := controller.prisma.Prisma.Transaction(
-		controller.prisma.UsersOnMeals.UpsertOne(
-			db.UsersOnMeals.UserIDMealID(db.UsersOnMeals.UserID.Equals(meal.MealId), db.UsersOnMeals.MealID.Equals(meal.VolunteeredMeal.User.Id)),
-		).Create(
-			db.UsersOnMeals.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
-			db.UsersOnMeals.User.Link(db.User.ID.Equals(meal.VolunteeredMeal.User.Id)),
-		).Update().Tx(),
 		controller.prisma.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
 			db.VolunteeredMeal.Description.Set(meal.VolunteeredMeal.Description),
 			db.VolunteeredMeal.Notes.Set(meal.VolunteeredMeal.Notes),
 			db.VolunteeredMeal.UserID.Set(meal.VolunteeredMeal.User.Id),
 		).Tx(),
+		controller.prisma.UsersOnMeals.UpsertOne(
+			db.UsersOnMeals.IDUserIDMealID(db.UsersOnMeals.ID.Equals(meal.VolunteeredMeal.Id), db.UsersOnMeals.UserID.Equals(meal.MealId), db.UsersOnMeals.MealID.Equals(meal.VolunteeredMeal.User.Id)),
+		).Create(
+			db.UsersOnMeals.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
+			db.UsersOnMeals.User.Link(db.User.ID.Equals(meal.VolunteeredMeal.User.Id)),
+		).Update().Tx(),
 	).Exec(controller.context)
 	if err != nil {
 		fmt.Println(err)

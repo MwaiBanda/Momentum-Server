@@ -78,8 +78,7 @@ model UsersOnMeals {
   meal       Meal     @relation(fields: [mealId], references: [id])
   user       User     @relation(fields: [userId], references: [id])
 
-  @@id([userId, mealId])
-  @@index([id])
+  @@id([id, userId, mealId])
 }
 
 model Transaction {
