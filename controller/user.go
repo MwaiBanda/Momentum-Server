@@ -95,7 +95,7 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 		db.User.ID.Equals(user.Id),
 	).Update(
 		db.User.Email.Set(user.Email),
-		db.User.Fullname.Set(user.Email),
+		db.User.Fullname.Set(user.Fullname),
 		db.User.Phone.Set(user.Phone),
 	).Exec(controller.context)
 	if err != nil {
