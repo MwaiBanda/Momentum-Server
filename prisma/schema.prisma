@@ -82,13 +82,13 @@ model UsersOnMeals {
 }
 
 model Transaction {
-  id         String   @id @default(cuid())
-  amount     Decimal
-  date       String
-  Decription String
-  createdOn  DateTime @default(now())
-  userId     String?
-  user       User?    @relation(fields: [userId], references: [id])
+  id          String   @id @default(cuid())
+  amount      Int
+  date        String
+  createdOn   DateTime @default(now())
+  userId      String
+  Description String
+  user        User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }

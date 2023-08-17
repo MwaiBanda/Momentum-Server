@@ -316,6 +316,176 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/transactions/": {
+            "post": {
+                "description": "Used to post a transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Post a transaction",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/transactions/{transactionId}": {
+            "delete": {
+                "description": "delete a transaction by providing an Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Delete a transaction",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "provide transaction Id",
+                        "name": "transactionId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/transactions/{userId}": {
+            "get": {
+                "description": "get a list of transactions belonging to a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Show a list of transactions belonging to a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "provide user Id",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Transaction"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/users": {
             "put": {
                 "description": "Used to update a user",
@@ -593,7 +763,7 @@ const docTemplate = `{
                 "meals": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.VolunteeredRequest"
+                        "$ref": "#/definitions/model.MealVolunteeredRequest"
                     }
                 },
                 "num_of_adults": {
@@ -691,6 +861,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.MealVolunteeredRequest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "meal_id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -876,6 +1066,29 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Transaction": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "created_on": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "model.UserRequest": {
             "type": "object",
             "properties": {
@@ -956,26 +1169,6 @@ const docTemplate = `{
                 },
                 "volunteered_meal": {
                     "$ref": "#/definitions/model.VolunteeredMeal"
-                }
-            }
-        },
-        "model.VolunteeredRequest": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "meal_id": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
                 }
             }
         }

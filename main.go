@@ -61,7 +61,7 @@ func main() {
 	v1 := api.Group("/v1", authMiddleware)
 
 	v1.Post("/meals", controllerInstance.PostMeal)
-	v1.Get("/meals", controllerInstance.GetMeals)
+	v1.Get("/meals", controllerInstance.GetAllMeals)
 	v1.Post("/meals/meal", controllerInstance.PostVolunteeredMealForMeal)
 
 	v1.Post("/users", controllerInstance.PostUser)
@@ -71,7 +71,10 @@ func main() {
 
 	v1.Post("/payments", controllerInstance.PostPayment)
 
-	v1.Get("/sermons", controllerInstance.GetSermon)
+	v1.Get("/transactions/:userId", controllerInstance.GetTransactionsByUserId)
+	v1.Delete("/transactions/:transactionId", controllerInstance.DeleteTransactionsById)
+
+	v1.Get("/sermons", controllerInstance.GetAllSermons)
 
 	app.Get("/*", swagger.HandlerDefault)
 

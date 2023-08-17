@@ -105,7 +105,7 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 	return context.JSON(meal)
 }
 
-// GetMeals godoc
+// GetAllMeals godoc
 //
 //	@Summary		Get all Meals
 //	@Description	Used to get all meals
@@ -119,7 +119,7 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 //	@Failure		404	{object}	httputil.HTTPError
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/meals [get]
-func (controller *Controller) GetMeals(context *fiber.Ctx) error {
+func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 	var meal []model.MealResponse
 	res, err := controller.prisma.Meal.FindMany().With(
 		db.Meal.User.Fetch(),

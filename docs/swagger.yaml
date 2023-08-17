@@ -25,7 +25,7 @@ definitions:
         type: string
       meals:
         items:
-          $ref: '#/definitions/model.VolunteeredRequest'
+          $ref: '#/definitions/model.MealVolunteeredRequest'
         type: array
       num_of_adults:
         type: integer
@@ -90,6 +90,19 @@ definitions:
       id:
         type: string
       message:
+        type: string
+    type: object
+  model.MealVolunteeredRequest:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      meal_id:
+        type: string
+      notes:
+        type: string
+      user_id:
         type: string
     type: object
   model.Participant:
@@ -214,6 +227,21 @@ definitions:
       total:
         type: string
     type: object
+  model.Transaction:
+    properties:
+      amount:
+        type: integer
+      created_on:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      user_id:
+        type: string
+    type: object
   model.UserRequest:
     properties:
       email:
@@ -267,19 +295,6 @@ definitions:
         type: string
       volunteered_meal:
         $ref: '#/definitions/model.VolunteeredMeal'
-    type: object
-  model.VolunteeredRequest:
-    properties:
-      date:
-        type: string
-      description:
-        type: string
-      meal_id:
-        type: string
-      notes:
-        type: string
-      user_id:
-        type: string
     type: object
 host: services.momentumchurch.dev
 info:
@@ -490,6 +505,120 @@ paths:
       summary: Show a list of sermons
       tags:
       - Sermons
+  /api/v1/transactions/:
+    post:
+      consumes:
+      - application/json
+      description: Used to post a transaction
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Post a transaction
+      tags:
+      - Transactions
+  /api/v1/transactions/{transactionId}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a transaction by providing an Id
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: provide transaction Id
+        in: path
+        name: transactionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Delete a transaction
+      tags:
+      - Transactions
+  /api/v1/transactions/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: get a list of transactions belonging to a user
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: provide user Id
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Transaction'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Show a list of transactions belonging to a user
+      tags:
+      - Transactions
   /api/v1/users:
     post:
       consumes:
