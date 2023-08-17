@@ -336,7 +336,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/model.TransactionRequest"
                         }
                     },
                     "400": {
@@ -394,7 +394,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/model.TransactionResponse"
                         }
                     },
                     "400": {
@@ -454,7 +454,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Transaction"
+                                "$ref": "#/definitions/model.TransactionResponse"
                             }
                         }
                     },
@@ -1059,13 +1059,33 @@
                 }
             }
         },
-        "model.Transaction": {
+        "model.TransactionRequest": {
             "type": "object",
             "properties": {
                 "amount": {
                     "type": "integer"
                 },
-                "created_on": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "createdOn": {
                     "type": "string"
                 },
                 "date": {
@@ -1077,8 +1097,8 @@
                 "id": {
                     "type": "string"
                 },
-                "user_id": {
-                    "type": "string"
+                "user": {
+                    "$ref": "#/definitions/model.UserResponse"
                 }
             }
         },

@@ -227,11 +227,24 @@ definitions:
       total:
         type: string
     type: object
-  model.Transaction:
+  model.TransactionRequest:
     properties:
       amount:
         type: integer
-      created_on:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      userId:
+        type: string
+    type: object
+  model.TransactionResponse:
+    properties:
+      amount:
+        type: integer
+      createdOn:
         type: string
       date:
         type: string
@@ -239,8 +252,8 @@ definitions:
         type: string
       id:
         type: string
-      user_id:
-        type: string
+      user:
+        $ref: '#/definitions/model.UserResponse'
     type: object
   model.UserRequest:
     properties:
@@ -523,7 +536,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Transaction'
+            $ref: '#/definitions/model.TransactionRequest'
         "400":
           description: Bad Request
           schema:
@@ -562,7 +575,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Transaction'
+            $ref: '#/definitions/model.TransactionResponse'
         "400":
           description: Bad Request
           schema:
@@ -602,7 +615,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.Transaction'
+              $ref: '#/definitions/model.TransactionResponse'
             type: array
         "400":
           description: Bad Request

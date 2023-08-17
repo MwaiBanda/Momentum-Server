@@ -343,7 +343,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/model.TransactionRequest"
                         }
                     },
                     "400": {
@@ -401,7 +401,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Transaction"
+                            "$ref": "#/definitions/model.TransactionResponse"
                         }
                     },
                     "400": {
@@ -461,7 +461,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Transaction"
+                                "$ref": "#/definitions/model.TransactionResponse"
                             }
                         }
                     },
@@ -1066,13 +1066,33 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Transaction": {
+        "model.TransactionRequest": {
             "type": "object",
             "properties": {
                 "amount": {
                     "type": "integer"
                 },
-                "created_on": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "createdOn": {
                     "type": "string"
                 },
                 "date": {
@@ -1084,8 +1104,8 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "user_id": {
-                    "type": "string"
+                "user": {
+                    "$ref": "#/definitions/model.UserResponse"
                 }
             }
         },

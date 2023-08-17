@@ -18,16 +18,16 @@ import (
 //	@tags			Transactions
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			userId			path		string	true	"provide user Id"
-//	@Success		200				{array}		model.Transaction
+//	@Success		200				{array}		model.TransactionResponse
 //	@Failure		400				{object}	httputil.HTTPError
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Failure		500				{object}	httputil.HTTPError
 //	@Router			/api/v1/transactions/{userId} [get]
 func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error {
-	var transactions []model.Transaction
+	var transactions []model.TransactionResponse
 	res, err := controller.prisma.Transaction.FindMany(
 		db.Transaction.UserID.Equals(context.Params("userId")),
-	).Exec(controller.context)
+	).With(db.Transaction.User.Fetch()).Exec(controller.context)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -48,13 +48,13 @@ func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error 
 //	@Produce		json
 //	@tags			Transactions
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Success		200				{object}	model.Transaction
+//	@Success		200				{object}	model.TransactionRequest
 //	@Failure		400				{object}	httputil.HTTPError
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Failure		500				{object}	httputil.HTTPError
 //	@Router			/api/v1/transactions [post]
 func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
-	transaction := new(model.Transaction)
+	transaction := new(model.TransactionRequest)
 	if err := context.BodyParser(transaction); err != nil {
 		log.Panic(err.Error())
 	}
@@ -80,13 +80,14 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 //	@tags			Transactions
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			transactionId	path		string	true	"provide transaction Id"
-//	@Success		200				{object}	model.Transaction
+//	@Success		200				{object}	model.TransactionResponse
 //	@Failure		400				{object}	httputil.HTTPError
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Failure		500				{object}	httputil.HTTPError
 //	@Router			/api/v1/transactions/{transactionId} [delete]
 func (controller *Controller) DeleteTransactionsById(context *fiber.Ctx) error {
-	var transaction model.Transaction
+
+	var transaction model.TransactionResponse
 	res, err := controller.prisma.Transaction.FindUnique(
 		db.Transaction.ID.Equals(context.Params("transactionId")),
 	).Delete().Exec(controller.context)
