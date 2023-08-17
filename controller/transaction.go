@@ -62,7 +62,8 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 		db.Transaction.Amount.Set(transaction.Amount),
 		db.Transaction.Date.Set(transaction.Date),
 		db.Transaction.Description.Set(transaction.Description),
-		db.Transaction.User.Link(db.User.ID.Equals(transaction.UserId))).Exec(controller.context)
+		db.Transaction.User.Link(db.User.ID.Equals(transaction.UserId)),
+	).Exec(controller.context)
 	if err != nil {
 		log.Panic(err.Error())
 	}
