@@ -91,7 +91,7 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 	if err := context.BodyParser(user); err != nil {
 		log.Panic(err.Error())
 	}
-	_, err := controller.prisma.User.UpsertOne(
+	_, err := controller.prisma.User.FindUnique(
 		db.User.ID.Equals(user.Id),
 	).Update(
 		db.User.Email.Set(user.Email),

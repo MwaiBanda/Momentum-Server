@@ -52,7 +52,7 @@ func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error 
 //	@Failure		400				{object}	httputil.HTTPError
 //	@Failure		404				{object}	httputil.HTTPError
 //	@Failure		500				{object}	httputil.HTTPError
-//	@Router			/api/v1/transactions/ [post]
+//	@Router			/api/v1/transactions [post]
 func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 	transaction := new(model.Transaction)
 	if err := context.BodyParser(transaction); err != nil {
