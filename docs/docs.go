@@ -316,7 +316,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/transactions/": {
+        "/api/v1/transactions": {
             "post": {
                 "description": "Used to post a transaction",
                 "consumes": [

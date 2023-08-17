@@ -505,7 +505,7 @@ paths:
       summary: Show a list of sermons
       tags:
       - Sermons
-  /api/v1/transactions/:
+  /api/v1/transactions:
     post:
       consumes:
       - application/json
