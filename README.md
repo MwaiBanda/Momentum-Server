@@ -5,7 +5,7 @@ https://services.momentumchurch.dev/
 ----
 Backend built with Fiber for Android &amp; iOS apps providing User, Meals, Semons, Payments & Transactions CRUD functionality, 
 interacts with Stripe API to facilitate payments, Prisma as ORM to connect to a Postgres instance, and provides CRUD functionality.
-With, Redis for caching
+With, Redis for caching. Each v1 API route is protected with token authentication for each request sent a bearer token is required.
 
 -----
 - Postgres DB
