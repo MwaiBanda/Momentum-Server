@@ -42,6 +42,28 @@ This endpoint allows users to delete their own information
 <img width="1430" alt="Screenshot 2023-08-19 at 8 41 10 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/ce047e45-0c38-48af-b986-c6010651468b">
 
 -----
+### [Transactions](https://services.momentumchurch.dev/index.html#/Transactions)
+Users are allowed to create transactions after making a payment, they view and delete transac 
+
+------
+
+#### [Post a Transaction](https://services.momentumchurch.dev/index.html#/Transactions/post_api_v1_transactions)
+This endpoint allows users to post a transaction
+<img width="1430" alt="Screenshot 2023-08-19 at 9 50 05 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/609455c4-2ffb-4781-95b9-ecb1806e2588">
+
+------
+
+#### [Delete a Transaction](https://services.momentumchurch.dev/index.html#/Transactions/delete_api_v1_transactions__transactionId_)
+This endpoint allows users to delete a transaction
+<img width="1430" alt="Screenshot 2023-08-19 at 9 50 29 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/cb2ec928-77c5-406e-9e8d-36890c210aa8">
+
+------
+
+#### [Get User Transactions](https://services.momentumchurch.dev/index.html#/Transactions/get_api_v1_transactions__userId_)
+This endpoint allows users to get their own transactions
+<img width="1430" alt="Screenshot 2023-08-19 at 9 50 49 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/1b967c37-7d87-48cf-83e3-08651316951d">
+
+-----
 
 ### [Meals](https://services.momentumchurch.dev/index.html#/Meals)
 Users are allowed to organize meals, a meal contains the receiver's contact, food preferences/allergies, dates to send the meals, and volunteers to bring meals  
@@ -58,11 +80,34 @@ This endpoint allows users to fetch all meals available
 This endpoint allows users to post a meal
 <img width="1430" alt="Screenshot 2023-08-19 at 7 53 48 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/ed153b05-7368-4d46-b805-5647f3e704bc">
 
------
+------
 
 #### [Post a Meal Participant](https://services.momentumchurch.dev/index.html#/Meals/post_api_v1_meals_meal)
-This endpoint allows users to volunteer as a participant to a meal
+This endpoint allows users to volunteer as a participant in a meal
 <img width="1430" alt="Screenshot 2023-08-19 at 8 14 19 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/fb3a12b6-2446-4408-a9ab-a9be5badc3f0">
 
------
+------
+
+
+### [Sermons](https://services.momentumchurch.dev/index.html#/Sermons)
+Users are allowed to view sermons, they contain preacher and video playback metadata 
+
+------
+
+#### [Get Sermons By Page #](https://services.momentumchurch.dev/index.html#/Sermons/get_api_v1_sermons)
+This endpoint allows users to get sermons
+<img width="1430" alt="Screenshot 2023-08-19 at 10 59 58 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/15c9b5bb-aba3-4c1d-b27c-7f09bfd0b582">
+
+
+
+------
+
+### [Payments](https://services.momentumchurch.dev/index.html#/Payments)
+Users are allowed to post payment information to initiate stripe checkoot
+
+------
+
+#### [Post a Payment](https://services.momentumchurch.dev/index.html#/Payments/post_api_v1_payments)
+This endpoint allows users to post payments
+<img width="1430" alt="Screenshot 2023-08-19 at 10 54 21 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/f4b32fb6-4bd0-47d4-8128-4df7fe4d46d2">
 
