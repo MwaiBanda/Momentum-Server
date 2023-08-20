@@ -1,4 +1,7 @@
 ### Momentum Server
+<b>`LIVE`</b>
+https://services.momentumchurch.dev/
+
 ----
 Backend built with Fiber for Android &amp; iOS apps providing User, Meals, Semons, Payments & Transactions CRUD functionality, 
 interacts with Stripe API to facilitate payments, Prisma as ORM to connect to a Postgres instance, and provides CRUD functionality.
