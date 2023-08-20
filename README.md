@@ -14,30 +14,30 @@ With, Redis for caching
 The API provides users to access, edit and upload content
 
 -----
-### [Users](https://services.momentumchurch.dev/index.html#/Meals)
+### [Users](https://services.momentumchurch.dev/index.html#/Users)
 Users are allowed to create accounts, retrieve, update, and delete their information. 
 
 ------
 
-#### [Get User By Id](https://services.momentumchurch.dev/index.html#/Meals/get_api_v1_meals)
+#### [Get User By Id](https://services.momentumchurch.dev/index.html#/Users/get_api_v1_users__userId_)
 This endpoint allows users to get their own information
 <img width="1430" alt="Screenshot 2023-08-19 at 8 42 15 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/20bc554d-2b7e-4272-b85f-bb75a121ae15">
 
 ------
 
-#### [Post a User](https://services.momentumchurch.dev/index.html#/Meals/post_api_v1_meals)
+#### [Post a User](https://services.momentumchurch.dev/index.html#/Users/post_api_v1_users)
 This endpoint allows users to post user information
 <img width="1430" alt="Screenshot 2023-08-19 at 8 42 26 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/49171553-ae04-4afa-aba3-2aa97b280cf2">
 
 ------
 
-#### [Update a User](https://services.momentumchurch.dev/index.html#/Meals/post_api_v1_meals)
+#### [Update a User](https://services.momentumchurch.dev/index.html#/Users/put_api_v1_users)
 This endpoint allows users to update their own information
 <img width="1430" alt="Screenshot 2023-08-19 at 8 40 15 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/44e4ce84-b8dd-4dd0-b0b0-39341a69e868">
 
 ------
 
-#### [Delete a User](https://services.momentumchurch.dev/index.html#/Meals/post_api_v1_meals_meal)
+#### [Delete a User](https://services.momentumchurch.dev/index.html#/Users/delete_api_v1_users__userId_)
 This endpoint allows users to delete their own information
 <img width="1430" alt="Screenshot 2023-08-19 at 8 41 10 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/ce047e45-0c38-48af-b986-c6010651468b">
 
