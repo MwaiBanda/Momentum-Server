@@ -16,8 +16,8 @@ model User {
   phone              String
   createdOn          DateTime          @default(now())
   organisedMeal      Meal[]
+  mealParticipations MealParticipant[]
   transactions       Transaction[]
-  mealParticipations UsersOnMeals[]
   volunteeredMeals   VolunteeredMeal[]
 }
 
@@ -39,7 +39,7 @@ model Meal {
   recipient       String
   createdOn       DateTime          @default(now())
   user            User?             @relation(fields: [userId], references: [id])
-  participants    UsersOnMeals[]
+  participants    MealParticipant[]
   meals           VolunteeredMeal[]
 
   @@index([userId])
@@ -70,7 +70,7 @@ model MealUpdates {
   @@index([mealId])
 }
 
-model UsersOnMeals {
+model MealParticipant {
   userId     String
   mealId     String
   assignedAt DateTime @default(now())
