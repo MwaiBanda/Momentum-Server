@@ -70,7 +70,7 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 // PostVolunteeredMealForMeal godoc
 //
 //	@Summary		Post a meal participate
-//	@Description	Used to post a meal participate
+//	@Description	Used to post a meal participant
 //	@tags			Meals
 //	@Param			Authorization	header	string							true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			data			body	model.VolunteeredMealRequest	true	"Post participant information"

@@ -402,7 +402,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to post a meal participate
+      description: Used to post a meal participant
       parameters:
       - description: Provide a bearer token
         example: Bearer XXX-xxx-XXX-xxx-XX

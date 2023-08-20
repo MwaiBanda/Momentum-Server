@@ -87,21 +87,25 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/users [put]
 func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
-	user := new(model.UserRequest)
-	if err := context.BodyParser(user); err != nil {
+	userRequest := new(model.UserRequest)
+	user := new(model.UserResponse)
+	if err := context.BodyParser(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	_, err := controller.prisma.User.FindUnique(
-		db.User.ID.Equals(user.Id),
+	res, err := controller.prisma.User.FindUnique(
+		db.User.ID.Equals(userRequest.Id),
 	).Update(
-		db.User.Email.Set(user.Email),
-		db.User.Fullname.Set(user.Fullname),
-		db.User.Phone.Set(user.Phone),
+		db.User.Email.Set(userRequest.Email),
+		db.User.Fullname.Set(userRequest.Fullname),
+		db.User.Phone.Set(userRequest.Phone),
 	).Exec(controller.context)
 	if err != nil {
 		log.Panic(err.Error())
 	}
-
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, &user); err != nil {
+		fmt.Println(err)
+	}
 	return context.JSON(user)
 }
 

@@ -138,7 +138,7 @@ const docTemplate = `{
         },
         "/api/v1/meals/meal": {
             "post": {
-                "description": "Used to post a meal participate",
+                "description": "Used to post a meal participant",
                 "consumes": [
                     "application/json"
                 ],
