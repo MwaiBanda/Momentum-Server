@@ -148,7 +148,7 @@ const docTemplate = `{
                 "tags": [
                     "Meals"
                 ],
-                "summary": "Post a meal participate",
+                "summary": "Post a meal participant",
                 "parameters": [
                     {
                         "type": "string",
