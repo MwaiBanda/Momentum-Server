@@ -92,11 +92,11 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 			db.VolunteeredMeal.Notes.Set(meal.VolunteeredMeal.Notes),
 			db.VolunteeredMeal.UserID.Set(meal.VolunteeredMeal.User.Id),
 		).Tx(),
-		controller.prisma.UsersOnMeals.UpsertOne(
-			db.UsersOnMeals.IDUserIDMealID(db.UsersOnMeals.ID.Equals(meal.VolunteeredMeal.Id), db.UsersOnMeals.UserID.Equals(meal.MealId), db.UsersOnMeals.MealID.Equals(meal.VolunteeredMeal.User.Id)),
+		controller.prisma.MealParticipant.UpsertOne(
+			db.MealParticipant.IDUserIDMealID(db.MealParticipant.ID.Equals(meal.VolunteeredMeal.Id), db.MealParticipant.UserID.Equals(meal.MealId), db.MealParticipant.MealID.Equals(meal.VolunteeredMeal.User.Id)),
 		).Create(
-			db.UsersOnMeals.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
-			db.UsersOnMeals.User.Link(db.User.ID.Equals(meal.VolunteeredMeal.User.Id)),
+			db.MealParticipant.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
+			db.MealParticipant.User.Link(db.User.ID.Equals(meal.VolunteeredMeal.User.Id)),
 		).Update().Tx(),
 	).Exec(controller.context)
 	if err != nil {
@@ -125,7 +125,7 @@ func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 		db.Meal.User.Fetch(),
 	).With(
 		db.Meal.Participants.Fetch().With(
-			db.UsersOnMeals.User.Fetch(),
+			db.MealParticipant.User.Fetch(),
 		),
 	).With(
 		db.Meal.Meals.Fetch().With(
