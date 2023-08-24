@@ -9,8 +9,10 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"fmt"
+	"github.com/GeertJohan/go.rice"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/gofiber/swagger"
 	"github.com/redis/go-redis/v9"
@@ -56,6 +58,14 @@ func main() {
 			return false, keyauth.ErrMissingOrMalformedAPIKey
 		},
 	})
+	app.Use("/assets", filesystem.New(filesystem.Config{
+		Root:   rice.MustFindBox("./cms/dist/assets").HTTPBox(),
+		Browse: true,
+	}))
+	app.Use("/dashboard", filesystem.New(filesystem.Config{
+		Root:   rice.MustFindBox("./cms/dist").HTTPBox(),
+		Browse: true,
+	}))
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1", authMiddleware)
