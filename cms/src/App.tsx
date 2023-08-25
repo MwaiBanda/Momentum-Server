@@ -1,34 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.css'
+import {Demo} from "./components/Demo.tsx";
+import {ReactQueryDevtools} from "react-query/devtools";
+import axios from 'axios';
+import {API_KEY} from "./util/Constants.ts";
 
+const queryClient = new QueryClient()
+axios.interceptors.request.use(
+  config => {
+    config.headers['Authorization'] = `Bearer ${API_KEY}`;
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+)
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <Demo/>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 

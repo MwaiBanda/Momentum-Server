@@ -6,8 +6,6 @@ COPY  ./cms/dist/. ./cms/dist/.
 COPY ./cms/dist/index.html ./cms/dist/index.html
 
 
-COPY ./model/. ./model/.
-
 COPY ./prisma/schema.prisma ./prisma/schema.prisma
 COPY ./controller/. ./controller/.
 COPY ./docs/. ./docs/.
