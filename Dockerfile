@@ -1,7 +1,6 @@
 FROM golang:1.20-alpine
 WORKDIR /dir
 
-COPY ./cms/. ./cms/.
 COPY  ./cms/dist/. ./cms/dist/.
 COPY ./cms/dist/index.html ./cms/dist/index.html
 
@@ -10,6 +9,7 @@ COPY ./prisma/schema.prisma ./prisma/schema.prisma
 COPY ./controller/. ./controller/.
 COPY ./docs/. ./docs/.
 COPY ./httputil/. ./httputil/.
+COPY ./constants/. ./constants/.
 COPY ./model/. ./model/.
 
 

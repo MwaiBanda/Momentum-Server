@@ -1,5 +1,6 @@
 import axios from "axios";
 import {useQuery} from "react-query";
+import {Link} from "react-router-dom";
 
 export const Demo = () => {
     const {data, isLoading} = useQuery("sermons", async () => {
@@ -7,7 +8,9 @@ export const Demo = () => {
     })
     return (
         <>
+        <Link to="/services">
          <h1 className="text-3xl font-bold underline">Hello world!</h1>
+        </Link>
         {isLoading ? <>Loading...</> : JSON.stringify(data)}
         </>
     )

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Momentum/constants"
 	"Momentum/controller"
 	_ "Momentum/docs"
 	_ "Momentum/httputil"
@@ -58,14 +59,22 @@ func main() {
 			return false, keyauth.ErrMissingOrMalformedAPIKey
 		},
 	})
+
 	app.Use("/assets", filesystem.New(filesystem.Config{
 		Root:   rice.MustFindBox("./cms/dist/assets").HTTPBox(),
 		Browse: true,
 	}))
-	app.Use("/dashboard", filesystem.New(filesystem.Config{
-		Root:   rice.MustFindBox("./cms/dist").HTTPBox(),
-		Browse: true,
-	}))
+
+	for _, route := range []string {
+		constants.DashboardServicesRoute,
+		constants.DashboardHomeRoute,
+		constants.DashboardRoute,
+	} {
+		app.Use(route, filesystem.New(filesystem.Config{
+			Root:   rice.MustFindBox("./cms/dist").HTTPBox(),
+			Browse: true,
+	    }))
+	}
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1", authMiddleware)
