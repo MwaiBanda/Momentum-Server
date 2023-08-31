@@ -10,7 +10,12 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"sync"
 )
+
+type H struct {
+	p func(controller *Controller) (waitGroup *sync.WaitGroup, channel chan<- StripeResult, endpoint string)
+}
 
 // PostPayment godoc
 //
@@ -27,51 +32,82 @@ import (
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/payments [post]
 func (controller *Controller) PostPayment(context *fiber.Ctx) error {
-	transaction := new(model.PaymentRequest)
-	if err := context.BodyParser(transaction); err != nil {
+	customer := new(stripe.Customer)
+	paymentRequest := new(model.PaymentRequest)
+	customerChannel := make(chan StripeResult)
+	paymentChannel := make(chan StripeResult)
+	waitGroup := new(sync.WaitGroup)
+
+	if err := context.BodyParser(paymentRequest); err != nil {
 		log.Panic(err.Error())
 	}
 
 	params := url.Values{}
-	params.Add("email", transaction.Email)
-	params.Add("name", transaction.Fullname)
-	params.Add("phone", transaction.Phone)
+	params.Add("email", paymentRequest.Email)
+	params.Add("name", paymentRequest.Fullname)
+	params.Add("phone", paymentRequest.Phone)
+	waitGroup.Add(1)
+	go controller.StripeRequest(waitGroup, customerChannel, "/customers?"+params.Encode())
 
-	customerResponse, err := controller.StripeRequest("/customers?" + params.Encode())
-	if err != nil {
-		log.Panic(err.Error())
-	}
-	customer := new(stripe.Customer)
-	if err := json.Unmarshal(customerResponse, customer); err != nil {
-		log.Panic(err)
+	go func() {
+		waitGroup.Wait()
+		close(customerChannel)
+	}()
+
+	for result := range customerChannel {
+		switch getBasePath(result.Endpoint) {
+		case "/customers":
+			customerResponse, err := result.ReadData()
+			if err != nil {
+				log.Println(err.Error())
+			}
+			if err := json.Unmarshal(customerResponse, customer); err != nil {
+				log.Panic(err)
+			}
+
+			params = url.Values{}
+			params.Add("customer", customer.ID)
+			waitGroup.Add(1)
+			go controller.StripeRequest(waitGroup, paymentChannel, "/ephemeral_keys?"+params.Encode())
+
+			params = url.Values{}
+			params.Add("customer", customer.ID)
+			params.Add("amount", strconv.Itoa(paymentRequest.Amount))
+			params.Add("receipt_email", paymentRequest.Email)
+			params.Add("currency", "usd")
+			params.Add("automatic_payment_methods[enabled]", "true")
+			waitGroup.Add(1)
+			go controller.StripeRequest(waitGroup, paymentChannel, "/payment_intents?"+params.Encode())
+		}
 	}
 
-	params = url.Values{}
-	params.Add("customer", customer.ID)
+	go func() {
+		waitGroup.Wait()
+		close(paymentChannel)
+	}()
 
-	ephemeralKeyResponse, err := controller.StripeRequest("/ephemeral_keys?" + params.Encode())
-	if err != nil {
-		log.Panic(err)
-	}
 	ephemeralKey := new(stripe.EphemeralKey)
-	if err := json.Unmarshal(ephemeralKeyResponse, ephemeralKey); err != nil {
-		log.Panic(err)
-	}
-
-	params = url.Values{}
-	params.Add("customer", customer.ID)
-	params.Add("amount", strconv.Itoa(transaction.Amount))
-	params.Add("receipt_email", transaction.Email)
-	params.Add("currency", "usd")
-	params.Add("automatic_payment_methods[enabled]", "true")
-
-	paymentIntentResponse, err := controller.StripeRequest("/payment_intents?" + params.Encode())
-	if err != nil {
-		log.Panic(err)
-	}
 	paymentIntent := new(stripe.PaymentIntent)
-	if err := json.Unmarshal(paymentIntentResponse, paymentIntent); err != nil {
-		log.Panic(err)
+
+	for result := range paymentChannel {
+		switch getBasePath(result.Endpoint) {
+		case "/ephemeral_keys":
+			ephemeralKeyResponse, err := result.ReadData()
+			if err != nil {
+				log.Panic(err)
+			}
+			if err := json.Unmarshal(ephemeralKeyResponse, ephemeralKey); err != nil {
+				log.Panic(err)
+			}
+		case "/payment_intents":
+			paymentIntentResponse, err := result.ReadData()
+			if err != nil {
+				log.Panic(err)
+			}
+			if err := json.Unmarshal(paymentIntentResponse, paymentIntent); err != nil {
+				log.Panic(err)
+			}
+		}
 	}
 
 	return context.JSON(model.PaymentResponse{

@@ -3,17 +3,20 @@ import './App.css'
 import {Demo} from "./components/Demo.tsx";
 import {ReactQueryDevtools} from "react-query/devtools";
 import axios from 'axios';
-import {API_KEY} from "./util/Constants.ts";
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 import "./index.css";
+import {API_KEY} from "./util/Constants.ts";
+
+
 
 const queryClient = new QueryClient()
 axios.interceptors.request.use(
   config => {
     config.headers['Authorization'] = `Bearer ${API_KEY}`;
+    console.log("ENV")
     return config;
   },
   error => {

@@ -6,12 +6,17 @@ export const Demo = () => {
     const {data, isLoading} = useQuery("sermons", async () => {
         return axios.get("/api/v1/sermons")
     })
+    
+    if (isLoading) {
+        return <> Loading... </>
+    }
+    
     return (
         <>
-        <Link to="/services">
+        <Link to="dashboard/services">
          <h1 className="text-3xl font-bold underline">Hello world!</h1>
         </Link>
-        {isLoading ? <>Loading...</> : JSON.stringify(data)}
+        {JSON.stringify(data)}
         </>
     )
 }

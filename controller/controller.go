@@ -5,11 +5,12 @@ import (
 	b64 "encoding/base64"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -33,27 +34,46 @@ func (controller *Controller) SetPrismaClient(client *db.PrismaClient) {
 func (controller *Controller) SetRedisClient(client *redis.Client) {
 	controller.redis = client
 }
-func (controller *Controller) StripeRequest(endpoint string) ([]byte, error) {
+
+func (controller *Controller) SetContext(context context.Context) {
+	controller.context = context
+}
+
+type StripeResult struct {
+	Endpoint string
+	ReadData func() ([]byte, error)
+}
+
+func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel chan<- StripeResult, endpoint string) {
+	defer waitGroup.Done()
 	req, err := http.NewRequest("POST", "https://api.stripe.com/v1"+endpoint, nil)
 	if err != nil {
 		log.Fatalln("New Request", err)
 	}
 
 	req.Header.Add("Authorization", "Basic "+b64.URLEncoding.EncodeToString([]byte(os.Getenv("STRIPE_SECRET_KEY"))))
-	switch strings.Split(endpoint, "?")[0] {
+
+	switch getBasePath(endpoint) {
 	case "/ephemeral_keys":
 		req.Header.Add("Stripe-Version", "2020-08-27")
 	default:
 		break
 	}
+
 	resp, err := controller.httpClient.Do(req)
 	if err != nil {
-		log.Fatalln("Request", err)
+		log.Panic("Request", err)
 	}
-	defer resp.Body.Close()
-	return ioutil.ReadAll(resp.Body)
+
+	channel <- StripeResult{
+		Endpoint: endpoint,
+		ReadData: func() ([]byte, error) {
+			defer resp.Body.Close()
+			return io.ReadAll(resp.Body)
+		},
+	}
 }
 
-func (controller *Controller) SetContext(context context.Context) {
-	controller.context = context
+func getBasePath(s string) string {
+	return strings.Split(s, "?")[0]
 }
