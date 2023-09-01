@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"Momentum/constants"
 	"Momentum/model"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
@@ -27,7 +28,7 @@ import (
 func (controller *Controller) GetAllSermons(context *fiber.Ctx) error {
 	pageNumber := context.Query("page", "1")
 	sermons := new(model.SermonResponse)
-	var cachedSermons, err = controller.redis.Get(controller.context, "sermon-page-"+pageNumber).Result()
+	var cachedSermons, err = controller.redis.Get(controller.context, constants.SermonKeyPrefix+pageNumber).Result()
 	if err == redis.Nil {
 		resp, err := controller.httpClient.Get("https://api.sermoncloud.com/momentum-church-1/sermons?page=" + pageNumber)
 		if err != nil {
@@ -38,7 +39,7 @@ func (controller *Controller) GetAllSermons(context *fiber.Ctx) error {
 		if err := json.Unmarshal(body, sermons); err != nil {
 			log.Println("[GetAllSermons]", err.Error())
 		}
-		if err = controller.redis.Set(controller.context, "sermon-page-"+pageNumber, string(body), time.Hour*6).Err(); err != nil {
+		if err = controller.redis.Set(controller.context, constants.SermonKeyPrefix+pageNumber, string(body), time.Hour*6).Err(); err != nil {
 			log.Println("[GetAllSermons]", err.Error())
 		}
 	} else if err != nil {

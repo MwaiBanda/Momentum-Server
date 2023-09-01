@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"Momentum/constants"
 	"Momentum/prisma/db"
 	b64 "encoding/base64"
 	"github.com/redis/go-redis/v9"
@@ -54,7 +55,7 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 	req.Header.Add("Authorization", "Basic "+b64.URLEncoding.EncodeToString([]byte(os.Getenv("STRIPE_SECRET_KEY"))))
 
 	switch getBasePath(endpoint) {
-	case "/ephemeral_keys":
+	case constants.StripeEphemeralKeyRoute:
 		req.Header.Add("Stripe-Version", "2020-08-27")
 	default:
 		break

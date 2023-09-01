@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"Momentum/constants"
 	"Momentum/model"
 	"Momentum/prisma/db"
 	"encoding/json"
@@ -127,7 +128,7 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 //	@Router			/api/v1/meals [get]
 func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 	mealResponse := new([]model.MealResponse)
-	cachedMeal, err := controller.redis.Get(controller.context, "meals").Result()
+	cachedMeal, err := controller.redis.Get(controller.context, constants.MealsKey).Result()
 	if err == redis.Nil {
 		res, err := controller.prisma.Meal.FindMany().With(
 			db.Meal.User.Fetch(),
@@ -146,7 +147,7 @@ func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 		}
 
 		result, _ := json.MarshalIndent(res, "", "  ")
-		controller.redis.Set(controller.context, "meals", string(result), time.Hour*6)
+		controller.redis.Set(controller.context, constants.MealsKey, string(result), time.Hour*6)
 		if err := json.Unmarshal(result, &mealResponse); err != nil {
 			fmt.Println(err)
 		}

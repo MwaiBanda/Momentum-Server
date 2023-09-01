@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"Momentum/constants"
 	_ "Momentum/httputil"
 	"Momentum/model"
 	"encoding/json"
@@ -52,7 +53,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 
 	for result := range customerChannel {
 		switch result.Endpoint {
-		case "/customers":
+		case constants.StripeCustomerRoute:
 			customerResponse, err := result.ReadData()
 			if err != nil {
 				log.Println(err.Error())
@@ -87,7 +88,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 
 	for result := range intentAndKeyChannel {
 		switch result.Endpoint {
-		case "/ephemeral_keys":
+		case constants.StripeEphemeralKeyRoute:
 			ephemeralKeyResponse, err := result.ReadData()
 			if err != nil {
 				log.Panic(err)
@@ -95,7 +96,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 			if err := json.Unmarshal(ephemeralKeyResponse, ephemeralKey); err != nil {
 				log.Panic(err)
 			}
-		case "/payment_intents":
+		case constants.StripePaymentIntentRoute:
 			paymentIntentResponse, err := result.ReadData()
 			if err != nil {
 				log.Panic(err)

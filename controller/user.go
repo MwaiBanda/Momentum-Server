@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"Momentum/constants"
 	"Momentum/model"
 	"Momentum/prisma/db"
 	"encoding/json"
@@ -28,7 +29,7 @@ import (
 func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 	userId := context.Params("userId")
 	userResponse := new(model.UserResponse)
-	cachedUser, err := controller.redis.Get(controller.context, "user-"+userId).Result()
+	cachedUser, err := controller.redis.Get(controller.context, constants.UserKeyPrefix+userId).Result()
 	if err == redis.Nil {
 		res, err := controller.prisma.User.FindFirst(db.UserWhereParam(
 			db.User.ID.Equals(userId),
@@ -40,7 +41,7 @@ func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 		if err := json.Unmarshal(result, userResponse); err != nil {
 			fmt.Println(err)
 		}
-		controller.redis.Set(controller.context, "user-"+userId, string(result), time.Hour*24)
+		controller.redis.Set(controller.context, constants.UserKeyPrefix+userId, string(result), time.Hour*24)
 	} else if err != nil {
 		log.Println("[GetUserById]", err.Error())
 	} else {
@@ -81,7 +82,7 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 		log.Panic(err.Error())
 	}
 	result, _ := json.MarshalIndent(res, "", "  ")
-	controller.redis.Set(controller.context, "user-"+userRequest.Id, string(result), time.Hour*24)
+	controller.redis.Set(controller.context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
 	return context.JSON(userRequest)
 }
 
@@ -118,13 +119,13 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 			log.Panic(err.Error())
 		}
 		result, _ := json.MarshalIndent(res, "", "  ")
-		controller.redis.Set(controller.context, "user-"+userRequest.Id, string(result), time.Hour*24)
+		controller.redis.Set(controller.context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
 		if err := json.Unmarshal(result, &userResponse); err != nil {
 			fmt.Println(err)
 		}
 	}
 
-	cachedUser, err := controller.redis.Get(controller.context, "user-"+userRequest.Id).Result()
+	cachedUser, err := controller.redis.Get(controller.context, constants.UserKeyPrefix+userRequest.Id).Result()
 	if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
 		log.Println("[GetAllSermons]", err.Error())
 	}
