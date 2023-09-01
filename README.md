@@ -1,4 +1,4 @@
-### Momentum Server
+### `Momentum Server`
 <b>`LIVE`</b>
 https://services.momentumchurch.dev/
 
@@ -8,9 +8,15 @@ interacts with Stripe API to facilitate payments, Prisma as ORM to connect to a 
 With, Redis for caching. Each v1 API route is protected with token authentication for each request sent a bearer token is required.
 
 -----
-- Prisma ORM connects to Postgres DB
-- Redis for Caching
-- Fiber 
+- #### `Go` Dependencies
+  - Prisma ORM connects to Postgres DB
+  - Redis for Caching
+  - Fiber
+- #### `Typescript` Dependencies
+    - React
+    - TailwindCSS
+    - React Router
+
 ----
 ### [API Documentation](https://services.momentumchurch.dev/)
 The API provides users to access, edit and upload content
