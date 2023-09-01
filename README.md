@@ -14,6 +14,7 @@ With, Redis for caching. Each v1 API route is protected with token authenticatio
   - Fiber
 - #### `Typescript` Dependencies
     - React
+    - React Query
     - TailwindCSS
     - React Router
 
