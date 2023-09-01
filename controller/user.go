@@ -28,7 +28,7 @@ import (
 func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 	userId := context.Params("userId")
 	userResponse := new(model.UserResponse)
-	cachedUser, err := controller.redis.Get(controller.context, "userResponse-"+userId).Result()
+	cachedUser, err := controller.redis.Get(controller.context, "user-"+userId).Result()
 	if err == redis.Nil {
 		res, err := controller.prisma.User.FindFirst(db.UserWhereParam(
 			db.User.ID.Equals(userId),
@@ -81,7 +81,7 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 		log.Panic(err.Error())
 	}
 	result, _ := json.MarshalIndent(res, "", "  ")
-	controller.redis.Set(controller.context, "userRequest-"+userRequest.Id, string(result), time.Hour*24)
+	controller.redis.Set(controller.context, "user-"+userRequest.Id, string(result), time.Hour*24)
 	return context.JSON(userRequest)
 }
 
@@ -106,21 +106,7 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 	if err := context.BodyParser(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
-
-	cachedUser, err := controller.redis.Get(controller.context, "user-"+userRequest.Id).Result()
-	if err != nil {
-		log.Panic("[UpdateUser]", err.Error())
-	}
-	if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
-		log.Println("[GetAllSermons]", err.Error())
-	}
-
-	if func() bool {
-		return userResponse.Phone != userRequest.Phone ||
-			userResponse.Email != userRequest.Email ||
-			userResponse.Fullname != userRequest.Fullname
-	}() {
-		log.Println("[Cache[Miss]]")
+	onUpdateUser := func() {
 		res, err := controller.prisma.User.FindUnique(
 			db.User.ID.Equals(userRequest.Id),
 		).Update(
@@ -132,10 +118,27 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 			log.Panic(err.Error())
 		}
 		result, _ := json.MarshalIndent(res, "", "  ")
-		controller.redis.Set(controller.context, "userRequest-"+userRequest.Id, string(result), time.Hour*24)
+		controller.redis.Set(controller.context, "user-"+userRequest.Id, string(result), time.Hour*24)
 		if err := json.Unmarshal(result, &userResponse); err != nil {
 			fmt.Println(err)
 		}
+	}
+
+	cachedUser, err := controller.redis.Get(controller.context, "user-"+userRequest.Id).Result()
+	if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
+		log.Println("[GetAllSermons]", err.Error())
+	}
+	if err == redis.Nil {
+		onUpdateUser()
+	} else if err != nil {
+		log.Panic("[UpdateUser]", err.Error())
+	} else if func() bool {
+		return userResponse.Phone != userRequest.Phone ||
+			userResponse.Email != userRequest.Email ||
+			userResponse.Fullname != userRequest.Fullname
+	}() {
+		log.Println("[Cache[Miss]]")
+		onUpdateUser()
 	}
 
 	return context.JSON(userResponse)
