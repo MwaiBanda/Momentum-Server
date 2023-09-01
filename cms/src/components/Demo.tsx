@@ -13,7 +13,7 @@ export const Demo = () => {
     
     return (
         <>
-        <Link to="dashboard/services">
+        <Link to="/services">
          <h1 className="text-3xl font-bold underline">Hello world!</h1>
         </Link>
         {JSON.stringify(data)}
