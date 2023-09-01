@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/lucsky/cuid"
+	"github.com/redis/go-redis/v9"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
 	"log"
+	"time"
 )
 
 // PostMeal godoc
@@ -32,6 +34,8 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	if err := context.BodyParser(mealRequest); err != nil {
 		log.Panic(err.Error())
 	}
+	go controller.redis.Expire(controller.context, "meal", time.Second*0)
+
 	var transactions []transaction.Param
 	transactions = append(transactions, controller.prisma.Meal.CreateOne(
 		db.Meal.Reason.Set(mealRequest.Reason),
@@ -86,6 +90,7 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 	if err := context.BodyParser(meal); err != nil {
 		log.Panic(err.Error())
 	}
+	go controller.redis.Expire(controller.context, "meal", time.Second*0)
 	err := controller.prisma.Prisma.Transaction(
 		controller.prisma.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
 			db.VolunteeredMeal.Description.Set(meal.VolunteeredMeal.Description),
@@ -102,6 +107,7 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	return context.JSON(meal)
 }
 
@@ -120,26 +126,37 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/meals [get]
 func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
-	var meal []model.MealResponse
-	res, err := controller.prisma.Meal.FindMany().With(
-		db.Meal.User.Fetch(),
-	).With(
-		db.Meal.Participants.Fetch().With(
-			db.MealParticipant.User.Fetch(),
-		),
-	).With(
-		db.Meal.Meals.Fetch().With(
-			db.VolunteeredMeal.User.Fetch(),
-		),
-	).Exec(controller.context)
+	mealResponse := new([]model.MealResponse)
+	cachedMeal, err := controller.redis.Get(controller.context, "meals").Result()
+	if err == redis.Nil {
+		res, err := controller.prisma.Meal.FindMany().With(
+			db.Meal.User.Fetch(),
+		).With(
+			db.Meal.Participants.Fetch().With(
+				db.MealParticipant.User.Fetch(),
+			),
+		).With(
+			db.Meal.Meals.Fetch().With(
+				db.VolunteeredMeal.User.Fetch(),
+			),
+		).Exec(controller.context)
 
-	if err != nil {
-		fmt.Println(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		result, _ := json.MarshalIndent(res, "", "  ")
+		controller.redis.Set(controller.context, "meals", string(result), time.Hour*6)
+		if err := json.Unmarshal(result, &mealResponse); err != nil {
+			fmt.Println(err)
+		}
+	} else if err != nil {
+		log.Println(err.Error())
+	} else {
+		if err := json.Unmarshal([]byte(cachedMeal), &mealResponse); err != nil {
+			fmt.Println(err)
+		}
 	}
 
-	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, &meal); err != nil {
-		fmt.Println(err)
-	}
-	return context.JSON(meal)
+	return context.JSON(mealResponse)
 }

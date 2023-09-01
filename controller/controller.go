@@ -66,7 +66,7 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 	}
 
 	channel <- StripeResult{
-		Endpoint: endpoint,
+		Endpoint: getBasePath(endpoint),
 		ReadData: func() ([]byte, error) {
 			defer resp.Body.Close()
 			return io.ReadAll(resp.Body)

@@ -13,10 +13,6 @@ import (
 	"sync"
 )
 
-type H struct {
-	p func(controller *Controller) (waitGroup *sync.WaitGroup, channel chan<- StripeResult, endpoint string)
-}
-
 // PostPayment godoc
 //
 //	@Summary		Post a payment
@@ -35,7 +31,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	customer := new(stripe.Customer)
 	paymentRequest := new(model.PaymentRequest)
 	customerChannel := make(chan StripeResult)
-	paymentChannel := make(chan StripeResult)
+	intentAndKeyChannel := make(chan StripeResult)
 	waitGroup := new(sync.WaitGroup)
 
 	if err := context.BodyParser(paymentRequest); err != nil {
@@ -55,7 +51,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	}()
 
 	for result := range customerChannel {
-		switch getBasePath(result.Endpoint) {
+		switch result.Endpoint {
 		case "/customers":
 			customerResponse, err := result.ReadData()
 			if err != nil {
@@ -68,7 +64,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 			params = url.Values{}
 			params.Add("customer", customer.ID)
 			waitGroup.Add(1)
-			go controller.StripeRequest(waitGroup, paymentChannel, "/ephemeral_keys?"+params.Encode())
+			go controller.StripeRequest(waitGroup, intentAndKeyChannel, "/ephemeral_keys?"+params.Encode())
 
 			params = url.Values{}
 			params.Add("customer", customer.ID)
@@ -77,20 +73,20 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 			params.Add("currency", "usd")
 			params.Add("automatic_payment_methods[enabled]", "true")
 			waitGroup.Add(1)
-			go controller.StripeRequest(waitGroup, paymentChannel, "/payment_intents?"+params.Encode())
+			go controller.StripeRequest(waitGroup, intentAndKeyChannel, "/payment_intents?"+params.Encode())
 		}
 	}
 
 	go func() {
 		waitGroup.Wait()
-		close(paymentChannel)
+		close(intentAndKeyChannel)
 	}()
 
 	ephemeralKey := new(stripe.EphemeralKey)
 	paymentIntent := new(stripe.PaymentIntent)
 
-	for result := range paymentChannel {
-		switch getBasePath(result.Endpoint) {
+	for result := range intentAndKeyChannel {
+		switch result.Endpoint {
 		case "/ephemeral_keys":
 			ephemeralKeyResponse, err := result.ReadData()
 			if err != nil {

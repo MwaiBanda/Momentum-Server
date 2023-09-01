@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 	"log"
+	"time"
 )
 
 // GetUserById godoc
@@ -24,20 +26,30 @@ import (
 //	@Failure		500				{object}	httputil.HTTPError
 //	@Router			/api/v1/users/{userId} [get]
 func (controller *Controller) GetUserById(context *fiber.Ctx) error {
-	var user model.UserResponse
-	res, err := controller.prisma.User.FindFirst(db.UserWhereParam(
-		db.User.ID.Equals(context.Params("userId")),
-	)).Exec(controller.context)
-	if err != nil {
-		fmt.Println(err)
+	userId := context.Params("userId")
+	userResponse := new(model.UserResponse)
+	cachedUser, err := controller.redis.Get(controller.context, "userResponse-"+userId).Result()
+	if err == redis.Nil {
+		res, err := controller.prisma.User.FindFirst(db.UserWhereParam(
+			db.User.ID.Equals(userId),
+		)).Exec(controller.context)
+		if err != nil {
+			fmt.Println(err)
+		}
+		result, _ := json.MarshalIndent(res, "", "  ")
+		if err := json.Unmarshal(result, userResponse); err != nil {
+			fmt.Println(err)
+		}
+		controller.redis.Set(controller.context, "user-"+userId, string(result), time.Hour*24)
+	} else if err != nil {
+		log.Println("[GetUserById]", err.Error())
+	} else {
+		if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
+			log.Println("[GetAllSermons]", err.Error())
+		}
 	}
 
-	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, &user); err != nil {
-		fmt.Println(err)
-	}
-
-	return context.JSON(user)
+	return context.JSON(userResponse)
 }
 
 // PostUser godoc
@@ -55,21 +67,22 @@ func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/users [post]
 func (controller *Controller) PostUser(context *fiber.Ctx) error {
-	user := new(model.UserRequest)
-	if err := context.BodyParser(user); err != nil {
+	userRequest := new(model.UserRequest)
+	if err := context.BodyParser(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	_, err := controller.prisma.User.CreateOne(
-		db.User.ID.Set(user.Id),
-		db.User.Email.Set(user.Email),
-		db.User.Fullname.Set(user.Email),
-		db.User.Phone.Set(user.Phone),
+	res, err := controller.prisma.User.CreateOne(
+		db.User.ID.Set(userRequest.Id),
+		db.User.Email.Set(userRequest.Email),
+		db.User.Fullname.Set(userRequest.Email),
+		db.User.Phone.Set(userRequest.Phone),
 	).Exec(controller.context)
 	if err != nil {
 		log.Panic(err.Error())
 	}
-
-	return context.JSON(user)
+	result, _ := json.MarshalIndent(res, "", "  ")
+	controller.redis.Set(controller.context, "userRequest-"+userRequest.Id, string(result), time.Hour*24)
+	return context.JSON(userRequest)
 }
 
 // UpdateUser godoc
@@ -88,25 +101,45 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 //	@Router			/api/v1/users [put]
 func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 	userRequest := new(model.UserRequest)
-	user := new(model.UserResponse)
+	userResponse := new(model.UserResponse)
+
 	if err := context.BodyParser(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	res, err := controller.prisma.User.FindUnique(
-		db.User.ID.Equals(userRequest.Id),
-	).Update(
-		db.User.Email.Set(userRequest.Email),
-		db.User.Fullname.Set(userRequest.Fullname),
-		db.User.Phone.Set(userRequest.Phone),
-	).Exec(controller.context)
+
+	cachedUser, err := controller.redis.Get(controller.context, "user-"+userRequest.Id).Result()
 	if err != nil {
-		log.Panic(err.Error())
+		log.Panic("[UpdateUser]", err.Error())
 	}
-	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, &user); err != nil {
-		fmt.Println(err)
+	if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
+		log.Println("[GetAllSermons]", err.Error())
 	}
-	return context.JSON(user)
+
+	if func() bool {
+		return userResponse.Phone != userRequest.Phone ||
+			userResponse.Email != userRequest.Email ||
+			userResponse.Fullname != userRequest.Fullname
+	}() {
+		log.Println("[Cache[Miss]]")
+		res, err := controller.prisma.User.FindUnique(
+			db.User.ID.Equals(userRequest.Id),
+		).Update(
+			db.User.Email.Set(userRequest.Email),
+			db.User.Fullname.Set(userRequest.Fullname),
+			db.User.Phone.Set(userRequest.Phone),
+		).Exec(controller.context)
+		if err != nil {
+			log.Panic(err.Error())
+		}
+		result, _ := json.MarshalIndent(res, "", "  ")
+		controller.redis.Set(controller.context, "userRequest-"+userRequest.Id, string(result), time.Hour*24)
+		if err := json.Unmarshal(result, &userResponse); err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	return context.JSON(userResponse)
+
 }
 
 // DeleteUserById godoc

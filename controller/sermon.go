@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/redis/go-redis/v9"
-	"io/ioutil"
+	"io"
 	"log"
 	"time"
 )
@@ -34,7 +34,7 @@ func (controller *Controller) GetAllSermons(context *fiber.Ctx) error {
 			log.Println("[GetAllSermons]", err.Error())
 		}
 		defer resp.Body.Close()
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		if err := json.Unmarshal(body, sermons); err != nil {
 			log.Println("[GetAllSermons]", err.Error())
 		}

@@ -16,7 +16,6 @@ const queryClient = new QueryClient()
 axios.interceptors.request.use(
   config => {
     config.headers['Authorization'] = `Bearer ${API_KEY}`;
-    console.log("ENV")
     return config;
   },
   error => {
