@@ -65,7 +65,12 @@ func main() {
 		Browse: true,
 	}))
 
-	for _, route := range []string {
+	app.Use("/assets", filesystem.New(filesystem.Config{
+		Root:   rice.MustFindBox("./cms/dist/assets").HTTPBox(),
+		Browse: true,
+	}))
+
+	for _, route := range []string{
 		constants.DashboardServicesRoute,
 		constants.DashboardHomeRoute,
 		constants.DashboardRoute,
@@ -73,7 +78,7 @@ func main() {
 		app.Use(route, filesystem.New(filesystem.Config{
 			Root:   rice.MustFindBox("./cms/dist").HTTPBox(),
 			Browse: true,
-	    }))
+		}))
 	}
 
 	api := app.Group("/api")

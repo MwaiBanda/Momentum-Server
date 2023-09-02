@@ -3,6 +3,7 @@ WORKDIR /dir
 
 COPY  ./cms/dist/. ./cms/dist/.
 COPY ./cms/dist/index.html ./cms/dist/index.html
+COPY ./cms/src/assets/. ./cms/src/assets/.
 
 
 COPY ./prisma/schema.prisma ./prisma/schema.prisma
