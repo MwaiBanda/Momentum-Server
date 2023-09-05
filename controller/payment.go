@@ -29,10 +29,12 @@ import (
 //	@Failure		500	{object}	httputil.HTTPError
 //	@Router			/api/v1/payments [post]
 func (controller *Controller) PostPayment(context *fiber.Ctx) error {
-	customer := new(stripe.Customer)
 	paymentRequest := new(model.PaymentRequest)
+	customer := new(stripe.Customer)
+	
 	customerChannel := make(chan StripeResult)
 	intentAndKeyChannel := make(chan StripeResult)
+	
 	waitGroup := new(sync.WaitGroup)
 
 	if err := context.BodyParser(paymentRequest); err != nil {
