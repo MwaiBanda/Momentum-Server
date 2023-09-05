@@ -31,10 +31,10 @@ import (
 func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	paymentRequest := new(model.PaymentRequest)
 	customer := new(stripe.Customer)
-	
-	customerChannel := make(chan StripeResult)
-	intentAndKeyChannel := make(chan StripeResult)
-	
+
+	customerChannel := make(chan StripeResponse)
+	intentAndKeyChannel := make(chan StripeResponse)
+
 	waitGroup := new(sync.WaitGroup)
 
 	if err := context.BodyParser(paymentRequest); err != nil {
@@ -46,17 +46,17 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	params.Add("name", paymentRequest.Fullname)
 	params.Add("phone", paymentRequest.Phone)
 	waitGroup.Add(1)
-	go controller.StripeRequest(waitGroup, customerChannel, "/customers?"+params.Encode())
+	go controller.StripeRequest(waitGroup, customerChannel, constants.StripeCustomerRoute+params.Encode())
 
 	go func() {
 		waitGroup.Wait()
 		close(customerChannel)
 	}()
 
-	for result := range customerChannel {
-		switch result.Endpoint {
+	for response := range customerChannel {
+		switch response.Endpoint {
 		case constants.StripeCustomerRoute:
-			customerResponse, err := result.ReadData()
+			customerResponse, err := response.ReadData()
 			if err != nil {
 				log.Println(err.Error())
 			}
@@ -67,7 +67,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 			params = url.Values{}
 			params.Add("customer", customer.ID)
 			waitGroup.Add(1)
-			go controller.StripeRequest(waitGroup, intentAndKeyChannel, "/ephemeral_keys?"+params.Encode())
+			go controller.StripeRequest(waitGroup, intentAndKeyChannel, constants.StripeEphemeralKeyRoute+params.Encode())
 
 			params = url.Values{}
 			params.Add("customer", customer.ID)
@@ -76,7 +76,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 			params.Add("currency", "usd")
 			params.Add("automatic_payment_methods[enabled]", "true")
 			waitGroup.Add(1)
-			go controller.StripeRequest(waitGroup, intentAndKeyChannel, "/payment_intents?"+params.Encode())
+			go controller.StripeRequest(waitGroup, intentAndKeyChannel, constants.StripePaymentIntentRoute+params.Encode())
 		}
 	}
 
@@ -88,10 +88,10 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	ephemeralKey := new(stripe.EphemeralKey)
 	paymentIntent := new(stripe.PaymentIntent)
 
-	for result := range intentAndKeyChannel {
-		switch result.Endpoint {
+	for response := range intentAndKeyChannel {
+		switch response.Endpoint {
 		case constants.StripeEphemeralKeyRoute:
-			ephemeralKeyResponse, err := result.ReadData()
+			ephemeralKeyResponse, err := response.ReadData()
 			if err != nil {
 				log.Panic(err)
 			}
@@ -99,7 +99,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 				log.Panic(err)
 			}
 		case constants.StripePaymentIntentRoute:
-			paymentIntentResponse, err := result.ReadData()
+			paymentIntentResponse, err := response.ReadData()
 			if err != nil {
 				log.Panic(err)
 			}

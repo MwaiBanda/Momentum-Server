@@ -40,12 +40,12 @@ func (controller *Controller) SetContext(context context.Context) {
 	controller.context = context
 }
 
-type StripeResult struct {
+type StripeResponse struct {
 	Endpoint string
 	ReadData func() ([]byte, error)
 }
 
-func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel chan<- StripeResult, endpoint string) {
+func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel chan<- StripeResponse, endpoint string) {
 	defer waitGroup.Done()
 	req, err := http.NewRequest("POST", "https://api.stripe.com/v1"+endpoint, nil)
 	if err != nil {
@@ -66,7 +66,7 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 		log.Panic("Request", err)
 	}
 
-	channel <- StripeResult{
+	channel <- StripeResponse{
 		Endpoint: getBasePath(endpoint),
 		ReadData: func() ([]byte, error) {
 			defer resp.Body.Close()
@@ -76,5 +76,5 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 }
 
 func getBasePath(s string) string {
-	return strings.Split(s, "?")[0]
+	return strings.SplitAfter(s, "?")[0]
 }
