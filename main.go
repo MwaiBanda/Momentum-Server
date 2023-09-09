@@ -14,7 +14,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/keyauth"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/swagger"
 	"github.com/redis/go-redis/v9"
 	"log"
@@ -36,11 +38,11 @@ import (
 // @BasePath		/
 func main() {
 	app := fiber.New()
-	app.Use(cors.New())
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
+	app.Use(helmet.New())
 
 	controllerInstance := controller.GetControllerInstance()
 	port := os.Getenv("PORT")
@@ -77,6 +79,7 @@ func main() {
 	}
 
 	api := app.Group("/api")
+	api.Get("/metrics", monitor.New())
 	v1 := api.Group("/v1", authMiddleware)
 
 	v1.Post("/meals", controllerInstance.PostMeal)
