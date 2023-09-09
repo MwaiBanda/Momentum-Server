@@ -3,7 +3,6 @@ package main
 import (
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
-	_ "Momentum/httputil"
 	"Momentum/middleware"
 	"Momentum/prisma/db"
 	"context"
