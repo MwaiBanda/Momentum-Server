@@ -24,9 +24,9 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.MealResponse
-//	@Failure		400	{object}	httputil.HTTPError
-//	@Failure		404	{object}	httputil.HTTPError
-//	@Failure		500	{object}	httputil.HTTPError
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/meals [post]
 func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	mealRequest := new(model.MealRequest)
@@ -82,9 +82,9 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.VolunteeredMealRequest
-//	@Failure		400	{object}	httputil.HTTPError
-//	@Failure		404	{object}	httputil.HTTPError
-//	@Failure		500	{object}	httputil.HTTPError
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/meals/meal [post]
 func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) error {
 	meal := new(model.VolunteeredMealRequest)
@@ -122,9 +122,9 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{array}		model.MealResponse
-//	@Failure		400	{object}	httputil.HTTPError
-//	@Failure		404	{object}	httputil.HTTPError
-//	@Failure		500	{object}	httputil.HTTPError
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/meals [get]
 func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 	mealResponse := new([]model.MealResponse)

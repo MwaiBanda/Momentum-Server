@@ -1,22 +1,14 @@
 package main
 
 import (
-	"Momentum/constants"
-	"Momentum/controller"
+	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	_ "Momentum/httputil"
+	"Momentum/middleware"
 	"Momentum/prisma/db"
 	"context"
-	"crypto/sha256"
-	"crypto/subtle"
 	"fmt"
-	"github.com/GeertJohan/go.rice"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/gofiber/fiber/v2/middleware/helmet"
-	"github.com/gofiber/fiber/v2/middleware/keyauth"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/swagger"
 	"github.com/redis/go-redis/v9"
 	"log"
@@ -38,65 +30,36 @@ import (
 // @BasePath		/
 func main() {
 	app := fiber.New()
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
-	}))
-	app.Use(helmet.New())
+	controller := handlers.GetControllerInstance()
+	port := func() string {
+		if len(os.Getenv("PORT")) > 0 {
+			return os.Getenv("PORT")
+		} else {
+			return "8085"
+		}
+	}()
 
-	controllerInstance := controller.GetControllerInstance()
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8085"
-	}
-
-	authMiddleware := keyauth.New(keyauth.Config{
-		Validator: func(c *fiber.Ctx, key string) (bool, error) {
-			hashedAPIKey := sha256.Sum256([]byte(os.Getenv("API_KEY")))
-			hashedKey := sha256.Sum256([]byte(key))
-
-			if subtle.ConstantTimeCompare(hashedAPIKey[:], hashedKey[:]) == 1 {
-				return true, nil
-			}
-			return false, keyauth.ErrMissingOrMalformedAPIKey
-		},
-	})
-
-	app.Use("/assets", filesystem.New(filesystem.Config{
-		Root:   rice.MustFindBox("./cms/dist/assets").HTTPBox(),
-		Browse: true,
-	}))
-
-	for _, route := range []string{
-		constants.DashboardServicesRoute,
-		constants.DashboardHomeRoute,
-		constants.DashboardRoute,
-	} {
-		app.Use(route, filesystem.New(filesystem.Config{
-			Root:   rice.MustFindBox("./cms/dist").HTTPBox(),
-			Browse: true,
-		}))
-	}
+	middleware.ConfigureAppMiddleWare(app)
 
 	api := app.Group("/api")
-	api.Get("/metrics", monitor.New())
-	v1 := api.Group("/v1", authMiddleware)
+	api.Get("/metrics", middleware.Monitor())
+	v1 := api.Group("/v1", middleware.BearerTokenAuthentication())
 
-	v1.Post("/meals", controllerInstance.PostMeal)
-	v1.Get("/meals", controllerInstance.GetAllMeals)
-	v1.Post("/meals/meal", controllerInstance.PostVolunteeredMealForMeal)
+	v1.Post("/meals", controller.PostMeal)
+	v1.Get("/meals", controller.GetAllMeals)
+	v1.Post("/meals/meal", controller.PostVolunteeredMealForMeal)
 
-	v1.Post("/users", controllerInstance.PostUser)
-	v1.Get("/users/:userId", controllerInstance.GetUserById)
-	v1.Put("/users", controllerInstance.UpdateUser)
-	v1.Delete("/users/:userId", controllerInstance.DeleteUserById)
+	v1.Post("/users", controller.PostUser)
+	v1.Get("/users/:userId", controller.GetUserById)
+	v1.Put("/users", controller.UpdateUser)
+	v1.Delete("/users/:userId", controller.DeleteUserById)
 
-	v1.Post("/payments", controllerInstance.PostPayment)
+	v1.Post("/payments", controller.PostPayment)
 
-	v1.Get("/transactions/:userId", controllerInstance.GetTransactionsByUserId)
-	v1.Delete("/transactions/:transactionId", controllerInstance.DeleteTransactionsById)
+	v1.Get("/transactions/:userId", controller.GetTransactionsByUserId)
+	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
 
-	v1.Get("/sermons", controllerInstance.GetAllSermons)
+	v1.Get("/sermons", controller.GetAllSermons)
 
 	app.Get("/*", swagger.HandlerDefault)
 
@@ -117,9 +80,9 @@ func main() {
 	}()
 	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
 	backgroundContext := context.Background()
-	controllerInstance.SetPrismaClient(client)
-	controllerInstance.SetRedisClient(redis.NewClient(opt))
-	controllerInstance.SetContext(backgroundContext)
+	controller.SetPrismaClient(client)
+	controller.SetRedisClient(redis.NewClient(opt))
+	controller.SetContext(backgroundContext)
 
 	log.Fatal(app.Listen(":" + port))
 }

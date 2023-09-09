@@ -19,9 +19,9 @@ import (
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			userId			path		string	true	"provide user Id"
 //	@Success		200				{array}		model.TransactionResponse
-//	@Failure		400				{object}	httputil.HTTPError
-//	@Failure		404				{object}	httputil.HTTPError
-//	@Failure		500				{object}	httputil.HTTPError
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/transactions/{userId} [get]
 func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error {
 	var transactions []model.TransactionResponse
@@ -49,9 +49,9 @@ func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error 
 //	@tags			Transactions
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Success		200				{object}	model.TransactionRequest
-//	@Failure		400				{object}	httputil.HTTPError
-//	@Failure		404				{object}	httputil.HTTPError
-//	@Failure		500				{object}	httputil.HTTPError
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/transactions [post]
 func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 	transaction := new(model.TransactionRequest)
@@ -81,9 +81,9 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			transactionId	path		string	true	"provide transaction Id"
 //	@Success		200				{object}	model.TransactionResponse
-//	@Failure		400				{object}	httputil.HTTPError
-//	@Failure		404				{object}	httputil.HTTPError
-//	@Failure		500				{object}	httputil.HTTPError
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/transactions/{transactionId} [delete]
 func (controller *Controller) DeleteTransactionsById(context *fiber.Ctx) error {
 

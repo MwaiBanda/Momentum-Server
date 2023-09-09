@@ -1,4 +1,4 @@
-package httputil
+package model
 
 // HTTPError example
 type HTTPError struct {

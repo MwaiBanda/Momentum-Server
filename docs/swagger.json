@@ -53,19 +53,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -111,19 +111,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -171,19 +171,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -231,19 +231,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -291,19 +291,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -342,19 +342,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -400,19 +400,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -461,19 +461,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -521,19 +521,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -579,19 +579,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -640,19 +640,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -699,19 +699,19 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HTTPError"
+                            "$ref": "#/definitions/model.HTTPError"
                         }
                     }
                 }
@@ -719,7 +719,7 @@
         }
     },
     "definitions": {
-        "httputil.HTTPError": {
+        "model.HTTPError": {
             "type": "object",
             "properties": {
                 "code": {

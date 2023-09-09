@@ -2,7 +2,6 @@ package controller
 
 import (
 	"Momentum/constants"
-	_ "Momentum/httputil"
 	"Momentum/model"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
@@ -24,9 +23,9 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.PaymentResponse
-//	@Failure		400	{object}	httputil.HTTPError
-//	@Failure		404	{object}	httputil.HTTPError
-//	@Failure		500	{object}	httputil.HTTPError
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/payments [post]
 func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 	paymentRequest := new(model.PaymentRequest)

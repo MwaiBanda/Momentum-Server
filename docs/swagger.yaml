@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  httputil.HTTPError:
+  model.HTTPError:
     properties:
       code:
         example: 400
@@ -347,15 +347,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Get all Meals
       tags:
       - Meals
@@ -386,15 +386,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Post a Meal
       tags:
       - Meals
@@ -426,15 +426,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Post a meal participant
       tags:
       - Meals
@@ -466,15 +466,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Post a payment
       tags:
       - Payments
@@ -506,15 +506,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Show a list of sermons
       tags:
       - Sermons
@@ -540,15 +540,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Post a transaction
       tags:
       - Transactions
@@ -579,15 +579,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Delete a transaction
       tags:
       - Transactions
@@ -620,15 +620,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Show a list of transactions belonging to a user
       tags:
       - Transactions
@@ -660,15 +660,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Post a user
       tags:
       - Users
@@ -699,15 +699,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Update a user
       tags:
       - Users
@@ -740,15 +740,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Delete user information by Id
       tags:
       - Users
@@ -780,15 +780,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HTTPError'
+            $ref: '#/definitions/model.HTTPError'
       summary: Get user information by Id
       tags:
       - Users

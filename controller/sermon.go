@@ -21,9 +21,9 @@ import (
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			page			query		number	false	"Provide a page number"
 //	@Success		200				{array}		model.SermonResponse
-//	@Failure		400				{object}	httputil.HTTPError
-//	@Failure		404				{object}	httputil.HTTPError
-//	@Failure		500				{object}	httputil.HTTPError
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/sermons [get]
 func (controller *Controller) GetAllSermons(context *fiber.Ctx) error {
 	pageNumber := context.Query("page", "1")

@@ -7,7 +7,7 @@ COPY ./cms/dist/index.html ./cms/dist/index.html
 COPY ./prisma/schema.prisma ./prisma/schema.prisma
 COPY ./controller/. ./controller/.
 COPY ./docs/. ./docs/.
-COPY ./httputil/. ./httputil/.
+COPY ./middleware/. ./middleware/.
 COPY ./constants/. ./constants/.
 COPY ./model/. ./model/.
 

@@ -22,9 +22,9 @@ import (
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			userId			path		string	true	"provide user Id"
 //	@Success		200				{array}		model.UserResponse
-//	@Failure		400				{object}	httputil.HTTPError
-//	@Failure		404				{object}	httputil.HTTPError
-//	@Failure		500				{object}	httputil.HTTPError
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/users/{userId} [get]
 func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 	userId := context.Params("userId")
@@ -63,9 +63,9 @@ func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.UserRequest
-//	@Failure		400	{object}	httputil.HTTPError
-//	@Failure		404	{object}	httputil.HTTPError
-//	@Failure		500	{object}	httputil.HTTPError
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/users [post]
 func (controller *Controller) PostUser(context *fiber.Ctx) error {
 	userRequest := new(model.UserRequest)
@@ -96,9 +96,9 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.UserRequest
-//	@Failure		400	{object}	httputil.HTTPError
-//	@Failure		404	{object}	httputil.HTTPError
-//	@Failure		500	{object}	httputil.HTTPError
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/users [put]
 func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 	userRequest := new(model.UserRequest)
@@ -156,9 +156,9 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			userId			path		string	true	"provide user Id"
 //	@Success		200				{array}		model.UserResponse
-//	@Failure		400				{object}	httputil.HTTPError
-//	@Failure		404				{object}	httputil.HTTPError
-//	@Failure		500				{object}	httputil.HTTPError
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/users/{userId} [delete]
 func (controller *Controller) DeleteUserById(context *fiber.Ctx) error {
 	var user model.UserResponse
