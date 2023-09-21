@@ -17,6 +17,8 @@ With, Redis for caching. Each v1 API route is protected with token authenticatio
     - React Query
     - TailwindCSS
     - React Router
+React frontend is exposed in the backend, and react-router is used for in-app routing. Additionally, the backend does expose each in-app route
+and react-router handles mapping the route to its corresponding page
 
 ----
 ### [API Documentation](https://services.momentumchurch.dev/)
