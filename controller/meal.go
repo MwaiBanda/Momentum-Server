@@ -35,7 +35,7 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	if err := context.BodyParser(mealRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	go controller.redis.Expire(controller.context, "meal", time.Second*0)
+	go controller.redis.Expire(controller.context, constants.MealsKey, time.Second*0)
 
 	var transactions []transaction.Param
 	transactions = append(transactions, controller.prisma.Meal.CreateOne(
@@ -91,7 +91,7 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 	if err := context.BodyParser(meal); err != nil {
 		log.Panic(err.Error())
 	}
-	go controller.redis.Expire(controller.context, "meal", time.Second*0)
+	go controller.redis.Expire(controller.context, constants.MealsKey, time.Second*0)
 	err := controller.prisma.Prisma.Transaction(
 		controller.prisma.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
 			db.VolunteeredMeal.Description.Set(meal.VolunteeredMeal.Description),
