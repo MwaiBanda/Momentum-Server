@@ -105,7 +105,7 @@ definitions:
       user_id:
         type: string
     type: object
-  model.MessageResponse:
+  model.Message:
     properties:
       createdOn:
         type: string
@@ -125,6 +125,13 @@ definitions:
         type: string
       title:
         type: string
+    type: object
+  model.MessageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Message'
+        type: array
     type: object
   model.Participant:
     properties:
@@ -505,7 +512,7 @@ paths:
             $ref: '#/definitions/model.HTTPError'
       summary: Show a list of messages available
       tags:
-      - Transactions
+      - Messages
   /api/v1/payments:
     post:
       consumes:

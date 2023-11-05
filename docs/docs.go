@@ -205,7 +205,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Transactions"
+                    "Messages"
                 ],
                 "summary": "Show a list of messages available",
                 "parameters": [
@@ -938,7 +938,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.MessageResponse": {
+        "model.Message": {
             "type": "object",
             "properties": {
                 "createdOn": {
@@ -967,6 +967,17 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "model.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Message"
+                    }
                 }
             }
         },

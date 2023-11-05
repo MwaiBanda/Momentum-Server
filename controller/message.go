@@ -15,7 +15,7 @@ import (
 //	@Description	get a list of messages available
 //	@Accept			json
 //	@Produce		json
-//	@tags			Transactions
+//	@tags			Messages
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Success		200				{array}		model.MessageResponse
 //	@Failure		400				{object}	model.HTTPError
