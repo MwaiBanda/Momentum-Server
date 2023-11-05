@@ -4,8 +4,8 @@ go 1.20
 
 require (
 	github.com/GeertJohan/go.rice v1.0.3
-	github.com/gofiber/fiber/v2 v2.50.0
-	github.com/gofiber/swagger v0.1.11
+	github.com/gofiber/fiber/v2 v2.49.0
+	github.com/gofiber/swagger v0.1.12
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/joho/godotenv v1.5.1
 	github.com/lucsky/cuid v1.2.1
