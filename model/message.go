@@ -1,6 +1,10 @@
 package model
 
 type MessageResponse struct {
+	Data []Message `json:"data"`
+}
+
+type Message struct {
 	ID        string `json:"id"`
 	Thumbnail string `json:"thumbnail"`
 	Series	string `json:"series"`
