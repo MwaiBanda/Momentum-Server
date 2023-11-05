@@ -7,11 +7,14 @@ import (
 	"Momentum/prisma/db"
 	"context"
 	"fmt"
+	"log"
+	"os"
+
+	firebase "firebase.google.com/go/v4"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	"github.com/redis/go-redis/v9"
-	"log"
-	"os"
+	"google.golang.org/api/option"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -59,9 +62,9 @@ func main() {
 	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
 
 	v1.Get("/sermons", controller.GetAllSermons)
+	app.Get("/messages/:userId", controller.GetAllMessages)
 
 	app.Get("/*", swagger.HandlerDefault)
-
 	app.Get("/*", swagger.New(swagger.Config{
 		URL:          "https://services.momentumchurch.dev/doc.json",
 		DeepLinking:  false,
@@ -82,6 +85,11 @@ func main() {
 	controller.SetPrismaClient(client)
 	controller.SetRedisClient(redis.NewClient(opt))
 	controller.SetContext(backgroundContext)
+	creds := option.WithCredentialsJSON(make([]byte, 0))
 
+	_, err := firebase.NewApp(backgroundContext, nil, creds)
+	if err != nil {
+		fmt.Println("[Firebase]", err)
+	}
 	log.Fatal(app.Listen(":" + port))
 }

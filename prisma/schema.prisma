@@ -9,6 +9,42 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model Message {
+  id        String    @id @default(cuid())
+  thumbnail String
+  series    String
+  title     String
+  preacher  String
+  date      String
+  createdOn DateTime  @default(now())
+  passages  Passage[]
+}
+
+model Passage {
+  id        String  @id @default(cuid())
+  header    String?
+  verse     String?
+  message   String?
+  messageId String
+  notes     Note[]
+  parent    Message @relation(fields: [messageId], references: [id])
+
+  @@index([messageId])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  content   String
+  createdOn DateTime @default(now())
+  updatedOn DateTime @default(now())
+  userId    String
+  passageId String
+  passage   Passage  @relation(fields: [passageId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, passageId])
+}
+
 model User {
   id                 String            @id
   email              String
@@ -17,6 +53,7 @@ model User {
   createdOn          DateTime          @default(now())
   organisedMeal      Meal[]
   mealParticipations MealParticipant[]
+  notes              Note[]
   transactions       Transaction[]
   volunteeredMeals   VolunteeredMeal[]
 }
