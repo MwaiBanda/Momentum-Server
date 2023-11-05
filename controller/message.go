@@ -23,7 +23,7 @@ import (
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/messages/{userId} [get]
 func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
-	var messages []model.MessageResponse
+	var messages []model.Message
 	res, err := controller.prisma.Message.FindMany().With(
 		db.Message.Passages.Fetch().With(
 			db.Passage.Notes.Fetch(
@@ -40,6 +40,6 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		fmt.Println(err)
 	}
 
-	return context.JSON(messages)
+	return context.JSON(model.MessageResponse{Data: messages})
 }
 
