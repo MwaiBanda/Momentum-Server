@@ -62,7 +62,7 @@ func main() {
 	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
 
 	v1.Get("/sermons", controller.GetAllSermons)
-	app.Get("/messages/:userId", controller.GetAllMessages)
+	v1.Get("/messages/:userId", controller.GetAllMessages)
 
 	app.Get("/*", swagger.HandlerDefault)
 	app.Get("/*", swagger.New(swagger.Config{
