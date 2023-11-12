@@ -30,6 +30,8 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 				db.Note.UserID.Equals(context.Params("userId")),
 			),
 		),
+	).OrderBy(
+		db.Message.CreatedOn.Order(db.SortOrderDesc),
 	).Exec(controller.context)
 	if err != nil {
 		fmt.Println(err)

@@ -27,7 +27,7 @@ model Passage {
   message   String?
   messageId String
   notes     Note[]
-  parent    Message @relation(fields: [messageId], references: [id])
+  parent    Message @relation(fields: [messageId], references: [id], onDelete: SetDefault)
 
   @@index([messageId])
 }
