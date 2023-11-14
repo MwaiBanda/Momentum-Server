@@ -25,9 +25,10 @@ model Passage {
   header    String?
   verse     String?
   message   String?
-  messageId String
+  messageId String?
+  order     Int?
   notes     Note[]
-  parent    Message @relation(fields: [messageId], references: [id], onDelete: SetDefault)
+  parent    Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
 
   @@index([messageId])
 }
@@ -38,8 +39,8 @@ model Note {
   createdOn DateTime @default(now())
   updatedOn DateTime @default(now())
   userId    String
-  passageId String
-  passage   Passage  @relation(fields: [passageId], references: [id])
+  passageId String?
+  passage   Passage?  @relation(fields: [passageId], references: [id], onDelete: SetNull)
   user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId, passageId])
