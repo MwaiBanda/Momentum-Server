@@ -38,10 +38,10 @@ model Note {
   content   String
   createdOn DateTime @default(now())
   updatedOn DateTime @default(now())
-  userId    String
+  userId    String?
   passageId String?
   passage   Passage?  @relation(fields: [passageId], references: [id], onDelete: SetNull)
-  user      User     @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId, passageId])
 }

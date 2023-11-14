@@ -133,6 +133,15 @@ definitions:
           $ref: '#/definitions/model.Message'
         type: array
     type: object
+  model.Notification:
+    properties:
+      body:
+        type: string
+      title:
+        type: string
+      topic:
+        type: string
+    type: object
   model.Participant:
     properties:
       id:
@@ -513,6 +522,46 @@ paths:
       summary: Show a list of messages available
       tags:
       - Messages
+  /api/v1/notifications:
+    post:
+      consumes:
+      - application/json
+      description: Used by clients to request a notification to be sent to a topiv
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Post a notification
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Notification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Notification'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Post a notification
+      tags:
+      - Notifications
   /api/v1/payments:
     post:
       consumes:

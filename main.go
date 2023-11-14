@@ -63,7 +63,10 @@ func main() {
 	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
 
 	v1.Get("/sermons", controller.GetAllSermons)
+
 	v1.Get("/messages/:userId", controller.GetAllMessages)
+
+	v1.Post("/notifications", controller.PostNotification)
 
 	app.Get("/*", swagger.HandlerDefault)
 	app.Get("/*", swagger.New(swagger.Config{
@@ -72,31 +75,36 @@ func main() {
 		DocExpansion: "none",
 	}))
 
+	
 	prismaClient := db.NewClient()
 	if err := prismaClient.Prisma.Connect(); err != nil {
-		fmt.Println(err)
+			fmt.Println(err)
 	}
 	defer func() {
 		if err := prismaClient.Prisma.Disconnect(); err != nil {
 			panic(err)
 		}
 	}()
-	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
-	redisClient := redis.NewClient(opt)	
-	backgroundContext := context.Background()
 	controller.SetPrismaClient(prismaClient)
-	controller.SetRedisClient(redisClient)
-	controller.SetContext(backgroundContext)
-	firebaseToken, err := redisClient.Get(backgroundContext, constants.FirebaseServiceTokenKey).Result()
-	if err != nil {
-		fmt.Println(err)
-	}
-	creds := option.WithCredentialsJSON([]byte(firebaseToken))
-	config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
-	firebaseApp, err := firebase.NewApp(backgroundContext, config, creds)
-	if err != nil {
-		fmt.Println("[Firebase]", err)
-	}
-	controller.SetFirebaseApp(firebaseApp)
+
+	go func ()  {
+		opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
+		redisClient := redis.NewClient(opt)
+		backgroundContext := context.Background()
+		controller.SetRedisClient(redisClient)
+		controller.SetContext(backgroundContext)
+		
+		firebaseToken, err := redisClient.Get(backgroundContext, constants.FirebaseServiceTokenKey).Result()
+		if err != nil {
+			fmt.Println(err)
+		}
+		creds := option.WithCredentialsJSON([]byte(firebaseToken))
+		config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
+		firebaseApp, err := firebase.NewApp(backgroundContext, config, creds)
+		if err != nil {
+			fmt.Println("[Firebase]", err)
+		}
+		controller.SetFirebaseApp(firebaseApp)
+	}()
 	log.Fatal(app.Listen(":" + port))
 }
