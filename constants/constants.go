@@ -10,4 +10,5 @@ var (
 	StripeCustomerRoute      = "/customers?"
 	StripeEphemeralKeyRoute  = "/ephemeral_keys?"
 	StripePaymentIntentRoute = "/payment_intents?"
+	FirebaseServiceTokenKey   = "firebase"
 )

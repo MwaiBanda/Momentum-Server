@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Momentum/constants"
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	"Momentum/middleware"
@@ -37,7 +38,7 @@ func main() {
 		if len(os.Getenv("PORT")) > 0 {
 			return os.Getenv("PORT")
 		} else {
-			return "8085"
+			return "8083"
 		}
 	}()
 
@@ -71,25 +72,31 @@ func main() {
 		DocExpansion: "none",
 	}))
 
-	client := db.NewClient()
-	if err := client.Prisma.Connect(); err != nil {
+	prismaClient := db.NewClient()
+	if err := prismaClient.Prisma.Connect(); err != nil {
 		fmt.Println(err)
 	}
 	defer func() {
-		if err := client.Prisma.Disconnect(); err != nil {
+		if err := prismaClient.Prisma.Disconnect(); err != nil {
 			panic(err)
 		}
 	}()
 	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
+	redisClient := redis.NewClient(opt)	
 	backgroundContext := context.Background()
-	controller.SetPrismaClient(client)
-	controller.SetRedisClient(redis.NewClient(opt))
+	controller.SetPrismaClient(prismaClient)
+	controller.SetRedisClient(redisClient)
 	controller.SetContext(backgroundContext)
-	creds := option.WithCredentialsJSON(make([]byte, 0))
-
-	_, err := firebase.NewApp(backgroundContext, nil, creds)
+	firebaseToken, err := redisClient.Get(backgroundContext, constants.FirebaseServiceTokenKey).Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+	creds := option.WithCredentialsJSON([]byte(firebaseToken))
+	config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
+	firebaseApp, err := firebase.NewApp(backgroundContext, config, creds)
 	if err != nil {
 		fmt.Println("[Firebase]", err)
 	}
+	controller.SetFirebaseApp(firebaseApp)
 	log.Fatal(app.Listen(":" + port))
 }

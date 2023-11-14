@@ -4,8 +4,7 @@ import (
 	"Momentum/constants"
 	"Momentum/prisma/db"
 	b64 "encoding/base64"
-	"github.com/redis/go-redis/v9"
-	"golang.org/x/net/context"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -13,6 +12,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"firebase.google.com/go/v4/messaging"
+	firebase "firebase.google.com/go/v4"
+	"github.com/redis/go-redis/v9"
+	"golang.org/x/net/context"
 )
 
 type Controller struct {
@@ -20,6 +24,8 @@ type Controller struct {
 	prisma     *db.PrismaClient
 	context    context.Context
 	redis      *redis.Client
+	firebase   *firebase.App
+	messaging *messaging.Client
 }
 
 func GetControllerInstance() *Controller {
@@ -34,6 +40,16 @@ func (controller *Controller) SetPrismaClient(client *db.PrismaClient) {
 
 func (controller *Controller) SetRedisClient(client *redis.Client) {
 	controller.redis = client
+}
+
+func (controller *Controller) SetFirebaseApp(app *firebase.App) {
+	controller.firebase = app
+	messagingClient, err := app.Messaging(controller.context)
+	if err != nil {
+		fmt.Println(err)
+	}
+	controller.messaging = messagingClient
+
 }
 
 func (controller *Controller) SetContext(context context.Context) {
