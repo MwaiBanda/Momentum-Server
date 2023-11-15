@@ -1,7 +1,6 @@
 package main
 
 import (
-	"Momentum/constants"
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	"Momentum/middleware"
@@ -11,11 +10,9 @@ import (
 	"log"
 	"os"
 
-	firebase "firebase.google.com/go/v4"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	"github.com/redis/go-redis/v9"
-	"google.golang.org/api/option"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -75,35 +72,28 @@ func main() {
 		DocExpansion: "none",
 	}))
 
-	prismaClient := db.NewClient()
-	if err := prismaClient.Prisma.Connect(); err != nil {
-		fmt.Println(err)
-	}
+	prismaClient := new(db.PrismaClient)
+	controller.SetContext(context.Background())
+
+	go func() {
+		prismaClient = db.NewClient()
+		if err := prismaClient.Prisma.Connect(); err != nil {
+			fmt.Println(err)
+		}
+		controller.SetPrismaClient(prismaClient)
+		go func () {
+			opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
+			redisClient := redis.NewClient(opt)
+			controller.SetRedisClient(redisClient)
+			controller.InitFirebaseApp()
+		}()
+	}()
+
 	defer func() {
 		if err := prismaClient.Prisma.Disconnect(); err != nil {
 			panic(err)
 		}
 	}()
-	controller.SetPrismaClient(prismaClient)
 
-	go func() {
-		opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
-		redisClient := redis.NewClient(opt)
-		backgroundContext := context.Background()
-		controller.SetRedisClient(redisClient)
-		controller.SetContext(backgroundContext)
-
-		firebaseToken, err := redisClient.Get(backgroundContext, constants.FirebaseServiceTokenKey).Result()
-		if err != nil {
-			fmt.Println(err)
-		}
-		creds := option.WithCredentialsJSON([]byte(firebaseToken))
-		config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
-		firebaseApp, err := firebase.NewApp(backgroundContext, config, creds)
-		if err != nil {
-			fmt.Println("[Firebase]", err)
-		}
-		controller.SetFirebaseApp(firebaseApp)
-	}()
 	log.Fatal(app.Listen(":" + port))
 }

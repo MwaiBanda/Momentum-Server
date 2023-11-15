@@ -17,6 +17,7 @@ import (
 	"firebase.google.com/go/v4/messaging"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
+	"google.golang.org/api/option"
 )
 
 type Controller struct {
@@ -32,6 +33,7 @@ type Controller struct {
 func GetControllerInstance() *Controller {
 	return &Controller{
 		HttpClient: &http.Client{Timeout: time.Second * 10},
+		CanSendNotificationChannel: make(chan bool),
 	}
 }
 
@@ -43,15 +45,28 @@ func (controller *Controller) SetRedisClient(client *redis.Client) {
 	controller.Redis = client
 }
 
-func (controller *Controller) SetFirebaseApp(app *firebase.App) {
-	controller.CanSendNotificationChannel = make(chan bool)
+func (controller *Controller) InitFirebaseApp() {
+	firebaseToken, err := controller.Redis.Get(controller.Context, constants.FirebaseServiceTokenKey).Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+	creds := option.WithCredentialsJSON([]byte(firebaseToken))
+	config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
+	firebaseApp, err := firebase.NewApp(controller.Context, config, creds)
+	if err != nil {
+		fmt.Println("[Firebase]", err)
+	}
+	controller.setFirebaseApp(firebaseApp)
+}
+
+func (controller *Controller) setFirebaseApp(app *firebase.App) {
 	controller.Firebase = app
 	messagingClient, err := app.Messaging(controller.Context)
 	if err != nil {
 		fmt.Println(err)
 	}
 	controller.Messaging = messagingClient
-	controller.CanSendNotificationChannel <- true
+	log.Println("Connected to Firebase")
 }
 
 func (controller *Controller) SetContext(context context.Context) {

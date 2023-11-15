@@ -24,36 +24,25 @@ import (
 //	@Router			/api/v1/notifications [post]
 func (controller *Controller) PostNotification(context *fiber.Ctx) error {
 	notification := new(model.Notification)
-
+	
 	if err := context.BodyParser(notification); err != nil {
 		log.Panic(err.Error())
 	}
 
-	var sendNotification = func() error {
-		message := &messaging.Message{
-			Notification: &messaging.Notification{
-				Title: notification.Title,
-				Body:  notification.Body,
-			},
-			Topic: notification.Topic,
-		}
-		_, err := controller.Messaging.Send(controller.Context, message)
-		if err != nil {
-			log.Println(err.Error())
-		}
-		return context.JSON(notification)
+	if controller.Firebase == nil {
+		controller.InitFirebaseApp()
 	}
 
-	if controller.Messaging != nil {
-		return sendNotification()
-	} else {
-		for canSendNotification := range controller.CanSendNotificationChannel {
-			if canSendNotification {
-				close(controller.CanSendNotificationChannel)
-				return sendNotification()
-			}
-		}
+	message := &messaging.Message{
+		Notification: &messaging.Notification{
+			Title: notification.Title,
+			Body:  notification.Body,
+		},
+		Topic: notification.Topic,
 	}
-
-	return context.SendStatus(500)
+	_, err := controller.Messaging.Send(controller.Context, message)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return context.JSON(notification)
 }
