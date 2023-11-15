@@ -27,9 +27,9 @@ import (
 // @BasePath		/
 func main() {
 	controller := handlers.GetControllerInstance()
-	controller.SetContext(context.Background())
 	go func ()  {
 		controller.InitRedisClient()
+		go controller.SetContext(context.Background())
 		go controller.InitPrismaClient()
 		go controller.InitFirebaseApp()
 	}()

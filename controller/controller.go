@@ -66,7 +66,7 @@ func (controller *Controller) InitFirebaseApp() {
 	if controller.Redis == nil {
 		controller.InitRedisClient()
 	}
-	firebaseToken, err := controller.Redis.Get(controller.Context, constants.FirebaseServiceTokenKey).Result()
+	firebaseToken, err := controller.Redis.Get(context.Background(), constants.FirebaseServiceTokenKey).Result()
 	if err != nil {
 		fmt.Println(err)
 	}
