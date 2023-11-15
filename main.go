@@ -85,7 +85,7 @@ func main() {
 			opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
 			redisClient := redis.NewClient(opt)
 			controller.SetRedisClient(redisClient)
-			controller.InitFirebaseApp()
+			go controller.InitFirebaseApp()
 		}()
 	}()
 
