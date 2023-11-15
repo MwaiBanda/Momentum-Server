@@ -6,10 +6,11 @@ import (
 	"Momentum/prisma/db"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/redis/go-redis/v9"
 	"log"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 )
 
 // GetUserById godoc
@@ -29,11 +30,11 @@ import (
 func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 	userId := context.Params("userId")
 	userResponse := new(model.UserResponse)
-	cachedUser, err := controller.redis.Get(controller.context, constants.UserKeyPrefix+userId).Result()
+	cachedUser, err := controller.Redis.Get(controller.Context, constants.UserKeyPrefix+userId).Result()
 	if err == redis.Nil {
-		res, err := controller.prisma.User.FindFirst(db.UserWhereParam(
+		res, err := controller.Prisma.User.FindFirst(db.UserWhereParam(
 			db.User.ID.Equals(userId),
-		)).Exec(controller.context)
+		)).Exec(controller.Context)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -41,7 +42,7 @@ func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 		if err := json.Unmarshal(result, userResponse); err != nil {
 			fmt.Println(err)
 		}
-		controller.redis.Set(controller.context, constants.UserKeyPrefix+userId, string(result), time.Hour*24)
+		controller.Redis.Set(controller.Context, constants.UserKeyPrefix+userId, string(result), time.Hour*24)
 	} else if err != nil {
 		log.Println("[GetUserById]", err.Error())
 	} else {
@@ -72,17 +73,17 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 	if err := context.BodyParser(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	res, err := controller.prisma.User.CreateOne(
+	res, err := controller.Prisma.User.CreateOne(
 		db.User.ID.Set(userRequest.Id),
 		db.User.Email.Set(userRequest.Email),
 		db.User.Fullname.Set(userRequest.Email),
 		db.User.Phone.Set(userRequest.Phone),
-	).Exec(controller.context)
+	).Exec(controller.Context)
 	if err != nil {
 		log.Panic(err.Error())
 	}
 	result, _ := json.MarshalIndent(res, "", "  ")
-	controller.redis.Set(controller.context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
+	controller.Redis.Set(controller.Context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
 	return context.JSON(userRequest)
 }
 
@@ -108,24 +109,24 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 		log.Panic(err.Error())
 	}
 	onUpdateUser := func() {
-		res, err := controller.prisma.User.FindUnique(
+		res, err := controller.Prisma.User.FindUnique(
 			db.User.ID.Equals(userRequest.Id),
 		).Update(
 			db.User.Email.Set(userRequest.Email),
 			db.User.Fullname.Set(userRequest.Fullname),
 			db.User.Phone.Set(userRequest.Phone),
-		).Exec(controller.context)
+		).Exec(controller.Context)
 		if err != nil {
 			log.Panic(err.Error())
 		}
 		result, _ := json.MarshalIndent(res, "", "  ")
-		controller.redis.Set(controller.context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
+		controller.Redis.Set(controller.Context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
 		if err := json.Unmarshal(result, &userResponse); err != nil {
 			fmt.Println(err)
 		}
 	}
 
-	cachedUser, err := controller.redis.Get(controller.context, constants.UserKeyPrefix+userRequest.Id).Result()
+	cachedUser, err := controller.Redis.Get(controller.Context, constants.UserKeyPrefix+userRequest.Id).Result()
 	if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
 		log.Println("[GetAllSermons]", err.Error())
 	}
@@ -162,9 +163,9 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 //	@Router			/api/v1/users/{userId} [delete]
 func (controller *Controller) DeleteUserById(context *fiber.Ctx) error {
 	var user model.UserResponse
-	res, err := controller.prisma.User.FindUnique(
+	res, err := controller.Prisma.User.FindUnique(
 		db.User.ID.Equals(context.Params("userId")),
-	).Delete().Exec(controller.context)
+	).Delete().Exec(controller.Context)
 	if err != nil {
 		fmt.Println(err)
 	}

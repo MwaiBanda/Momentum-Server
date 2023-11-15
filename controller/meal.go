@@ -6,12 +6,13 @@ import (
 	"Momentum/prisma/db"
 	"encoding/json"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/lucsky/cuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
-	"log"
-	"time"
 )
 
 // PostMeal godoc
@@ -35,10 +36,10 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	if err := context.BodyParser(mealRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	go controller.redis.Expire(controller.context, constants.MealsKey, time.Second*0)
+	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
 
 	var transactions []transaction.Param
-	transactions = append(transactions, controller.prisma.Meal.CreateOne(
+	transactions = append(transactions, controller.Prisma.Meal.CreateOne(
 		db.Meal.Reason.Set(mealRequest.Reason),
 		db.Meal.Email.Set(mealRequest.Email),
 		db.Meal.Phone.Set(mealRequest.Phone),
@@ -56,7 +57,7 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 		db.Meal.ID.Set(mealID),
 	).Tx())
 	for _, meal := range mealRequest.Meals {
-		transactions = append(transactions, controller.prisma.VolunteeredMeal.CreateOne(
+		transactions = append(transactions, controller.Prisma.VolunteeredMeal.CreateOne(
 			db.VolunteeredMeal.Description.Set(""),
 			db.VolunteeredMeal.Notes.Set(""),
 			db.VolunteeredMeal.Date.Set(meal.Date),
@@ -64,7 +65,7 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 		).Tx())
 	}
 
-	err := controller.prisma.Prisma.Transaction(transactions...).Exec(controller.context)
+	err := controller.Prisma.Prisma.Transaction(transactions...).Exec(controller.Context)
 	if err != nil {
 		log.Panic(err.Error())
 	}
@@ -91,20 +92,20 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 	if err := context.BodyParser(meal); err != nil {
 		log.Panic(err.Error())
 	}
-	go controller.redis.Expire(controller.context, constants.MealsKey, time.Second*0)
-	err := controller.prisma.Prisma.Transaction(
-		controller.prisma.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
+	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
+	err := controller.Prisma.Prisma.Transaction(
+		controller.Prisma.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
 			db.VolunteeredMeal.Description.Set(meal.VolunteeredMeal.Description),
 			db.VolunteeredMeal.Notes.Set(meal.VolunteeredMeal.Notes),
 			db.VolunteeredMeal.UserID.Set(meal.VolunteeredMeal.User.Id),
 		).Tx(),
-		controller.prisma.MealParticipant.UpsertOne(
+		controller.Prisma.MealParticipant.UpsertOne(
 			db.MealParticipant.IDUserIDMealID(db.MealParticipant.ID.Equals(meal.VolunteeredMeal.Id), db.MealParticipant.UserID.Equals(meal.MealId), db.MealParticipant.MealID.Equals(meal.VolunteeredMeal.User.Id)),
 		).Create(
 			db.MealParticipant.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
 			db.MealParticipant.User.Link(db.User.ID.Equals(meal.VolunteeredMeal.User.Id)),
 		).Update().Tx(),
-	).Exec(controller.context)
+	).Exec(controller.Context)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -128,9 +129,9 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 //	@Router			/api/v1/meals [get]
 func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 	mealResponse := new([]model.MealResponse)
-	cachedMeal, err := controller.redis.Get(controller.context, constants.MealsKey).Result()
+	cachedMeal, err := controller.Redis.Get(controller.Context, constants.MealsKey).Result()
 	if err == redis.Nil {
-		res, err := controller.prisma.Meal.FindMany().With(
+		res, err := controller.Prisma.Meal.FindMany().With(
 			db.Meal.User.Fetch(),
 		).With(
 			db.Meal.Participants.Fetch().With(
@@ -140,14 +141,14 @@ func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 			db.Meal.Meals.Fetch().With(
 				db.VolunteeredMeal.User.Fetch(),
 			),
-		).Exec(controller.context)
+		).Exec(controller.Context)
 
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		result, _ := json.MarshalIndent(res, "", "  ")
-		controller.redis.Set(controller.context, constants.MealsKey, string(result), time.Hour*6)
+		controller.Redis.Set(controller.Context, constants.MealsKey, string(result), time.Hour*6)
 		if err := json.Unmarshal(result, &mealResponse); err != nil {
 			fmt.Println(err)
 		}

@@ -5,8 +5,9 @@ import (
 	"Momentum/prisma/db"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"log"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // GetTransactionsByUserId godoc
@@ -25,9 +26,9 @@ import (
 //	@Router			/api/v1/transactions/{userId} [get]
 func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error {
 	var transactions []model.TransactionResponse
-	res, err := controller.prisma.Transaction.FindMany(
+	res, err := controller.Prisma.Transaction.FindMany(
 		db.Transaction.UserID.Equals(context.Params("userId")),
-	).With(db.Transaction.User.Fetch()).Exec(controller.context)
+	).With(db.Transaction.User.Fetch()).Exec(controller.Context)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,12 +59,12 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 	if err := context.BodyParser(transaction); err != nil {
 		log.Panic(err.Error())
 	}
-	_, err := controller.prisma.Transaction.CreateOne(
+	_, err := controller.Prisma.Transaction.CreateOne(
 		db.Transaction.Amount.Set(transaction.Amount),
 		db.Transaction.Date.Set(transaction.Date),
 		db.Transaction.Description.Set(transaction.Description),
 		db.Transaction.User.Link(db.User.ID.Equals(transaction.UserId)),
-	).Exec(controller.context)
+	).Exec(controller.Context)
 	if err != nil {
 		log.Panic(err.Error())
 	}
@@ -88,9 +89,9 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 func (controller *Controller) DeleteTransactionsById(context *fiber.Ctx) error {
 
 	var transaction model.TransactionResponse
-	res, err := controller.prisma.Transaction.FindUnique(
+	res, err := controller.Prisma.Transaction.FindUnique(
 		db.Transaction.ID.Equals(context.Params("transactionId")),
-	).Delete().Exec(controller.context)
+	).Delete().Exec(controller.Context)
 	if err != nil {
 		fmt.Println(err)
 	}

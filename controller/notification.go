@@ -24,20 +24,36 @@ import (
 //	@Router			/api/v1/notifications [post]
 func (controller *Controller) PostNotification(context *fiber.Ctx) error {
 	notification := new(model.Notification)
-	
+
 	if err := context.BodyParser(notification); err != nil {
 		log.Panic(err.Error())
 	}
-	message := &messaging.Message{
-		Notification: &messaging.Notification{
-			Title: notification.Title,
-			Body:  notification.Body,
-		},
-		Topic: notification.Topic,
+
+	var sendNotification = func() error {
+		message := &messaging.Message{
+			Notification: &messaging.Notification{
+				Title: notification.Title,
+				Body:  notification.Body,
+			},
+			Topic: notification.Topic,
+		}
+		_, err := controller.Messaging.Send(controller.Context, message)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		return context.JSON(notification)
 	}
-	_, err := controller.messaging.Send(controller.context, message)
-	if err != nil {
-		log.Println(err.Error())
+
+	if controller.Messaging != nil {
+		return sendNotification()
+	} else {
+		for canSendNotification := range controller.CanSendNotificationChannel {
+			if canSendNotification {
+				close(controller.CanSendNotificationChannel)
+				return sendNotification()
+			}
+		}
 	}
-	return context.JSON(notification)
+
+	return context.SendStatus(500)
 }

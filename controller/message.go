@@ -24,7 +24,7 @@ import (
 //	@Router			/api/v1/messages/{userId} [get]
 func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	var messages []model.Message
-	res, err := controller.prisma.Message.FindMany().With(
+	res, err := controller.Prisma.Message.FindMany().With(
 		db.Message.Passages.Fetch().With(
 			db.Passage.Notes.Fetch(
 				db.Note.UserID.Equals(context.Params("userId")),
@@ -32,7 +32,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		),
 	).OrderBy(
 		db.Message.CreatedOn.Order(db.SortOrderDesc),
-	).Exec(controller.context)
+	).Exec(controller.Context)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -44,4 +44,3 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 
 	return context.JSON(model.MessageResponse{Data: messages})
 }
-

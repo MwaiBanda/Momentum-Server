@@ -13,47 +13,49 @@ import (
 	"sync"
 	"time"
 
-	"firebase.google.com/go/v4/messaging"
 	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/messaging"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
 )
 
 type Controller struct {
-	httpClient *http.Client
-	prisma     *db.PrismaClient
-	context    context.Context
-	redis      *redis.Client
-	firebase   *firebase.App
-	messaging *messaging.Client
+	HttpClient                 *http.Client
+	Prisma                     *db.PrismaClient
+	Context                    context.Context
+	Redis                      *redis.Client
+	Firebase                   *firebase.App
+	Messaging                  *messaging.Client
+	CanSendNotificationChannel chan bool
 }
 
 func GetControllerInstance() *Controller {
 	return &Controller{
-		httpClient: &http.Client{Timeout: time.Second * 10},
+		HttpClient: &http.Client{Timeout: time.Second * 10},
 	}
 }
 
 func (controller *Controller) SetPrismaClient(client *db.PrismaClient) {
-	controller.prisma = client
+	controller.Prisma = client
 }
 
 func (controller *Controller) SetRedisClient(client *redis.Client) {
-	controller.redis = client
+	controller.Redis = client
 }
 
 func (controller *Controller) SetFirebaseApp(app *firebase.App) {
-	controller.firebase = app
-	messagingClient, err := app.Messaging(controller.context)
+	controller.CanSendNotificationChannel = make(chan bool)
+	controller.Firebase = app
+	messagingClient, err := app.Messaging(controller.Context)
 	if err != nil {
 		fmt.Println(err)
 	}
-	controller.messaging = messagingClient
-
+	controller.Messaging = messagingClient
+	controller.CanSendNotificationChannel <- true
 }
 
 func (controller *Controller) SetContext(context context.Context) {
-	controller.context = context
+	controller.Context = context
 }
 
 type StripeResponse struct {
@@ -77,7 +79,7 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 		break
 	}
 
-	resp, err := controller.httpClient.Do(req)
+	resp, err := controller.HttpClient.Do(req)
 	if err != nil {
 		log.Panic("Request", err)
 	}

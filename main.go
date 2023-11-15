@@ -75,10 +75,9 @@ func main() {
 		DocExpansion: "none",
 	}))
 
-	
 	prismaClient := db.NewClient()
 	if err := prismaClient.Prisma.Connect(); err != nil {
-			fmt.Println(err)
+		fmt.Println(err)
 	}
 	defer func() {
 		if err := prismaClient.Prisma.Disconnect(); err != nil {
@@ -87,13 +86,13 @@ func main() {
 	}()
 	controller.SetPrismaClient(prismaClient)
 
-	go func ()  {
+	go func() {
 		opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
 		redisClient := redis.NewClient(opt)
 		backgroundContext := context.Background()
 		controller.SetRedisClient(redisClient)
 		controller.SetContext(backgroundContext)
-		
+
 		firebaseToken, err := redisClient.Get(backgroundContext, constants.FirebaseServiceTokenKey).Result()
 		if err != nil {
 			fmt.Println(err)
