@@ -26,7 +26,7 @@ import (
 //	@Router			/api/v1/transactions/{userId} [get]
 func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error {
 	var transactions []model.TransactionResponse
-	res, err := controller.Prisma.Transaction.FindMany(
+	res, err := controller.PrismaClient.Transaction.FindMany(
 		db.Transaction.UserID.Equals(context.Params("userId")),
 	).With(db.Transaction.User.Fetch()).Exec(controller.Context)
 	if err != nil {
@@ -59,7 +59,7 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 	if err := context.BodyParser(transaction); err != nil {
 		log.Panic(err.Error())
 	}
-	_, err := controller.Prisma.Transaction.CreateOne(
+	_, err := controller.PrismaClient.Transaction.CreateOne(
 		db.Transaction.Amount.Set(transaction.Amount),
 		db.Transaction.Date.Set(transaction.Date),
 		db.Transaction.Description.Set(transaction.Description),
@@ -89,7 +89,7 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 func (controller *Controller) DeleteTransactionsById(context *fiber.Ctx) error {
 
 	var transaction model.TransactionResponse
-	res, err := controller.Prisma.Transaction.FindUnique(
+	res, err := controller.PrismaClient.Transaction.FindUnique(
 		db.Transaction.ID.Equals(context.Params("transactionId")),
 	).Delete().Exec(controller.Context)
 	if err != nil {

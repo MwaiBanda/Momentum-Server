@@ -4,15 +4,12 @@ import (
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	"Momentum/middleware"
-	"Momentum/prisma/db"
 	"context"
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
-	"github.com/redis/go-redis/v9"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -29,8 +26,14 @@ import (
 // @host			services.momentumchurch.dev
 // @BasePath		/
 func main() {
-	app := fiber.New()
 	controller := handlers.GetControllerInstance()
+	controller.SetContext(context.Background())
+	go func ()  {
+		controller.InitRedisClient()
+		go controller.InitPrismaClient()
+		go controller.InitFirebaseApp()
+	}()
+	app := fiber.New()
 	port := func() string {
 		if len(os.Getenv("PORT")) > 0 {
 			return os.Getenv("PORT")
@@ -72,25 +75,8 @@ func main() {
 		DocExpansion: "none",
 	}))
 
-	prismaClient := new(db.PrismaClient)
-	controller.SetContext(context.Background())
-
-	go func() {
-		prismaClient = db.NewClient()
-		if err := prismaClient.Prisma.Connect(); err != nil {
-			fmt.Println(err)
-		}
-		controller.SetPrismaClient(prismaClient)
-		go func () {
-			opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
-			redisClient := redis.NewClient(opt)
-			controller.SetRedisClient(redisClient)
-			go controller.InitFirebaseApp()
-		}()
-	}()
-
 	defer func() {
-		if err := prismaClient.Prisma.Disconnect(); err != nil {
+		if err := controller.PrismaClient.Prisma.Disconnect(); err != nil {
 			panic(err)
 		}
 	}()

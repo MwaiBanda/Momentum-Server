@@ -32,7 +32,7 @@ func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 	userResponse := new(model.UserResponse)
 	cachedUser, err := controller.Redis.Get(controller.Context, constants.UserKeyPrefix+userId).Result()
 	if err == redis.Nil {
-		res, err := controller.Prisma.User.FindFirst(db.UserWhereParam(
+		res, err := controller.PrismaClient.User.FindFirst(db.UserWhereParam(
 			db.User.ID.Equals(userId),
 		)).Exec(controller.Context)
 		if err != nil {
@@ -73,7 +73,7 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 	if err := context.BodyParser(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
-	res, err := controller.Prisma.User.CreateOne(
+	res, err := controller.PrismaClient.User.CreateOne(
 		db.User.ID.Set(userRequest.Id),
 		db.User.Email.Set(userRequest.Email),
 		db.User.Fullname.Set(userRequest.Email),
@@ -109,7 +109,7 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 		log.Panic(err.Error())
 	}
 	onUpdateUser := func() {
-		res, err := controller.Prisma.User.FindUnique(
+		res, err := controller.PrismaClient.User.FindUnique(
 			db.User.ID.Equals(userRequest.Id),
 		).Update(
 			db.User.Email.Set(userRequest.Email),
@@ -163,7 +163,7 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 //	@Router			/api/v1/users/{userId} [delete]
 func (controller *Controller) DeleteUserById(context *fiber.Ctx) error {
 	var user model.UserResponse
-	res, err := controller.Prisma.User.FindUnique(
+	res, err := controller.PrismaClient.User.FindUnique(
 		db.User.ID.Equals(context.Params("userId")),
 	).Delete().Exec(controller.Context)
 	if err != nil {

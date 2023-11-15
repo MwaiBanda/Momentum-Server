@@ -24,7 +24,7 @@ import (
 //	@Router			/api/v1/messages/{userId} [get]
 func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	var messages []model.Message
-	res, err := controller.Prisma.Message.FindMany().With(
+	res, err := controller.PrismaClient.Message.FindMany().With(
 		db.Message.Passages.Fetch().With(
 			db.Passage.Notes.Fetch(
 				db.Note.UserID.Equals(context.Params("userId")),

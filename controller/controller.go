@@ -22,7 +22,7 @@ import (
 
 type Controller struct {
 	HttpClient                 *http.Client
-	Prisma                     *db.PrismaClient
+	PrismaClient               *db.PrismaClient
 	Context                    context.Context
 	Redis                      *redis.Client
 	Firebase                   *firebase.App
@@ -32,20 +32,40 @@ type Controller struct {
 
 func GetControllerInstance() *Controller {
 	return &Controller{
-		HttpClient: &http.Client{Timeout: time.Second * 10},
+		HttpClient:                 &http.Client{Timeout: time.Second * 10},
 		CanSendNotificationChannel: make(chan bool),
 	}
 }
 
 func (controller *Controller) SetPrismaClient(client *db.PrismaClient) {
-	controller.Prisma = client
+	controller.PrismaClient = client
 }
 
 func (controller *Controller) SetRedisClient(client *redis.Client) {
 	controller.Redis = client
 }
 
+func (controller *Controller) InitPrismaClient() {
+	prismaClient := db.NewClient()
+	if err := prismaClient.Prisma.Connect(); err != nil {
+		fmt.Println(err)
+	}
+	controller.SetPrismaClient(prismaClient)
+}
+func (controller *Controller) InitRedisClient() {
+	opt, err := redis.ParseURL(constants.RedisURL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	redisClient := redis.NewClient(opt)
+	controller.SetRedisClient(redisClient)
+	log.Println("Connected to Redis")
+}
+
 func (controller *Controller) InitFirebaseApp() {
+	if controller.Redis == nil {
+		controller.InitRedisClient()
+	}
 	firebaseToken, err := controller.Redis.Get(controller.Context, constants.FirebaseServiceTokenKey).Result()
 	if err != nil {
 		fmt.Println(err)

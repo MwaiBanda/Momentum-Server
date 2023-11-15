@@ -39,7 +39,7 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
 
 	var transactions []transaction.Param
-	transactions = append(transactions, controller.Prisma.Meal.CreateOne(
+	transactions = append(transactions, controller.PrismaClient.Meal.CreateOne(
 		db.Meal.Reason.Set(mealRequest.Reason),
 		db.Meal.Email.Set(mealRequest.Email),
 		db.Meal.Phone.Set(mealRequest.Phone),
@@ -57,7 +57,7 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 		db.Meal.ID.Set(mealID),
 	).Tx())
 	for _, meal := range mealRequest.Meals {
-		transactions = append(transactions, controller.Prisma.VolunteeredMeal.CreateOne(
+		transactions = append(transactions, controller.PrismaClient.VolunteeredMeal.CreateOne(
 			db.VolunteeredMeal.Description.Set(""),
 			db.VolunteeredMeal.Notes.Set(""),
 			db.VolunteeredMeal.Date.Set(meal.Date),
@@ -65,7 +65,7 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 		).Tx())
 	}
 
-	err := controller.Prisma.Prisma.Transaction(transactions...).Exec(controller.Context)
+	err := controller.PrismaClient.Prisma.Transaction(transactions...).Exec(controller.Context)
 	if err != nil {
 		log.Panic(err.Error())
 	}
@@ -93,13 +93,13 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 		log.Panic(err.Error())
 	}
 	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
-	err := controller.Prisma.Prisma.Transaction(
-		controller.Prisma.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
+	err := controller.PrismaClient.Prisma.Transaction(
+		controller.PrismaClient.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.VolunteeredMeal.Id)).Update(
 			db.VolunteeredMeal.Description.Set(meal.VolunteeredMeal.Description),
 			db.VolunteeredMeal.Notes.Set(meal.VolunteeredMeal.Notes),
 			db.VolunteeredMeal.UserID.Set(meal.VolunteeredMeal.User.Id),
 		).Tx(),
-		controller.Prisma.MealParticipant.UpsertOne(
+		controller.PrismaClient.MealParticipant.UpsertOne(
 			db.MealParticipant.IDUserIDMealID(db.MealParticipant.ID.Equals(meal.VolunteeredMeal.Id), db.MealParticipant.UserID.Equals(meal.MealId), db.MealParticipant.MealID.Equals(meal.VolunteeredMeal.User.Id)),
 		).Create(
 			db.MealParticipant.Meal.Link(db.Meal.ID.Equals(meal.MealId)),
@@ -131,7 +131,7 @@ func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 	mealResponse := new([]model.MealResponse)
 	cachedMeal, err := controller.Redis.Get(controller.Context, constants.MealsKey).Result()
 	if err == redis.Nil {
-		res, err := controller.Prisma.Meal.FindMany().With(
+		res, err := controller.PrismaClient.Meal.FindMany().With(
 			db.Meal.User.Fetch(),
 		).With(
 			db.Meal.Participants.Fetch().With(
