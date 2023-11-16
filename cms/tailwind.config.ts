@@ -2,10 +2,17 @@
 import { type Config } from "tailwindcss";
 
 export default {
-  content: ["./src/**/*.{ts,tsx}"],
+  content: [
+    "./src/**/*.{ts,tsx}",
+  'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
+],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'momentum-orange': '#ec750c',
+      },
+    },
   },
-  plugins: [],
+  plugins: [require('flowbite/plugin')],
 } satisfies Config
 

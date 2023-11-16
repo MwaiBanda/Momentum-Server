@@ -50,6 +50,7 @@ func (controller *Controller) InitPrismaClient() {
 	if err := prismaClient.Prisma.Connect(); err != nil {
 		fmt.Println(err)
 	}
+	log.Println("Connected to Prisma")
 	controller.SetPrismaClient(prismaClient)
 }
 func (controller *Controller) InitRedisClient() {

@@ -1,17 +1,29 @@
 import {createBrowserRouter} from "react-router-dom";
-import {Demo} from "../components/demo.tsx";
+import {Home} from "../pages/home.tsx";
+import { Messages } from "../pages/messages.tsx";
+import { Notifications } from "../pages/noticafications.tsx";
+import { Payments } from "../pages/payments.tsx";
+import { Users } from "../pages/users.tsx";
 
 export const router = createBrowserRouter([
     {
-        path: "/dashboard/home",
-        element: <Demo/>,
+        path: "/messages",
+        element: <Messages/>,
     },
     {
         path: "/dashboard",
-        element: <Demo/>,
+        element: <Home/>,
     },
     {
-        path: "/services",
-        element: <h1>Services</h1>,
+        path: "/notifications",
+        element: <Notifications/>,
+    },
+    {
+        path: "/payments",
+        element: <Payments/>,
+    },
+    {
+        path: "/users",
+        element: <Users/>,
     },
 ])
