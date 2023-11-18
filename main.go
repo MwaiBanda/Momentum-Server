@@ -29,7 +29,7 @@ func main() {
 	controller := handlers.GetControllerInstance()
 	go func ()  {
 		controller.InitRedisClient()
-		go controller.SetContext(context.Background())
+		controller.SetContext(context.Background())
 		go controller.InitPrismaClient()
 		go controller.InitFirebaseApp()
 	}()
