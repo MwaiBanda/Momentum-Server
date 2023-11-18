@@ -38,7 +38,7 @@ func main() {
 		if len(os.Getenv("PORT")) > 0 {
 			return os.Getenv("PORT")
 		} else {
-			return "8083"
+			return "8085"
 		}
 	}()
 
@@ -67,7 +67,9 @@ func main() {
 	v1.Get("/messages/:userId", controller.GetAllMessages)
 
 	v1.Post("/notifications", controller.PostNotification)
-
+	
+	v1.Get("/events", controller.GetAllEvents)
+	
 	app.Get("/*", swagger.HandlerDefault)
 	app.Get("/*", swagger.New(swagger.Config{
 		URL:          "https://services.momentumchurch.dev/doc.json",
@@ -80,6 +82,5 @@ func main() {
 			panic(err)
 		}
 	}()
-
 	log.Fatal(app.Listen(":" + port))
 }

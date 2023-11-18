@@ -32,7 +32,7 @@ type Controller struct {
 
 func GetControllerInstance() *Controller {
 	return &Controller{
-		HttpClient:                 &http.Client{Timeout: time.Second * 10},
+		HttpClient:  &http.Client{Timeout: time.Second * 10},
 		CanSendNotificationChannel: make(chan bool),
 	}
 }
