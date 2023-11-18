@@ -29,7 +29,6 @@ func main() {
 	controller := handlers.GetControllerInstance()
 	go func ()  {
 		controller.InitRedisClient()
-		controller.SetContext(context.Background())
 		go controller.InitPrismaClient()
 		go controller.InitFirebaseApp()
 	}()
@@ -41,9 +40,10 @@ func main() {
 			return "8085"
 		}
 	}()
-
+	
+	controller.SetContext(context.Background())
 	middleware.ConfigureAppMiddleWare(app)
-
+	
 	api := app.Group("/api")
 	api.Get("/metrics", middleware.Monitor())
 	v1 := api.Group("/v1", middleware.BearerTokenAuthentication())
