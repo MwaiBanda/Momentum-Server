@@ -45,28 +45,31 @@ func (controller *Controller) SetRedisClient(client *redis.Client) {
 	controller.Redis = client
 }
 
-func (controller *Controller) InitPrismaClient() {
+func (controller *Controller) InitPrismaClient(wg ...*sync.WaitGroup) {
 	prismaClient := db.NewClient()
 	if err := prismaClient.Prisma.Connect(); err != nil {
 		fmt.Println(err)
 	}
-	log.Println("Connected to Prisma")
+	if len(wg) > 0 {
+		defer wg[0].Done()
+	}
 	controller.SetPrismaClient(prismaClient)
+	log.Println("Connected to Prisma")
 }
-func (controller *Controller) InitRedisClient() {
+func (controller *Controller) InitRedisClient(wg ...*sync.WaitGroup) {
 	opt, err := redis.ParseURL(constants.RedisURL)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	redisClient := redis.NewClient(opt)
+	if len(wg) > 0 {
+		defer wg[0].Done()
+	}
 	controller.SetRedisClient(redisClient)
 	log.Println("Connected to Redis")
 }
 
-func (controller *Controller) InitFirebaseApp() {
-	if controller.Redis == nil {
-		controller.InitRedisClient()
-	}
+func (controller *Controller) InitFirebaseApp(wg ...*sync.WaitGroup) {
 	firebaseToken, err := controller.Redis.Get(context.Background(), constants.FirebaseServiceTokenKey).Result()
 	if err != nil {
 		fmt.Println(err)
@@ -76,6 +79,9 @@ func (controller *Controller) InitFirebaseApp() {
 	firebaseApp, err := firebase.NewApp(controller.Context, config, creds)
 	if err != nil {
 		fmt.Println("[Firebase]", err)
+	}
+	if len(wg) > 0 {
+		defer wg[0].Done()
 	}
 	controller.setFirebaseApp(firebaseApp)
 }

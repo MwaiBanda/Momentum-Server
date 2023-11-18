@@ -7,6 +7,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
@@ -27,11 +28,17 @@ import (
 // @BasePath		/
 func main() {
 	controller := handlers.GetControllerInstance()
+	waitGroup := new(sync.WaitGroup)
+	waitGroup.Add(1)
 	go func ()  {
-		controller.InitRedisClient()
-		go controller.InitPrismaClient()
-		go controller.InitFirebaseApp()
+		controller.InitRedisClient(waitGroup)
+		waitGroup.Add(1)
+		go controller.InitPrismaClient(waitGroup)
+		waitGroup.Add(1)
+		go controller.InitFirebaseApp(waitGroup)
+		defer waitGroup.Wait()
 	}()
+
 	app := fiber.New()
 	port := func() string {
 		if len(os.Getenv("PORT")) > 0 {

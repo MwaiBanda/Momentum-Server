@@ -10,7 +10,7 @@ export function Nav() {
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Navbar.Link href="/dashboard" active> Home</Navbar.Link>
-          <Navbar.Link  href="/messages">Messages</Navbar.Link>
+          <Navbar.Link href="/messages">Messages</Navbar.Link>
           <Navbar.Link href="/notifications">Notifications</Navbar.Link>
           <Navbar.Link href="/payments">Payments</Navbar.Link>
           <Navbar.Link href="/users">Users</Navbar.Link>
