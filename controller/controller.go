@@ -4,6 +4,7 @@ import (
 	"Momentum/constants"
 	"Momentum/prisma/db"
 	b64 "encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -32,7 +33,7 @@ type Controller struct {
 
 func GetControllerInstance() *Controller {
 	return &Controller{
-		HttpClient:  &http.Client{Timeout: time.Second * 10},
+		HttpClient:                 &http.Client{Timeout: time.Second * 10},
 		CanSendNotificationChannel: make(chan bool),
 	}
 }
@@ -103,6 +104,48 @@ func (controller *Controller) SetContext(context context.Context) {
 type StripeResponse struct {
 	Endpoint string
 	ReadData func() ([]byte, error)
+}
+
+func (controller *Controller) GetPlanningCenterToken() Token {
+	var tokenResponse TokenResponse
+	var cachedToken, err = controller.Redis.Get(controller.Context, constants.TokenKey).Result()
+	if err == redis.Nil {
+		resp, err := controller.HttpClient.Post(constants.PlannnigCenterTokenUrl, "application/json", nil)
+		if err != nil {
+			log.Println("GetPlanningCenterToken", err)
+		}
+		defer resp.Body.Close()
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("GetPlanningCenterToken", err)
+		}
+		if err := json.Unmarshal(data, &tokenResponse); err != nil {
+			log.Println("GetPlanningCenterToken", err)
+		}
+		if err = controller.Redis.Set(controller.Context, constants.TokenKey, string(data), 1*time.Hour + 30 * time.Minute).Err(); err != nil {
+			log.Println("[GetAllSermons]", err.Error())
+		}
+	} else if err != nil { 
+		log.Println("GetPlanningCenterToken", err)
+	} else {
+		err := json.Unmarshal([]byte(cachedToken), &tokenResponse)
+		if err != nil {
+			log.Println("GetPlanningCenterToken", err)
+		}
+	}
+
+	return tokenResponse.Data
+}
+
+type TokenResponse struct {
+	Data Token `json:"data"`
+}
+type Token struct {
+	Type       string          `json:"type"`
+	Attributes TokenAttributes `json:"attributes"`
+}
+type TokenAttributes struct {
+	Token string `json:"token"`
 }
 
 func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel chan<- StripeResponse, endpoint string) {

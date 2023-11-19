@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,7 +14,7 @@ import (
 
 // GetAllEvents godoc
 //
-//	@Summary		Get all Calender Events 
+//	@Summary		Get all Calender Events
 //	@Description	Used to get all events scheduled on the church calender
 //	@tags			Events
 //
@@ -34,7 +33,11 @@ func (controller *Controller) GetAllEvents(context *fiber.Ctx) error {
 		log.Fatalln("New Request", err)
 	}
 
-	req.Header.Add("Authorization", "Bearer "+os.Getenv("PLANNING_CENTER_TOKEN"))
+	token := controller.GetPlanningCenterToken()
+	if err != nil {
+		log.Println(err)
+	}
+	req.Header.Add("Authorization", token.Type+" "+token.Attributes.Token)
 
 	resp, err := controller.HttpClient.Do(req)
 	if err != nil {
