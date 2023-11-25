@@ -71,10 +71,7 @@ func main() {
 		DocExpansion: "none",
 	}))
 
-	defer func() {
-		if err := controller.PrismaClient.Prisma.Disconnect(); err != nil {
-			panic(err)
-		}
-	}()
+	defer controller.DisconectPrismaClient()
+
 	log.Fatal(app.Listen(":" + port))
 }

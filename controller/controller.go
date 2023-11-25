@@ -16,6 +16,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
 	"google.golang.org/api/option"
@@ -35,6 +36,10 @@ func GetControllerInstance() *Controller {
 	controller := &Controller{
 		HttpClient:                 &http.Client{Timeout: time.Second * 10},
 		CanSendNotificationChannel: make(chan bool),
+	}
+	err := godotenv.Load()
+	if err != nil {
+	  log.Fatal("Error loading .env file")
 	}
 	controller.InitDependencies()
 	return controller
@@ -73,8 +78,15 @@ func (controller *Controller) InitPrismaClient(wg ...*sync.WaitGroup) {
 	controller.SetPrismaClient(prismaClient)
 	log.Println("Connected to Prisma")
 }
+
+func (controller *Controller) DisconectPrismaClient() {
+	if err := controller.PrismaClient.Prisma.Disconnect(); err != nil {
+		panic(err)
+	}
+}
+
 func (controller *Controller) InitRedisClient(wg ...*sync.WaitGroup) {
-	opt, err := redis.ParseURL(constants.RedisURL)
+	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -140,7 +152,7 @@ func (controller *Controller) GetPlanningCenterToken() Token {
 			log.Println("GetPlanningCenterToken", err)
 		}
 		if err = controller.Redis.Set(controller.Context, constants.TokenKey, string(data), 1*time.Hour + 30 * time.Minute).Err(); err != nil {
-			log.Println("[GetAllSermons]", err.Error())
+			log.Println("[GetPlanningCenterToken]", err.Error())
 		}
 	} else if err != nil { 
 		log.Println("GetPlanningCenterToken", err)
@@ -169,7 +181,7 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 	defer waitGroup.Done()
 	req, err := http.NewRequest("POST", "https://api.stripe.com/v1"+endpoint, nil)
 	if err != nil {
-		log.Fatalln("New Request", err)
+		log.Fatalln("StripeRequest", err)
 	}
 
 	req.Header.Add("Authorization", "Basic "+b64.URLEncoding.EncodeToString([]byte(os.Getenv("STRIPE_SECRET_KEY"))))
@@ -183,7 +195,7 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 
 	resp, err := controller.HttpClient.Do(req)
 	if err != nil {
-		log.Panic("Request", err)
+		log.Panic("StripeRequest", err)
 	}
 
 	channel <- StripeResponse{
