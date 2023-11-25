@@ -4,10 +4,8 @@ import (
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	"Momentum/middleware"
-	"context"
 	"log"
 	"os"
-	"sync"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
@@ -27,18 +25,8 @@ import (
 // @host			services.momentumchurch.dev
 // @BasePath		/
 func main() {
+	log.Println("Starting Momentum API")
 	controller := handlers.GetControllerInstance()
-	waitGroup := new(sync.WaitGroup)
-	waitGroup.Add(1)
-	go func ()  {
-		controller.InitRedisClient(waitGroup)
-		waitGroup.Add(1)
-		go controller.InitPrismaClient(waitGroup)
-		waitGroup.Add(1)
-		go controller.InitFirebaseApp(waitGroup)
-		defer waitGroup.Wait()
-	}()
-
 	app := fiber.New()
 	port := func() string {
 		if len(os.Getenv("PORT")) > 0 {
@@ -48,7 +36,6 @@ func main() {
 		}
 	}()
 	
-	controller.SetContext(context.Background())
 	middleware.ConfigureAppMiddleWare(app)
 	
 	api := app.Group("/api")

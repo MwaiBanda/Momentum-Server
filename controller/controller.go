@@ -32,10 +32,26 @@ type Controller struct {
 }
 
 func GetControllerInstance() *Controller {
-	return &Controller{
+	controller := &Controller{
 		HttpClient:                 &http.Client{Timeout: time.Second * 10},
 		CanSendNotificationChannel: make(chan bool),
 	}
+	controller.InitDependencies()
+	return controller
+}
+
+func (controller *Controller) InitDependencies() {
+	waitGroup := new(sync.WaitGroup)
+	waitGroup.Add(1)
+	go controller.SetContext(context.Background(), waitGroup)
+	waitGroup.Add(1)
+	go controller.InitRedisClient(waitGroup)
+	waitGroup.Wait()
+	waitGroup.Add(1)
+	go controller.InitPrismaClient(waitGroup)
+	waitGroup.Add(1)
+	go controller.InitFirebaseApp(waitGroup)
+	waitGroup.Wait()
 }
 
 func (controller *Controller) SetPrismaClient(client *db.PrismaClient) {
@@ -71,7 +87,7 @@ func (controller *Controller) InitRedisClient(wg ...*sync.WaitGroup) {
 }
 
 func (controller *Controller) InitFirebaseApp(wg ...*sync.WaitGroup) {
-	firebaseToken, err := controller.Redis.Get(context.Background(), constants.FirebaseServiceTokenKey).Result()
+	firebaseToken, err := controller.Redis.Get(controller.Context, constants.FirebaseServiceTokenKey).Result()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -97,8 +113,9 @@ func (controller *Controller) setFirebaseApp(app *firebase.App) {
 	log.Println("Connected to Firebase")
 }
 
-func (controller *Controller) SetContext(context context.Context) {
+func (controller *Controller) SetContext(context context.Context, wg *sync.WaitGroup) {
 	controller.Context = context
+	wg.Done()
 }
 
 type StripeResponse struct {
