@@ -4,12 +4,12 @@ import (
 	"Momentum/constants"
 	"Momentum/model"
 	"encoding/json"
-	"io"
+	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 )
 
 // GetAllEvents godoc
@@ -27,32 +27,23 @@ import (
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/events [get]
 func (controller *Controller) GetAllEvents(context *fiber.Ctx) error {
-	url := constants.PlannnigCenterUrl + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-24*time.Hour).Format(time.RFC3339)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		log.Fatalln("New Request", err)
-	}
-
-	token := controller.GetPlanningCenterToken()
-	if err != nil {
-		log.Println(err)
-	}
-	req.Header.Add("Authorization", token.Type+" "+token.Attributes.Token)
-
-	resp, err := controller.HttpClient.Do(req)
-	if err != nil {
-		log.Panic("Request", err)
-	}
-	defer resp.Body.Close()
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Panic("Request", err)
-	}
 	eventResponse := new(model.EventReponse)
-
-	if err := json.Unmarshal(data, &eventResponse); err != nil {
-		log.Println(err)
+	cachedEvents, err := controller.Redis.Get(controller.Context, constants.EventsKey).Result()	
+	if err == redis.Nil {
+		data, err := controller.EventRequest().ReadData()
+		if err != nil {
+			log.Panic("Request", err)
+		}
+		if err := json.Unmarshal(data, &eventResponse); err != nil {
+			log.Println(err)
+		}
+		controller.Redis.Set(controller.Context, constants.EventsKey, string(data), time.Hour*2)
+	} else if err != nil {
+		log.Println(err.Error())
+	} else {
+		if err := json.Unmarshal([]byte(cachedEvents), &eventResponse); err != nil {
+			fmt.Println(err)
+		}
 	}
-
 	return context.JSON(eventResponse)
 }

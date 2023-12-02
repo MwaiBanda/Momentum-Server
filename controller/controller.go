@@ -210,3 +210,33 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 func getBasePath(s string) string {
 	return strings.SplitAfter(s, "?")[0]
 }
+
+func (controller *Controller) EventRequest() EventReponse {
+	url := constants.PlannnigCenterUrl + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-24*time.Hour).Format(time.RFC3339)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatalln("New Request", err)
+	}
+
+	token := controller.GetPlanningCenterToken()
+	if err != nil {
+		log.Println(err)
+	}
+	req.Header.Add("Authorization", token.Type+" "+token.Attributes.Token)
+
+	resp, err := controller.HttpClient.Do(req)
+	if err != nil {
+		log.Panic("Request", err)
+	}
+	
+	return EventReponse{
+		ReadData: func() ([]byte, error) {
+			defer resp.Body.Close()
+			return io.ReadAll(resp.Body)
+		},
+	}
+}
+
+type EventReponse struct {
+	ReadData func() ([]byte, error)
+}

@@ -21,14 +21,15 @@ model Message {
 }
 
 model Passage {
-  id        String  @id @default(cuid())
+  id        String    @id @default(cuid())
   header    String?
   verse     String?
   message   String?
   messageId String?
   order     Int?
+  createdOn DateTime? @default(now())
   notes     Note[]
-  parent    Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  parent    Message?  @relation(fields: [messageId], references: [id])
 
   @@index([messageId])
 }
@@ -40,8 +41,8 @@ model Note {
   updatedOn DateTime @default(now())
   userId    String?
   passageId String?
-  passage   Passage?  @relation(fields: [passageId], references: [id], onDelete: SetNull)
-  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  passage   Passage? @relation(fields: [passageId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
 
   @@index([userId, passageId])
 }
