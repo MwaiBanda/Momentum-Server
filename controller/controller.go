@@ -39,7 +39,7 @@ func GetControllerInstance() *Controller {
 	}
 	err := godotenv.Load()
 	if err != nil {
-	  log.Fatal("Error loading .env file")
+	  log.Println("Error loading .env file")
 	}
 	controller.InitDependencies()
 	return controller
