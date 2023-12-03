@@ -1,6 +1,11 @@
 import { Navbar } from 'flowbite-react';
+import { useLocation } from 'react-router-dom';
+import {HOME, MESSAGES, NOFICATIONS, PAYMENTS, USERS} from "../util/constants";
+
 
 export function Nav() {
+  let location = useLocation();
+
     return (
       <Navbar fluid rounded className="w-full">
         <Navbar.Brand href="/dashboard">
@@ -9,11 +14,11 @@ export function Nav() {
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
-          <Navbar.Link href="/dashboard" active> Home</Navbar.Link>
-          <Navbar.Link href="/messages">Messages</Navbar.Link>
-          <Navbar.Link href="/notifications">Notifications</Navbar.Link>
-          <Navbar.Link href="/payments">Payments</Navbar.Link>
-          <Navbar.Link href="/users">Users</Navbar.Link>
+          <Navbar.Link href={HOME} active={HOME === location.pathname}> Home</Navbar.Link>
+          <Navbar.Link href={MESSAGES} active={MESSAGES === location.pathname}>Messages</Navbar.Link>
+          <Navbar.Link href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</Navbar.Link>
+          <Navbar.Link href={PAYMENTS} active={PAYMENTS === location.pathname}>Payments</Navbar.Link>
+          <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link>
         </Navbar.Collapse>
       </Navbar>
     );

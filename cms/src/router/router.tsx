@@ -4,26 +4,27 @@ import { Messages } from "../pages/messages.tsx";
 import { Notifications } from "../pages/noticafications.tsx";
 import { Payments } from "../pages/payments.tsx";
 import { Users } from "../pages/users.tsx";
+import { HOME, MESSAGES, NOFICATIONS, PAYMENTS, USERS } from "../util/constants.ts";
 
 export const router = createBrowserRouter([
     {
-        path: "/messages",
+        path: MESSAGES,
         element: <Messages/>,
     },
     {
-        path: "/dashboard",
+        path: HOME,
         element: <Home/>,
     },
     {
-        path: "/notifications",
+        path: NOFICATIONS,
         element: <Notifications/>,
     },
     {
-        path: "/payments",
+        path: PAYMENTS,
         element: <Payments/>,
     },
     {
-        path: "/users",
+        path: USERS,
         element: <Users/>,
     },
 ])
