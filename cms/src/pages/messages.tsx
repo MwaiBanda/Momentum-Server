@@ -7,7 +7,7 @@ import { Message } from "../models/message"
 function MessageCard({ message }: { message: Message }) {
   return (
     <Card className="max-w-lg mt-6" imgSrc="assets/logo.png" horizontal>
-        <div className="w-96">
+        <div className="min-w-96">
             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {message.preacher}
             </h5>

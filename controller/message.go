@@ -31,7 +31,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	if err == redis.Nil {
 		res, err := controller.PrismaClient.Message.FindMany().With(
 			db.Message.Passages.Fetch().OrderBy(
-				db.Passage.CreatedOn.Order(db.SortOrderDesc),
+				db.Passage.CreatedOn.Order(db.SortOrderAsc),
 			).With(
 				db.Passage.Notes.Fetch(
 					db.Note.UserID.Equals(context.Params("userId")),
