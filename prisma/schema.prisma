@@ -26,7 +26,6 @@ model Passage {
   verse     String?
   message   String?
   messageId String?
-  order     Int?
   createdOn DateTime? @default(now())
   notes     Note[]
   parent    Message?  @relation(fields: [messageId], references: [id])
