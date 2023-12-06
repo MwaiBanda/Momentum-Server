@@ -12,6 +12,7 @@ type Message struct {
 	Preacher  string `json:"preacher"`	
 	Date	  string `json:"date"`
 	CreatedOn string `json:"createdOn"`
+	Published bool   `json:"published"`
 	Passages []PassageResponse `json:"passages"`
 }
 
@@ -20,4 +21,5 @@ type PassageResponse struct {
 	Header   string `json:"header"`
 	Verse    string `json:"verse"`
 	Message string `json:"message"`
+	Type string `json:"type"`
 }

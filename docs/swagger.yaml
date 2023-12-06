@@ -152,6 +152,8 @@ definitions:
         type: array
       preacher:
         type: string
+      published:
+        type: boolean
       series:
         type: string
       thumbnail:
@@ -189,6 +191,8 @@ definitions:
       id:
         type: string
       message:
+        type: string
+      type:
         type: string
       verse:
         type: string
@@ -555,6 +559,46 @@ paths:
       summary: Post a meal participant
       tags:
       - Meals
+  /api/v1/messages:
+    post:
+      consumes:
+      - application/json
+      description: Used to post a message
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Post a message
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Post a Message
+      tags:
+      - Messages
   /api/v1/messages/{userId}:
     get:
       consumes:

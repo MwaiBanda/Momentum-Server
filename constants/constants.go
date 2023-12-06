@@ -20,4 +20,7 @@ var (
 	PlannnigCenterUrl			= "https://api.churchcenter.com/calendar/v2/events"
 	PlannnigCenterTokenUrl		= "https://momentumlifegroups.churchcenter.com/sessions/tokens"
 	TokenKey  					= "planning-token"
+	Admin 						= "admin"
+	Header 						= "header"
+	Message 					= "message" 
 )

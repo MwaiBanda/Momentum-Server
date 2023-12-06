@@ -249,6 +249,66 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/messages": {
+            "post": {
+                "description": "Used to post a message",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Post a Message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Post a message",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/messages/{userId}": {
             "get": {
                 "description": "get a list of messages available",
@@ -1124,6 +1184,9 @@ const docTemplate = `{
                 "preacher": {
                     "type": "string"
                 },
+                "published": {
+                    "type": "boolean"
+                },
                 "series": {
                     "type": "string"
                 },
@@ -1181,6 +1244,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 },
                 "verse": {

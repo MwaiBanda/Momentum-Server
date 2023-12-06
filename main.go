@@ -58,6 +58,7 @@ func main() {
 
 	v1.Get("/sermons", controller.GetAllSermons)
 
+	v1.Post("/messages", controller.PostMessage)
 	v1.Get("/messages/:userId", controller.GetAllMessages)
 
 	v1.Post("/notifications", controller.PostNotification)

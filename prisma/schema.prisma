@@ -10,13 +10,14 @@ datasource db {
 }
 
 model Message {
-  id        String    @id @default(cuid())
+  id        String    @id 
   thumbnail String
   series    String
   title     String
   preacher  String
   date      String
   createdOn DateTime  @default(now())
+  published Boolean   @default(false)
   passages  Passage[]
 }
 
