@@ -105,6 +105,9 @@ func (controller *Controller) PostMessage(context *fiber.Ctx) error {
 	}
 	messageId := cuid.New()
 	var transactions []transaction.Param
+
+	go controller.Redis.Expire(controller.Context, constants.MessageKey, time.Second*0)
+
 	transactions = append(transactions, controller.PrismaClient.Message.CreateOne(
 		db.Message.ID.Set(messageId),
 		db.Message.Thumbnail.Set(message.Thumbnail),

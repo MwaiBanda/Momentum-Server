@@ -1,6 +1,6 @@
 import { Navbar } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
-import {HOME, MESSAGES, NOFICATIONS, PAYMENTS, USERS} from "../util/constants";
+import {MESSAGES, NOFICATIONS, PAYMENTS, USERS} from "../util/constants";
 
 
 
@@ -16,8 +16,8 @@ export function Nav() {
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
-          <Navbar.Link  href={HOME} active={HOME === location.pathname}> Home</Navbar.Link>
-          <Navbar.Link  className="bg-momentum-orange active:bg-momentum-orange" href={MESSAGES} active={MESSAGES === location.pathname}>Messages</Navbar.Link>
+          {/* <Navbar.Link  href={HOME} active={HOME === location.pathname}> Home</Navbar.Link> */}
+          <Navbar.Link  className="hover:text-momentum-orange active:text-momentum-orange" href={MESSAGES} active={MESSAGES === location.pathname}>Messages</Navbar.Link>
           <Navbar.Link href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</Navbar.Link>
           <Navbar.Link href={PAYMENTS} active={PAYMENTS === location.pathname}>Payments</Navbar.Link>
           <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link>
