@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"sort"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -79,7 +80,13 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 			fmt.Println(err)
 		}
 	}
-
+	for _, message := range messages {
+		if message.HasOrder {
+			sort.Slice(message.Passages, func(i, j int) bool {
+				return message.Passages[i].Order < message.Passages[j].Order
+			})
+		}
+	}
 	return context.JSON(model.MessageResponse{Data: messages})
 }
 
@@ -120,11 +127,13 @@ func (controller *Controller) PostMessage(context *fiber.Ctx) error {
 		if passage.Type == constants.Header {
 			transactions = append(transactions, controller.PrismaClient.Passage.CreateOne(
 				db.Passage.Header.Set(passage.Header),
+				db.Passage.MessageID.Set(messageId),
 			).Tx())
 		} else if passage.Type == constants.Message {
 			transactions = append(transactions, controller.PrismaClient.Passage.CreateOne(
 				db.Passage.Verse.Set(passage.Verse),
 				db.Passage.Message.Set(passage.Message),
+				db.Passage.MessageID.Set(messageId),
 			).Tx())
 		}
 	}

@@ -13,6 +13,7 @@ type Message struct {
 	Date	  string `json:"date"`
 	CreatedOn string `json:"createdOn"`
 	Published bool   `json:"published"`
+	HasOrder  bool   `json:"hasOrder"`
 	Passages []PassageResponse `json:"passages"`
 }
 
@@ -22,4 +23,5 @@ type PassageResponse struct {
 	Verse    string `json:"verse"`
 	Message string `json:"message"`
 	Type string `json:"type"`
+	Order int `json:"order"`
 }
