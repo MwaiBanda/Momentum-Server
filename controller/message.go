@@ -58,13 +58,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		}
 		
 		if userId != constants.Admin && messages != nil{
-			for _, message := range messages {
-				if message.HasOrder {
-					sort.Slice(message.Passages, func(i, j int) bool {
-						return message.Passages[i].Order < message.Passages[j].Order
-					})
-				}
-			}
+			
 			controller.Redis.Set(controller.Context, constants.MessageKey, string(result), time.Hour*24)
 		} else {
 			res, err := controller.PrismaClient.Message.FindMany(
@@ -87,6 +81,13 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	} else {
 		if err := json.Unmarshal([]byte(cachedMessages), &messages); err != nil {
 			fmt.Println(err)
+		}
+	}
+	for _, message := range messages {
+		if message.HasOrder {
+			sort.Slice(message.Passages, func(i, j int) bool {
+				return message.Passages[i].Order < message.Passages[j].Order
+			})
 		}
 	}
 	return context.JSON(model.MessageResponse{Data: messages})
