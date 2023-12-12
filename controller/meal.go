@@ -148,7 +148,9 @@ func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 		}
 
 		result, _ := json.MarshalIndent(res, "", "  ")
-		controller.Redis.Set(controller.Context, constants.MealsKey, string(result), time.Hour*6)
+		if result == nil {
+			controller.Redis.Set(controller.Context, constants.MealsKey, string(result), time.Hour*24)
+		}
 		if err := json.Unmarshal(result, &mealResponse); err != nil {
 			fmt.Println(err)
 		}

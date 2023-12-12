@@ -54,9 +54,18 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		result, _ := json.MarshalIndent(res, "", "  ")
 		if err := json.Unmarshal(result, &messages); err != nil {
 			fmt.Println(err)
+			
 		}
-		if userId != constants.Admin {
-			controller.Redis.Set(controller.Context, constants.MessageKey, string(result), time.Hour*6)
+		
+		if userId != constants.Admin && messages != nil{
+			for _, message := range messages {
+				if message.HasOrder {
+					sort.Slice(message.Passages, func(i, j int) bool {
+						return message.Passages[i].Order < message.Passages[j].Order
+					})
+				}
+			}
+			controller.Redis.Set(controller.Context, constants.MessageKey, string(result), time.Hour*24)
 		} else {
 			res, err := controller.PrismaClient.Message.FindMany(
 				db.Message.Published.Equals(false),
@@ -78,13 +87,6 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	} else {
 		if err := json.Unmarshal([]byte(cachedMessages), &messages); err != nil {
 			fmt.Println(err)
-		}
-	}
-	for _, message := range messages {
-		if message.HasOrder {
-			sort.Slice(message.Passages, func(i, j int) bool {
-				return message.Passages[i].Order < message.Passages[j].Order
-			})
 		}
 	}
 	return context.JSON(model.MessageResponse{Data: messages})
@@ -128,12 +130,14 @@ func (controller *Controller) PostMessage(context *fiber.Ctx) error {
 			transactions = append(transactions, controller.PrismaClient.Passage.CreateOne(
 				db.Passage.Header.Set(passage.Header),
 				db.Passage.MessageID.Set(messageId),
+				db.Passage.Order.Set(passage.Order),
 			).Tx())
 		} else if passage.Type == constants.Message {
 			transactions = append(transactions, controller.PrismaClient.Passage.CreateOne(
 				db.Passage.Verse.Set(passage.Verse),
 				db.Passage.Message.Set(passage.Message),
 				db.Passage.MessageID.Set(messageId),
+				db.Passage.Order.Set(passage.Order),
 			).Tx())
 		}
 	}
