@@ -22,4 +22,5 @@ export type Passage = {
     verse: string | null;
     message: string | null;
     type : string | null;
+    order: number;
 }

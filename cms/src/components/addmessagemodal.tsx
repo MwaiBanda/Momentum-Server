@@ -110,21 +110,23 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                                 preacher: preacherInputRef.current?.value ?? "",
                                 thumbnail: imageInputRef.current?.value ?? "",
                                 date: dateInputRef.current?.value ?? "",
-                                passages: refs.map((passage) => {
+                                passages: refs.map((passage, index) => {
                                     switch (passage.type) {
                                         case PassageType.Header:
                                             return {
                                                 header: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
                                                 verse: null,
                                                 message: null,
-                                                type: "header"
+                                                type: "header",
+                                                order: index
                                             }
                                         case PassageType.Message:
                                             return {
                                                 header: null,
                                                 verse: (passage.text as RefObject<HTMLInputElement>).current?.value ?? "",
                                                 message: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
-                                                type: "message"
+                                                type: "message",
+                                                order: index
                                             }
                                     }
                                 })

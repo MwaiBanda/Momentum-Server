@@ -124,6 +124,7 @@ func (controller *Controller) PostMessage(context *fiber.Ctx) error {
 		db.Message.Title.Set(message.Title),
 		db.Message.Preacher.Set(message.Preacher),
 		db.Message.Date.Set(message.Date),
+		db.Message.HasOrder.Set(true),
 	).Tx())
 	for _, passage := range message.Passages {
 		if passage.Type == constants.Header {
