@@ -39,10 +39,13 @@ func GetControllerInstance() *Controller {
 		HttpClient:                 &http.Client{Timeout: time.Second * 10},
 		CanSendNotificationChannel: make(chan bool),
 	}
-	err := godotenv.Load()
-	if err != nil {
-	  log.Println("Error loading .env file")
+	if os.Getenv("ENVIRONMENT") == constants.Development {	
+		err := godotenv.Load()
+		if err != nil {
+	  		log.Fatalln("Error loading .env file")
+		}
 	}
+	
 	controller.InitDependencies()
 	return controller
 }
@@ -141,7 +144,7 @@ func (controller *Controller) GetPlanningCenterToken() Token {
 	var tokenResponse TokenResponse
 	var cachedToken, err = controller.Redis.Get(controller.Context, constants.TokenKey).Result()
 	if err == redis.Nil {
-		resp, err := controller.HttpClient.Post(constants.PlannnigCenterTokenUrl, "application/json", nil)
+		resp, err := controller.HttpClient.Post(os.Getenv("PLANNING_CENTER_TOKEN_URL"), "application/json", nil)
 		if err != nil {
 			log.Println("GetPlanningCenterToken", err)
 		}
@@ -214,7 +217,7 @@ func getBasePath(s string) string {
 }
 
 func (controller *Controller) EventRequest() EventReponse {
-	url := constants.PlannnigCenterUrl + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-24*time.Hour).Format(time.RFC3339)
+	url := os.Getenv("PLANNING_CENTER_URL") + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-24*time.Hour).Format(time.RFC3339)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatalln("New Request", err)
