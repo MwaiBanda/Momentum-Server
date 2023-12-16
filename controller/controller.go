@@ -2,7 +2,9 @@ package controller
 
 import (
 	"Momentum/constants"
+	"Momentum/model"
 	"Momentum/prisma/db"
+	"bytes"
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -239,4 +241,22 @@ func (controller *Controller) EventRequest() EventReponse {
 
 type EventReponse struct {
 	ReadData func() ([]byte, error)
+}
+
+func (controller *Controller) PostUserHook(requestBody model.TransactionHookRequest) {
+	url := os.Getenv("USER_WEBHOOK")
+	requestBytes, err := json.Marshal(requestBody); if err != nil {
+		log.Println(err)
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBytes))
+	if err != nil {
+		log.Fatalln("New Request", err)
+	}
+
+	resp, err := controller.HttpClient.Do(req)
+	if err != nil {
+		log.Panic("Request", err)
+	}
+	
+	defer resp.Body.Close()
 }

@@ -16,3 +16,11 @@ type TransactionResponse struct {
 	Description string       `json:"description"`
 	User        UserResponse `json:"user"`
 }
+
+type TransactionHookRequest struct {
+	Amount      int          `json:"amount"`
+	Description string       `json:"description"`
+	Fullname	string       `json:"fullname"`
+	Email       string       `json:"email"`
+	Phone       string       `json:"phone"`
+}

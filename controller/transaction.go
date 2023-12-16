@@ -56,20 +56,35 @@ func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error 
 //	@Router			/api/v1/transactions [post]
 func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 	transaction := new(model.TransactionRequest)
+	transactioResponse := new(model.TransactionResponse)
 	if err := context.BodyParser(transaction); err != nil {
 		log.Panic(err.Error())
 	}
-	_, err := controller.PrismaClient.Transaction.CreateOne(
+	res, err := controller.PrismaClient.Transaction.CreateOne(
 		db.Transaction.Amount.Set(transaction.Amount),
 		db.Transaction.Date.Set(transaction.Date),
 		db.Transaction.Description.Set(transaction.Description),
 		db.Transaction.User.Link(db.User.ID.Equals(transaction.UserId)),
+	).With(
+		db.Transaction.User.Fetch(),
 	).Exec(controller.Context)
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, transactioResponse); err != nil {
+		fmt.Println(err)
+	}
 	if err != nil {
 		log.Panic(err.Error())
 	}
+	
+	controller.PostUserHook(model.TransactionHookRequest{
+		Amount:      transactioResponse.Amount,
+		Description: transactioResponse.Description,
+		Fullname:    transactioResponse.User.Fullname,
+		Email:       transactioResponse.User.Email,
+		Phone:       transactioResponse.User.Phone,
+	})
 
-	return context.JSON(transaction)
+	return context.JSON(transactioResponse)
 }
 
 // DeleteTransactionsById godoc
