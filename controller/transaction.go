@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -56,7 +57,7 @@ func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error 
 //	@Router			/api/v1/transactions [post]
 func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 	transaction := new(model.TransactionRequest)
-	transactioResponse := new(model.TransactionResponse)
+	transactionResponse := new(model.TransactionResponse)
 	if err := context.BodyParser(transaction); err != nil {
 		log.Panic(err.Error())
 	}
@@ -69,22 +70,22 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 		db.Transaction.User.Fetch(),
 	).Exec(controller.Context)
 	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, transactioResponse); err != nil {
+	if err := json.Unmarshal(result, transactionResponse); err != nil {
 		fmt.Println(err)
 	}
 	if err != nil {
 		log.Panic(err.Error())
 	}
-	
-	controller.PostUserHook(model.TransactionHookRequest{
-		Amount:      transactioResponse.Amount,
-		Description: transactioResponse.Description,
-		Fullname:    transactioResponse.User.Fullname,
-		Email:       transactioResponse.User.Email,
-		Phone:       transactioResponse.User.Phone,
+
+	controller.PostTransactionMail(model.TransactionMailRequest{
+		Amount:      transactionResponse.Amount,
+		Description: strings.ReplaceAll(transactionResponse.Description, ",", "<br>"),
+		Fullname:    transactionResponse.User.Fullname,
+		Email:       transactionResponse.User.Email,
+		Phone:       transactionResponse.User.Phone,
 	})
 
-	return context.JSON(transactioResponse)
+	return context.JSON(transactionResponse)
 }
 
 // DeleteTransactionsById godoc

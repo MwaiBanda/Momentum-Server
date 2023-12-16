@@ -11,9 +11,11 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/smtp"
 	"os"
 	"strings"
 	"sync"
+	"text/template"
 	"time"
 
 	firebase "firebase.google.com/go/v4"
@@ -39,13 +41,13 @@ func GetControllerInstance() *Controller {
 		HttpClient:                 &http.Client{Timeout: time.Second * 10},
 		CanSendNotificationChannel: make(chan bool),
 	}
-	if os.Getenv("ENVIRONMENT") == constants.Development {	
-		err := godotenv.Load()
+	err := godotenv.Load()
+	if os.Getenv("ENVIRONMENT") == constants.Development {
 		if err != nil {
-	  		log.Fatalln("Error loading .env file")
+			log.Fatalln("Error loading .env file")
 		}
 	}
-	
+
 	controller.InitDependencies()
 	return controller
 }
@@ -156,10 +158,10 @@ func (controller *Controller) GetPlanningCenterToken() Token {
 		if err := json.Unmarshal(data, &tokenResponse); err != nil {
 			log.Println("GetPlanningCenterToken", err)
 		}
-		if err = controller.Redis.Set(controller.Context, constants.TokenKey, string(data), 1*time.Hour + 30 * time.Minute).Err(); err != nil {
+		if err = controller.Redis.Set(controller.Context, constants.TokenKey, string(data), 1*time.Hour+30*time.Minute).Err(); err != nil {
 			log.Println("[GetPlanningCenterToken]", err.Error())
 		}
-	} else if err != nil { 
+	} else if err != nil {
 		log.Println("GetPlanningCenterToken", err)
 	} else {
 		err := json.Unmarshal([]byte(cachedToken), &tokenResponse)
@@ -233,7 +235,7 @@ func (controller *Controller) EventRequest() EventReponse {
 	if err != nil {
 		log.Panic("Request", err)
 	}
-	
+
 	return EventReponse{
 		ReadData: func() ([]byte, error) {
 			defer resp.Body.Close()
@@ -246,20 +248,34 @@ type EventReponse struct {
 	ReadData func() ([]byte, error)
 }
 
-func (controller *Controller) PostUserHook(requestBody model.TransactionHookRequest) {
-	url := os.Getenv("USER_WEBHOOK")
-	requestBytes, err := json.Marshal(requestBody); if err != nil {
-		log.Println(err)
-	}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBytes))
-	if err != nil {
-		log.Fatalln("New Request", err)
+func (controller *Controller) PostTransactionMail(mail model.TransactionMailRequest) {
+	from := "bandamwai@gmail.com"
+	password := os.Getenv("EMAIL_APP_PASSWORD")
+
+	to := []string{
+		"bandamwai@gmail.com",
+		"charlie@momentumindiana.org",
 	}
 
-	resp, err := controller.HttpClient.Do(req)
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+
+	t, _ := template.ParseFiles("./controller/transaction.html")
+
+	var body bytes.Buffer
+
+	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	body.Write([]byte(fmt.Sprintf("Subject: New Payment 📲 \n%s\n\n", mimeHeaders)))
+
+	t.Execute(&body, mail)
+
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, body.Bytes())
 	if err != nil {
-		log.Panic("Request", err)
+		fmt.Println(err)
+		return
 	}
-	
-	defer resp.Body.Close()
+	fmt.Println("Email Sent!")
+
 }

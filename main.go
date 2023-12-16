@@ -56,7 +56,7 @@ func main() {
 	v1.Get("/transactions/:userId", controller.GetTransactionsByUserId)
 	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
 	v1.Post("/transactions", controller.PostTransaction)
-	
+
 	v1.Get("/sermons", controller.GetAllSermons)
 
 	v1.Post("/messages", controller.PostMessage)
@@ -75,5 +75,6 @@ func main() {
 
 	defer controller.DisconectPrismaClient()
 
+	 
 	log.Fatal(app.Listen(":" + port))
 }

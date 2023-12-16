@@ -1,0 +1,66 @@
+<!-- transaction.html -->
+<!DOCTYPE html>
+<html>
+
+<style>
+  body {
+    background: white;
+    margin: 0;
+    padding: 0;
+    height: 80vh;
+    width: 100vw;
+  }
+
+  .footer {
+    margin: 15px;
+    width: 100%;
+    text-align: center;
+  }
+
+  #header {
+    max-height: 200px;
+    margin: 15px;
+
+  }
+  #thumbnail {
+    display:flex;
+     width:100%;
+     justify-content:center;
+     align-items:center;
+  }
+
+  #header-content {
+    bottom: 35;
+    left: 0;
+  }
+
+  #footer-content {
+    margin: 15px;
+  }
+  small {
+    text-align: center;
+  }
+</style>
+<body>
+  <div style="height:100%">
+    <div id="thumbnail">
+      <img crossorigin="anonymous" src="https://i.imgur.com/PEDrNqY.png" title="source: imgur.com" width=150 height=150>
+    </div>
+    <div id="header">
+      <h2>Hello 👋🏾</h2>
+      <p>New payment from <b>{{.Fullname}}</b>, {{.Phone}} for the amount: <b>${{.Amount}}</b>. And gave to the following ministries: <br><b>{{.Description}}</b></p>
+      <p> Reference <b>all transactions</b> in attached link below: <br>
+          <span>
+          <a href="https://services.momentumchurch.dev/payments"><b> Momentum Apps Dashboard - Transactions </b></a> 
+          </span>
+      </p>
+    </div>
+  </div>
+  <footer>
+      <div id="footer-content">
+      <p id="header-content">Kind Regards,<br><b>Momentum Payments (Android & iOS)</b></p>
+      <p><small> Copyright © 2022 Momentum Church. All rights reserved</small></p>
+      </div>
+  </footer>
+</body>
+</html>
