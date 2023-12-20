@@ -1,16 +1,18 @@
 import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
-import { useState, useRef } from "react";
+import { useRef } from "react";
+import { auth } from "../util/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 
-export default function SignupModal() {
-    const [openModal, setOpenModal] = useState(false);
-    const emailInputRef = useRef<HTMLInputElement>(null);
-    return (
+export default function SignupModal({ openModal, setOpenModal }: { openModal: boolean, setOpenModal: (open: boolean) => void }) {
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  return (
         <Modal show={openModal} size="md" popup onClose={() => setOpenModal(false)} initialFocus={emailInputRef}>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Sign in to your account</h3>
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="email" value="Your email" />
@@ -21,25 +23,22 @@ export default function SignupModal() {
               <div className="mb-2 block">
                 <Label htmlFor="password" value="Your password" />
               </div>
-              <TextInput id="password" type="password" required />
+              <TextInput id="password" ref={passwordInputRef} type="password" required />
             </div>
-            <div className="flex justify-between">
-              <div className="flex items-center gap-2">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember">Remember me</Label>
-              </div>
-              <a href="#" className="text-sm text-cyan-700 hover:underline dark:text-cyan-500">
-                Lost Password?
-              </a>
-            </div>
+            
             <div className="w-full">
-              <Button>Log in to your account</Button>
-            </div>
-            <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-300">
-              Not registered?&nbsp;
-              <a href="#" className="text-cyan-700 hover:underline dark:text-cyan-500">
-                Create account
-              </a>
+              <Button onClick={() => {
+                signInWithEmailAndPassword(auth, emailInputRef.current?.value as string, passwordInputRef.current?.value as string)
+                .then((userCredential) => {
+                  const user = userCredential.user;
+                  setOpenModal(false)
+                  alert(`Signed in as ${user?.email}`)
+                }).catch((error) => {
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+                  alert(`Error: ${errorCode} ${errorMessage}`)
+                })
+              }}>Log in to your account</Button>
             </div>
           </div>
         </Modal.Body>

@@ -1,6 +1,7 @@
-import { Navbar } from 'flowbite-react';
+import { Button, Navbar } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
 import {MESSAGES, NOFICATIONS, PAYMENTS, USERS} from "../util/constants";
+import { auth } from '../util/firebase';
 
 
 
@@ -21,6 +22,13 @@ export function Nav() {
           <Navbar.Link href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</Navbar.Link>
           <Navbar.Link href={PAYMENTS} active={PAYMENTS === location.pathname}>Payments</Navbar.Link>
           <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link>
+          <Navbar.Link className="cursor-pointer" onClick={() => {
+            auth.signOut().then(() => {
+              alert("Signed out")
+            }).catch((error) => {
+              alert(error)
+            })
+          }}>Sign Out</Navbar.Link>
         </Navbar.Collapse>
       </Navbar>
     );

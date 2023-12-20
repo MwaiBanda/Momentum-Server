@@ -5,6 +5,8 @@ import axios from "axios"
 import { Message } from "../models/message"
 import { useState } from "react";
 import AddMessageModal from "../components/addmessagemodal";
+import { auth } from "../util/firebase";
+import SignupModal from "../components/signupmodal";
 
 function MessageCard({ message }: { message: Message }) {
   return (
@@ -44,7 +46,8 @@ export const Messages = () => {
         },
     })
 
-    const [openModal, setOpenModal] = useState(false);
+    const [openAuthModal, setOpenAuthModal] = useState(false);
+    const [openModal, setOpenMessageModal] = useState(false);
  
     if (isLoading) return <div>Loading...</div>
 
@@ -52,7 +55,13 @@ export const Messages = () => {
         <main className="w-full h-screen">
         <Nav/>
         <div className="w-full flex flex-col justify-normal items-end">
-        <button className="bg-momentum-orange hover:bg-momentum-orange text-white font-bold py-2 px-4 rounded max-h-10" onClick={() => setOpenModal(true)}>
+        <button className="bg-momentum-orange hover:bg-momentum-orange text-white font-bold py-2 px-4 rounded max-h-10" onClick={() => {
+           if (auth.currentUser?.uid === undefined) {
+              setOpenAuthModal(true)
+           } else {
+              setOpenMessageModal(true)
+           }
+        }}>
             Add Message
         </button>
         </div>
@@ -63,7 +72,8 @@ export const Messages = () => {
                 </div>
             ))}
         </div>
-        <AddMessageModal openModal={openModal} setOpenModal={setOpenModal}/>
+        <SignupModal openModal={openAuthModal} setOpenModal={setOpenAuthModal}/>
+        <AddMessageModal openModal={openModal} setOpenModal={setOpenMessageModal}/>
         </main>
     )
 }
