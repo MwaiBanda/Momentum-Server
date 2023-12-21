@@ -11,6 +11,36 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+
+// GetAllTransactions godoc
+//
+//	@Summary		Show a list of all transactions
+//	@Description	get a list of all transactions 
+//	@Accept			json
+//	@Produce		json
+//	@tags			Transactions
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Success		200				{array}		model.TransactionResponse
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/transactions [get]
+func (controller *Controller) GetAllTransactions(context *fiber.Ctx) error {
+	var transactions []model.TransactionResponse
+	res, err := controller.PrismaClient.Transaction.FindMany().With(
+		db.Transaction.User.Fetch(),
+	).Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, &transactions); err != nil {
+		fmt.Println(err)
+	}
+	return context.JSON(transactions)
+}
+
 // GetTransactionsByUserId godoc
 //
 //	@Summary		Show a list of transactions belonging to a user

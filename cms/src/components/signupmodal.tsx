@@ -1,4 +1,4 @@
-import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
+import { Button, Label, Modal, TextInput } from "flowbite-react";
 import { useRef } from "react";
 import { auth } from "../util/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";

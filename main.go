@@ -53,6 +53,7 @@ func main() {
 
 	v1.Post("/payments", controller.PostPayment)
 
+	v1.Get("/transactions", controller.GetAllTransactions)
 	v1.Get("/transactions/:userId", controller.GetTransactionsByUserId)
 	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
 	v1.Post("/transactions", controller.PostTransaction)

@@ -544,6 +544,58 @@ const docTemplate = `{
             }
         },
         "/api/v1/transactions": {
+            "get": {
+                "description": "get a list of all transactions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Show a list of all transactions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.TransactionResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Used to post a transaction",
                 "consumes": [
@@ -1172,6 +1224,9 @@ const docTemplate = `{
                 "date": {
                     "type": "string"
                 },
+                "hasOrder": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -1245,6 +1300,9 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 },
                 "type": {
                     "type": "string"

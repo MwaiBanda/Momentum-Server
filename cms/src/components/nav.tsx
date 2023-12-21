@@ -1,4 +1,4 @@
-import { Button, Navbar } from 'flowbite-react';
+import { Navbar } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
 import {MESSAGES, NOFICATIONS, PAYMENTS, USERS} from "../util/constants";
 import { auth } from '../util/firebase';
