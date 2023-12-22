@@ -1,14 +1,26 @@
 import { Navbar } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
-import {MESSAGES, NOFICATIONS, PAYMENTS, USERS} from "../util/constants";
+import {MESSAGES, NOFICATIONS, PAYMENTS} from "../util/constants";
 import { auth } from '../util/firebase';
 
 
 
 
-export function Nav() {
+export function Nav({ onSigninClick }: { onSigninClick: () => void }) {
   let location = useLocation();
-
+  function AuthNavlink() {
+    if (auth.currentUser) {
+      return <Navbar.Link className="cursor-pointer" onClick={() => {
+        auth.signOut().then(() => {
+          alert("Signed out")
+        }).catch((error) => {
+          alert(error)
+        })
+      }}>Sign Out</Navbar.Link>
+    } else {
+      return <Navbar.Link onClick={onSigninClick}>Sign In</Navbar.Link>
+    }
+  }
     return (
       <Navbar fluid rounded className="w-full" >
         <Navbar.Brand href="/dashboard">
@@ -20,15 +32,9 @@ export function Nav() {
           {/* <Navbar.Link  href={HOME} active={HOME === location.pathname}> Home</Navbar.Link> */}
           <Navbar.Link  className="hover:text-momentum-orange active:text-momentum-orange" href={MESSAGES} active={MESSAGES === location.pathname}>Messages</Navbar.Link>
           <Navbar.Link href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</Navbar.Link>
-          <Navbar.Link href={PAYMENTS} active={PAYMENTS === location.pathname}>Payments</Navbar.Link>
-          <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link>
-          <Navbar.Link className="cursor-pointer" onClick={() => {
-            auth.signOut().then(() => {
-              alert("Signed out")
-            }).catch((error) => {
-              alert(error)
-            })
-          }}>Sign Out</Navbar.Link>
+          <Navbar.Link href={PAYMENTS} active={PAYMENTS === location.pathname}>Transactions</Navbar.Link>
+          {/* <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link> */}
+          <AuthNavlink />
         </Navbar.Collapse>
       </Navbar>
     );

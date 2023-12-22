@@ -74,7 +74,9 @@ function NotificationCard() {
 export const Notifications = () => {
     return (
         <main className="w-full h-screen">
-            <Nav />
+            <Nav onSigninClick={() => {
+                
+            }}/>
             <div className="w-full h-screen flex justify-center items-center">
                 <NotificationCard />
             </div>

@@ -27,7 +27,9 @@ import (
 //	@Router			/api/v1/transactions [get]
 func (controller *Controller) GetAllTransactions(context *fiber.Ctx) error {
 	var transactions []model.TransactionResponse
-	res, err := controller.PrismaClient.Transaction.FindMany().With(
+	res, err := controller.PrismaClient.Transaction.FindMany().OrderBy(
+		db.Transaction.CreatedOn.Order(db.SortOrderDesc),
+	).With(
 		db.Transaction.User.Fetch(),
 	).Exec(controller.Context)
 	if err != nil {

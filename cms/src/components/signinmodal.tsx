@@ -4,7 +4,7 @@ import { auth } from "../util/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 
-export default function SignupModal({ openModal, setOpenModal }: { openModal: boolean, setOpenModal: (open: boolean) => void }) {
+export default function SigninModal({ openModal, setOpenModal }: { openModal: boolean, setOpenModal: (open: boolean) => void }) {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   return (

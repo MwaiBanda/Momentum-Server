@@ -6,7 +6,7 @@ import { Message } from "../models/message"
 import { useState } from "react";
 import AddMessageModal from "../components/addmessagemodal";
 import { auth } from "../util/firebase";
-import SignupModal from "../components/signupmodal";
+import SigninModal from "../components/signinmodal";
 
 function MessageCard({ message }: { message: Message }) {
   return (
@@ -53,13 +53,13 @@ export const Messages = () => {
 
     return (
         <main className="w-full h-screen">
-        <Nav/>
+        <Nav onSigninClick={() => setOpenAuthModal(true)}/>
         <div className="w-full flex flex-col justify-normal items-end">
         <button className="bg-momentum-orange hover:bg-momentum-orange text-white font-bold py-2 px-4 rounded max-h-10" onClick={() => {
-           if (auth.currentUser?.uid === undefined) {
-              setOpenAuthModal(true)
+           if (auth.currentUser) {
+                setOpenMessageModal(true)
            } else {
-              setOpenMessageModal(true)
+                setOpenAuthModal(true)
            }
         }}>
             Add Message
@@ -72,7 +72,7 @@ export const Messages = () => {
                 </div>
             ))}
         </div>
-        <SignupModal openModal={openAuthModal} setOpenModal={setOpenAuthModal}/>
+        <SigninModal openModal={openAuthModal} setOpenModal={setOpenAuthModal}/>
         <AddMessageModal openModal={openModal} setOpenModal={setOpenMessageModal}/>
         </main>
     )
