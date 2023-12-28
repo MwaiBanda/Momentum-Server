@@ -1,8 +1,11 @@
 import axios from "axios";
-import { Modal, Button, Label, TextInput, Textarea } from "flowbite-react"
+import { Modal, Button } from "flowbite-react"
 import { Ref, RefObject, createRef, useRef, useState } from "react"
 import { useMutation } from "react-query";
-import { MessageRequest } from "../models/message";
+import { MessageRequest } from "../../../models/message";
+import { TextField } from "@/components/textfield";
+import { TextArea } from "@/components/textarea";
+
 enum PassageType {
     Header,
     Message
@@ -10,7 +13,7 @@ enum PassageType {
 
 type PassageHolder = {
     type: PassageType;
-    text: Ref<HTMLInputElement>;
+    text: React.RefObject<HTMLInputElement>;
     area: Ref<HTMLTextAreaElement>
 }
 
@@ -36,7 +39,7 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
             <Modal.Header />
             <Modal.Body>
                 <div className="space-y-6">
-                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">Add a Message</h3>
+                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">Add Message</h3>
                     <TextField
                         reference={titleInputRef}
                         title="Title"
@@ -115,14 +118,11 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                                         case PassageType.Header:
                                             return {
                                                 header: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
-                                                verse: null,
-                                                message: null,
                                                 type: "header",
                                                 order: index
                                             }
                                         case PassageType.Message:
                                             return {
-                                                header: null,
                                                 verse: (passage.text as RefObject<HTMLInputElement>).current?.value ?? "",
                                                 message: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
                                                 type: "message",
@@ -135,7 +135,7 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                         }}>Submit</Button>
                         <div className="flex">
                             <Button onClick={() => {
-                                setRefs([...refs, { type: PassageType.Header, text: null, area: createRef() }])
+                                setRefs([...refs, { type: PassageType.Header, text: createRef(), area: createRef() }])
                                 console.log(refs)
                             }}>Add header</Button>
                             <Button className="ml-1" onClick={() => {
@@ -152,24 +152,6 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
     )
 }
 
-function TextField({ reference, title, placeholder, id }: { reference: Ref<HTMLInputElement>, title: string, placeholder: string, id: string }) {
-    return (
-        <div>
-            <div className="mb-2 block">
-                <Label htmlFor={id} value={title} />
-            </div>
-            <TextInput id={id} ref={reference} placeholder={placeholder} required />
-        </div>
-    )
-}
 
-function TextArea({ reference, title, placeholder, id }: { reference: Ref<HTMLTextAreaElement>, title: string, placeholder: string, id: string }) {
-    return (
-        <div>
-            <div className="mb-2 block">
-                <Label htmlFor={id} value={title} />
-            </div>
-            <Textarea id={id} ref={reference} placeholder={placeholder} required />
-        </div>
-    )
-}
+
+

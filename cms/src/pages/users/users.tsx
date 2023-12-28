@@ -1,4 +1,4 @@
-import { Nav } from "../components/nav"
+import { Nav } from "../../components/nav"
 
 export const Users = () => {
     return (

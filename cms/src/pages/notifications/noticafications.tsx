@@ -1,5 +1,5 @@
 import { useMutation } from "react-query";
-import { Nav } from "../components/nav"
+import { Nav } from "../../components/nav"
 import { Button, Card, Label, TextInput, Textarea } from 'flowbite-react';
 import axios from "axios";
 import { useState } from "react";

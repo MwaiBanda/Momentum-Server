@@ -6,6 +6,8 @@ export type Message = {
     thumbnail: string;
     title: string;
     date: string;
+    published: boolean;
+    passages: Passage[];
 }
 
 export type MessageRequest = {
@@ -18,9 +20,10 @@ export type MessageRequest = {
 }
 
 export type Passage = {
-    header: string | null;
-    verse: string | null;
-    message: string | null;
-    type : string | null;
+    id?: string;
+    header?: string ;
+    verse?: string;
+    message?: string;
+    type : string;
     order: number;
 }
