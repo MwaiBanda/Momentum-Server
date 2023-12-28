@@ -27,7 +27,7 @@ export default function SigninModal({ openModal, setOpenModal }: { openModal: bo
             </div>
             
             <div className="w-full">
-              <Button onClick={() => {
+              <Button className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                 signInWithEmailAndPassword(auth, emailInputRef.current?.value as string, passwordInputRef.current?.value as string)
                 .then((userCredential) => {
                   const user = userCredential.user;

@@ -14,7 +14,7 @@ export function TextArea({ reference, value, title, placeholder, id, onChange }:
             <div className="mb-2 block">
                 <Label htmlFor={id} value={title} />
             </div>
-            <Textarea id={id} ref={reference} placeholder={placeholder} value={value} onChange={onChange} required />
+            <Textarea id={id} ref={reference} placeholder={placeholder} value={value} onChange={onChange} required rows={6}/>
         </div>
     )
 }

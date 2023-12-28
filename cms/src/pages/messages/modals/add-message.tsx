@@ -106,7 +106,7 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                     }
                     )}
                     <div className="w-full flex justify-between">
-                        <Button onClick={() => {
+                        <Button className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                             mutation.mutate({
                                 title: titleInputRef.current?.value ?? "",
                                 series: seriesInputRef.current?.value ?? "",
@@ -134,11 +134,11 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                             setOpenModal(false)
                         }}>Submit</Button>
                         <div className="flex">
-                            <Button onClick={() => {
+                            <Button className="bg-momentum-orange hover:bg-momentum-orange active:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                                 setRefs([...refs, { type: PassageType.Header, text: createRef(), area: createRef() }])
                                 console.log(refs)
                             }}>Add header</Button>
-                            <Button className="ml-1" onClick={() => {
+                            <Button className="ml-1 bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                                 setRefs([...refs, { type: PassageType.Message, text: createRef(), area: createRef() }])
                                 console.log(refs)
                             }}>Add message</Button>

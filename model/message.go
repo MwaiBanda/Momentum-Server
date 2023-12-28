@@ -25,3 +25,4 @@ type PassageResponse struct {
 	Type string `json:"type"`
 	Order int `json:"order"`
 }
+

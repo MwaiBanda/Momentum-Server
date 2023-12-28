@@ -149,3 +149,55 @@ func (controller *Controller) PostMessage(context *fiber.Ctx) error {
 	}
 	return context.JSON(message)
 }
+
+// UpdateMessage godoc
+//
+//	@Summary		Update a Message
+//	@Description	Used to update a message
+//	@tags			Messages
+//	@Param			Authorization	header	string			true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.Message	true	"Post a message"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	model.Message
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
+//	@Router			/api/v1/messages [put]
+func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
+	var message model.Message
+	go controller.Redis.Expire(controller.Context, constants.MessageKey, time.Second*0)
+	if err := context.BodyParser(&message); err != nil {
+		return err
+	}
+	var transactions []transaction.Param
+	transactions = append(transactions, controller.PrismaClient.Message.FindUnique(
+		db.Message.ID.Equals(message.ID),
+	).Update(
+		db.Message.Title.Set(message.Title),
+		db.Message.Preacher.Set(message.Preacher),
+		db.Message.Date.Set(message.Date),
+		db.Message.Thumbnail.Set(message.Thumbnail),
+		db.Message.Series.Set(message.Series),
+		db.Message.Published.Set(message.Published),
+	).Tx())
+
+	if len(message.Passages) > 0 {
+		for _, passage := range message.Passages {
+			transactions = append(transactions, controller.PrismaClient.Passage.FindUnique(
+				db.Passage.ID.Equals(passage.ID),
+			).Update(
+				db.Passage.Header.Set(passage.Header),
+				db.Passage.Verse.Set(passage.Verse),
+				db.Passage.Message.Set(passage.Message),
+			).Tx())
+		}
+	}
+	
+	err := controller.PrismaClient.Prisma.Transaction(transactions...).Exec(controller.Context)
+	if err != nil {
+		log.Panic(err.Error())
+	}
+
+	return context.JSON(message)
+}

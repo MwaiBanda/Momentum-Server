@@ -1,8 +1,10 @@
 import { TextArea } from "@/components/textarea";
 import { TextField } from "@/components/textfield";
 import { Message, Passage } from "@/models/message";
+import axios from "axios";
 import { Button, Modal, ToggleSwitch } from "flowbite-react";
 import { useEffect, useState } from "react";
+import { useMutation } from "react-query";
 
 export default function EditMessageModal({ message, openModal, setOpenModal }: { message: Message | null, openModal: boolean, setOpenModal: (open: boolean) => void }) {
     const [title, setTitle] = useState("");
@@ -11,9 +13,16 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
     const [image, setImage] = useState("");
     const [date, setDate] = useState("");
     const [published, setPublished] = useState(false);
-    const [canUpdateMessage, setCanUpdateMessage] = useState(false);
     const [passages, setPassages] = useState<Passage[]>([]);
     const [passagesToUpdate, setPassagesToUpdate] = useState<Passage[]>([]);
+
+    const mutation = useMutation((data: Message) => {
+        return axios.put('/api/v1/messages', data)
+    }, {
+        onSuccess: () => {
+            alert("Message posted successfully")
+        }
+    })
 
     useEffect(() => {
         console.log(message)
@@ -52,7 +61,6 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                         id="title"
                         onChange={(event) => {
                             setTitle(event.target.value)
-                            setCanUpdateMessage(true)
                         }}
                     />
                     <TextField
@@ -62,7 +70,6 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                         id="series"
                         onChange={(event) => {
                             setSeries(event.target.value)
-                            setCanUpdateMessage(true)
                         }}
                     />
                     <TextField
@@ -72,7 +79,6 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                         id="preacher"
                         onChange={(event) => {
                             setPreacher(event.target.value)
-                            setCanUpdateMessage(true)
                         }}
                     />
                     <TextField
@@ -82,7 +88,6 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                         id="date"
                         onChange={(event) => {
                             setDate(event.target.value)
-                            setCanUpdateMessage(true)
                         }}
                     />
                     <TextField
@@ -92,7 +97,6 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                         id="image"
                         onChange={(event) => {
                             setImage(event.target.value)
-                            setCanUpdateMessage(true)
                         }}
                     />
                     {passages.map((passage, index) => {
@@ -172,13 +176,17 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={() => {
-                    if (canUpdateMessage) {
-                        
-                    }   
-                    if (passagesToUpdate.length > 0) {
-                        
-                    }
+                <Button className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
+                    mutation.mutate({
+                        id: message?.id ?? "",
+                        title: title,
+                        series: series,
+                        preacher: preacher,
+                        thumbnail: image,
+                        date: date,
+                        passages: passagesToUpdate,
+                        published: published
+                    })
                     setOpenModal(false)
                 }}>Update</Button>
             </Modal.Footer>

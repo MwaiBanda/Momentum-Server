@@ -45,8 +45,12 @@ export const Messages = () => {
                 <div key={message.id}>
                     <MessageCard message={message} onEditMessage={
                         (message) => {
-                            setOpenEditMessageModal(true)
-                            setEditableMessage(message)
+                            if (auth.currentUser) {
+                                setEditableMessage(message)
+                                setOpenEditMessageModal(true)
+                            } else {
+                                setOpenAuthModal(true)
+                            }
                         }
                     }/>
                 </div>
