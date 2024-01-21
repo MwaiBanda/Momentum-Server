@@ -30,9 +30,9 @@ export function Nav({ onSigninClick }: { onSigninClick: () => void }) {
         <Navbar.Toggle />
         <Navbar.Collapse>
           {/* <Navbar.Link  href={HOME} active={HOME === location.pathname}> Home</Navbar.Link> */}
-          <Navbar.Link className=" hover:bg-momentum-orange enabled:hover:bg-momentum-orange" href={MESSAGES} active={MESSAGES === location.pathname}>Messages</Navbar.Link>
-          <Navbar.Link className=" hover:bg-momentum-orange enabled:hover:bg-momentum-orange" href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</Navbar.Link>
-          <Navbar.Link className=" hover:bg-momentum-orange enabled:hover:bg-momentum-orange" href={PAYMENTS} active={PAYMENTS === location.pathname}>Transactions</Navbar.Link>
+          <Navbar.Link href={MESSAGES} active={MESSAGES === location.pathname}>Messages</Navbar.Link>
+          <Navbar.Link href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</Navbar.Link>
+          <Navbar.Link href={PAYMENTS} active={PAYMENTS === location.pathname}>Transactions</Navbar.Link>
           {/* <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link> */}
           <AuthNavlink />
         </Navbar.Collapse>
