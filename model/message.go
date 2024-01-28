@@ -24,7 +24,7 @@ type PassageResponse struct {
 	Message string `json:"message"`
 	Type string `json:"type"`
 	Order int `json:"order"`
-	UserNote Note `json:"note"`
+	Notes []Note `json:"notes"`
 }
 
 type Note struct {
