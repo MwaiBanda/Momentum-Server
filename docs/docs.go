@@ -369,7 +369,7 @@ const docTemplate = `{
         },
         "/api/v1/messages/notes": {
             "post": {
-                "description": "Used to add user notes to a passage",
+                "description": "Used to update a user notes in a passage",
                 "consumes": [
                     "application/json"
                 ],
@@ -379,7 +379,7 @@ const docTemplate = `{
                 "tags": [
                     "Messages"
                 ],
-                "summary": "Add a Note to a Passage",
+                "summary": "Update a Note in a Passage",
                 "parameters": [
                     {
                         "type": "string",
@@ -390,7 +390,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Post a message",
+                        "description": "Post a note",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -403,7 +403,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Message"
+                            "$ref": "#/definitions/model.Note"
                         }
                     },
                     "400": {
@@ -1389,6 +1389,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NoteRequest": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "passage_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

@@ -208,10 +208,10 @@ func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
 //	@Description	Used to add user notes to a passage
 //	@tags			Messages
 //	@Param			Authorization	header	string			true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			data			body	model.Message	true	"Post a message"
+//	@Param			data			body	model.Message	true	"Post a note request"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	model.Message
+//	@Success		200	{object}	model.NoteRequest
 //	@Failure		400	{object}	model.HTTPError
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
@@ -225,6 +225,34 @@ func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
 		db.Note.Content.Set(note.Content),
 		db.Note.UserID.Set(note.UserID),
 		db.Note.PassageID.Set(note.PassageID),
+	).Exec(controller.Context)
+	return context.JSON(note)
+}
+
+// UpdateNote godoc
+//
+//	@Summary		Update a Note in a Passage
+//	@Description	Used to update a user notes in a passage
+//	@tags			Messages
+//	@Param			Authorization	header	string			true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.Message	true	"Post a note"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	model.Note
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
+//	@Router			/api/v1/messages/notes [put]
+func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
+	note := new(model.Note)
+	if err := context.BodyParser(note); err != nil {
+		return err
+	}
+	 controller.PrismaClient.Note.FindUnique(
+		db.Note.ID.Equals(note.ID),
+	).Update(
+		db.Note.Content.Set(note.Content),
+
 	).Exec(controller.Context)
 	return context.JSON(note)
 }

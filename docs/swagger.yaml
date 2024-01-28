@@ -177,6 +177,15 @@ definitions:
       id:
         type: string
     type: object
+  model.NoteRequest:
+    properties:
+      content:
+        type: string
+      passage_id:
+        type: string
+      user_id:
+        type: string
+    type: object
   model.Notification:
     properties:
       body:
@@ -693,7 +702,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to add user notes to a passage
+      description: Used to update a user notes in a passage
       parameters:
       - description: Provide a bearer token
         example: Bearer XXX-xxx-XXX-xxx-XX
@@ -701,7 +710,7 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Post a message
+      - description: Post a note
         in: body
         name: data
         required: true
@@ -713,7 +722,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Message'
+            $ref: '#/definitions/model.Note'
         "400":
           description: Bad Request
           schema:
@@ -726,7 +735,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Add a Note to a Passage
+      summary: Update a Note in a Passage
       tags:
       - Messages
   /api/v1/notifications:

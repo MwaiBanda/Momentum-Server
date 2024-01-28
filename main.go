@@ -64,6 +64,7 @@ func main() {
 	v1.Get("/messages/:userId", controller.GetAllMessages)
 	v1.Put("/messages", controller.UpdateMessage)
 	v1.Post("/messages/notes", controller.AddUserNoteToMessage)
+	v1.Put("/messages/notes", controller.UpdateUserNote)
 
 	v1.Post("/notifications", controller.PostNotification)
 	
