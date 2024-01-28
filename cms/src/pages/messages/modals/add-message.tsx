@@ -137,11 +137,20 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                             <Button className="bg-momentum-orange hover:bg-momentum-orange active:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                                 setRefs([...refs, { type: PassageType.Header, text: createRef(), area: createRef() }])
                                 console.log(refs)
-                            }}>Add header</Button>
+                            }}>Header</Button>
+                            <div className="flex">
                             <Button className="ml-1 bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                                 setRefs([...refs, { type: PassageType.Message, text: createRef(), area: createRef() }])
                                 console.log(refs)
-                            }}>Add message</Button>
+                            }}>Message</Button>
+                           {refs.length > 0 ? <Button className="ml-1 rounded-full bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
+                                setRefs([...refs.slice(0, refs.length - 1)])
+                                console.log(refs)
+                            }}><svg className="w-4 h-4 rounded-full text-white-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h13a5 5 0 0 1 0 10H7M3 9l4-4M3 9l4 4"/>
+                          </svg></Button> : <></>}
+                            </div>
+                            
                         </div>
 
                     </div>
