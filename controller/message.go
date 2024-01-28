@@ -33,7 +33,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	var messages []model.Message
 	var unpublished []model.Message
 	userId := context.Params("userId")
-	cachedMessages, err := controller.Redis.Get(controller.Context, constants.MessageKey).Result()
+	cachedMessages, err := controller.Redis.Get(controller.Context, constants.MessageKey + "-" + userId).Result()
 	if err == redis.Nil {
 		res, err := controller.PrismaClient.Message.FindMany(
 			db.Message.Published.Equals(true),
@@ -58,8 +58,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		}
 		
 		if userId != constants.Admin && messages != nil{
-			
-			controller.Redis.Set(controller.Context, constants.MessageKey, string(result), time.Hour*24)
+			controller.Redis.Set(controller.Context, constants.MessageKey + "-" + userId, string(result), time.Minute*30)
 		} else {
 			res, err := controller.PrismaClient.Message.FindMany(
 				db.Message.Published.Equals(false),
