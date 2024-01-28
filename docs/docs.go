@@ -367,6 +367,66 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/messages/notes": {
+            "post": {
+                "description": "Used to add user notes to a passage",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Add a Note to a Passage",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Post a message",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Message"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/messages/{userId}": {
             "get": {
                 "description": "get a list of messages available",
@@ -1322,6 +1382,17 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Note": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Notification": {
             "type": "object",
             "properties": {
@@ -1358,6 +1429,12 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                },
+                "notes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Note"
+                    }
                 },
                 "order": {
                     "type": "integer"

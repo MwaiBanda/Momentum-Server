@@ -170,6 +170,13 @@ definitions:
           $ref: '#/definitions/model.Message'
         type: array
     type: object
+  model.Note:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+    type: object
   model.Notification:
     properties:
       body:
@@ -194,6 +201,10 @@ definitions:
         type: string
       message:
         type: string
+      notes:
+        items:
+          $ref: '#/definitions/model.Note'
+        type: array
       order:
         type: integer
       type:
@@ -676,6 +687,46 @@ paths:
           schema:
             $ref: '#/definitions/model.HTTPError'
       summary: Show a list of messages available
+      tags:
+      - Messages
+  /api/v1/messages/notes:
+    post:
+      consumes:
+      - application/json
+      description: Used to add user notes to a passage
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Post a message
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Add a Note to a Passage
       tags:
       - Messages
   /api/v1/notifications:

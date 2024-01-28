@@ -24,5 +24,16 @@ type PassageResponse struct {
 	Message string `json:"message"`
 	Type string `json:"type"`
 	Order int `json:"order"`
+	Notes []Note `json:"notes"`
 }
 
+type Note struct {
+	ID        string `json:"id"`
+	Content   string `json:"content"`
+}
+
+type NoteRequest struct {
+	PassageID        string `json:"passage_id"`
+	UserID        string `json:"user_id"`
+	Content   string `json:"content"`
+}

@@ -201,3 +201,30 @@ func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
 
 	return context.JSON(message)
 }
+
+// AddNoteToPassage godoc
+//
+//	@Summary		Add a Note to a Passage
+//	@Description	Used to add user notes to a passage
+//	@tags			Messages
+//	@Param			Authorization	header	string			true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body	model.Message	true	"Post a message"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	model.Message
+//	@Failure		400	{object}	model.HTTPError
+//	@Failure		404	{object}	model.HTTPError
+//	@Failure		500	{object}	model.HTTPError
+//	@Router			/api/v1/messages/notes [post]
+func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
+	note := new(model.NoteRequest)
+	if err := context.BodyParser(note); err != nil {
+		return err
+	}
+	 controller.PrismaClient.Note.CreateOne(
+		db.Note.Content.Set(note.Content),
+		db.Note.UserID.Set(note.UserID),
+		db.Note.PassageID.Set(note.PassageID),
+	).Exec(controller.Context)
+	return context.JSON(note)
+}
