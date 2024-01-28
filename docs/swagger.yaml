@@ -210,10 +210,8 @@ definitions:
         type: string
       message:
         type: string
-      notes:
-        items:
-          $ref: '#/definitions/model.Note'
-        type: array
+      note:
+        $ref: '#/definitions/model.Note'
       order:
         type: integer
       type:
@@ -700,6 +698,39 @@ paths:
       - Messages
   /api/v1/messages/notes:
     post:
+      consumes:
+      - application/json
+      description: Used to add user notes to a passage
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.NoteRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Add a Note to a Passage
+      tags:
+      - Messages
+    put:
       consumes:
       - application/json
       description: Used to update a user notes in a passage

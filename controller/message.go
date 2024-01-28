@@ -208,7 +208,6 @@ func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
 //	@Description	Used to add user notes to a passage
 //	@tags			Messages
 //	@Param			Authorization	header	string			true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			data			body	model.Message	true	"Post a note request"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.NoteRequest

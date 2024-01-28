@@ -368,7 +368,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/messages/notes": {
-            "post": {
+            "put": {
                 "description": "Used to update a user notes in a passage",
                 "consumes": [
                     "application/json"
@@ -404,6 +404,55 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.Note"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Used to add user notes to a passage",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Add a Note to a Passage",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.NoteRequest"
                         }
                     },
                     "400": {
@@ -1444,11 +1493,8 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
-                "notes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Note"
-                    }
+                "note": {
+                    "$ref": "#/definitions/model.Note"
                 },
                 "order": {
                     "type": "integer"
