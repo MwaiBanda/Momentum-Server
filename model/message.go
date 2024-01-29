@@ -30,10 +30,11 @@ type PassageResponse struct {
 type Note struct {
 	ID        string `json:"id"`
 	Content   string `json:"content"`
+	UserID	string `json:"userId"`
 }
 
 type NoteRequest struct {
-	PassageID        string `json:"passage_id"`
-	UserID        string `json:"user_id"`
+	PassageID        string `json:"passageId"`
+	UserID        string `json:"userId"`
 	Content   string `json:"content"`
 }

@@ -245,7 +245,7 @@ func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/messages/notes [put]
 func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
-	note := new(model.Note)
+	note := new(model.NoteRequest)
 	if err := context.BodyParser(note); err != nil {
 		return err
 	}
