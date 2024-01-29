@@ -220,8 +220,11 @@ func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
 		return err
 	}
 
-	go controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0)
-
+	_, err := controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0).Result()
+	if err != nil {
+		return err
+	}
+	
 	 controller.PrismaClient.Note.CreateOne(
 		db.Note.Content.Set(note.Content),
 		db.Note.UserID.Set(note.UserID),
@@ -249,9 +252,11 @@ func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
 	if err := context.BodyParser(note); err != nil {
 		return err
 	}
-	
-	go controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0)
 
+	_, err := controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0).Result()
+	if err != nil {
+		return err
+	}
 	 controller.PrismaClient.Note.FindUnique(
 		db.Note.ID.Equals(note.ID),
 	).Update(
