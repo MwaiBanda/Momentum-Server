@@ -219,6 +219,9 @@ func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
 	if err := context.BodyParser(note); err != nil {
 		return err
 	}
+
+	go controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0)
+
 	 controller.PrismaClient.Note.CreateOne(
 		db.Note.Content.Set(note.Content),
 		db.Note.UserID.Set(note.UserID),
