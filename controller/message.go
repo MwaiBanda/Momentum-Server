@@ -245,10 +245,13 @@ func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/messages/notes [put]
 func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
-	note := new(model.NoteRequest)
+	note := new(model.Note)
 	if err := context.BodyParser(note); err != nil {
 		return err
 	}
+	
+	go controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0)
+
 	 controller.PrismaClient.Note.FindUnique(
 		db.Note.ID.Equals(note.ID),
 	).Update(
