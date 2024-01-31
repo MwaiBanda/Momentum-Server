@@ -3,7 +3,7 @@ import {
     ColumnDef,
 } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-
+import { auth } from "@/util/firebase";
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -43,7 +43,7 @@ export const columns: ColumnDef<Transaction>[] = [
       accessorKey: "date",
       header: "Date",
       cell: ({ row }) => (
-        <div className="capitalize">{ row.getValue("date") }</div>
+        <div className="capitalize">{auth.currentUser ? row.getValue("date") : (row.getValue("date") as string).split("").map(() => "*").join("")}</div>
       ),
     },
     {
@@ -59,13 +59,13 @@ export const columns: ColumnDef<Transaction>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="capitalize">{(row.getValue("user") as User).fullname}</div>,
+      cell: ({ row }) => <div className="capitalize">{auth.currentUser ? (row.getValue("user") as User).fullname : (row.index == 0 ? "🔒 Signin to view information" : "")}</div>,
     },
     {
       accessorKey: "description",
       header: "Description",
       cell: ({ row }) => (
-        <div className="capitalize">{ row.getValue("description") }</div>
+        <div className="capitalize">{auth.currentUser ? row.getValue("description") : (row.getValue("description") as string).split("").map(() => "*").join("")}</div>
       ),
     },
     {
@@ -81,7 +81,7 @@ export const columns: ColumnDef<Transaction>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{(row.getValue("user") as User).email}</div>,
+      cell: ({ row }) => <div className={auth.currentUser ? "lowercase" : "capitalize"}>{auth.currentUser ? (row.getValue("user") as User).email : (row.index == 0 ? "🔒 Signin to view information" : "")}</div>,
     },
     {
       accessorKey: "createdOn",
@@ -96,7 +96,7 @@ export const columns: ColumnDef<Transaction>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{(new Date(row.getValue("createdOn")).toLocaleDateString())}</div>,
+      cell: ({ row }) => <div className="lowercase">{auth.currentUser ? (new Date(row.getValue("createdOn")).toLocaleDateString()) : (row.getValue("createdOn") as string).split("").map(() => "*").join("")}</div>,
     },
     {
       accessorKey: "amount",
@@ -109,7 +109,7 @@ export const columns: ColumnDef<Transaction>[] = [
           currency: "USD",
         }).format(amount)
   
-        return <div className="text-right font-medium">{formatted}</div>
+        return <div className="text-right font-medium">{auth.currentUser ? formatted : formatted.split("").map(() => { return "$" }).slice(0, formatted.length - 2).join("")}</div>
       },
     },
     {

@@ -2,25 +2,41 @@ import { Navbar } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
 import {MESSAGES, NOFICATIONS, PAYMENTS} from "../util/constants";
 import { auth } from '../util/firebase';
+import { useEffect, useState } from 'react';
 
 
-
+function AuthNavlink({ onSigninClick }: { onSigninClick: () => void}){
+  const [isSignedIn, setSignedIn] = useState(auth.currentUser ? true : false)
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setSignedIn(true)
+      } else {
+        setSignedIn(false)
+      }
+    })
+    if (auth.currentUser) {
+      setSignedIn(true)
+    } else {
+      setSignedIn(false)
+    }
+  }, [auth.currentUser])
+  if (isSignedIn) {
+    return <Navbar.Link className="cursor-pointer" onClick={() => {
+      auth.signOut().then(() => {
+        alert("Signed out")
+      }).catch((error) => {
+        alert(error)
+      })
+    }}>Sign Out</Navbar.Link>
+  } else {
+    return <Navbar.Link onClick={onSigninClick}>Sign In</Navbar.Link>
+  }
+}
 
 export function Nav({ onSigninClick }: { onSigninClick: () => void }) {
   let location = useLocation();
-  function AuthNavlink() {
-    if (auth.currentUser) {
-      return <Navbar.Link className="cursor-pointer" onClick={() => {
-        auth.signOut().then(() => {
-          alert("Signed out")
-        }).catch((error) => {
-          alert(error)
-        })
-      }}>Sign Out</Navbar.Link>
-    } else {
-      return <Navbar.Link onClick={onSigninClick}>Sign In</Navbar.Link>
-    }
-  }
+  
     return (
       <Navbar fluid rounded className="w-full" >
         <Navbar.Brand href="/dashboard">
@@ -34,7 +50,7 @@ export function Nav({ onSigninClick }: { onSigninClick: () => void }) {
           <Navbar.Link href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</Navbar.Link>
           <Navbar.Link href={PAYMENTS} active={PAYMENTS === location.pathname}>Transactions</Navbar.Link>
           {/* <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link> */}
-          <AuthNavlink />
+          <AuthNavlink onSigninClick={onSigninClick}/>
         </Navbar.Collapse>
       </Navbar>
     );
