@@ -206,7 +206,7 @@ func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
 //	@Summary		Add a Note to a Passage
 //	@Description	Used to add user notes to a passage
 //	@tags			Messages
-//	@Param			Authorization	header	string			true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			Authorization	header	string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.NoteRequest
@@ -305,7 +305,7 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 //	@Produce		json
 //	@tags			Users
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			messageId			path		string	true	"provide a message Id"
+//	@Param			messageId		path		string	true	"provide a message Id"
 //	@Success		200				{array}		model.UserResponse
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError

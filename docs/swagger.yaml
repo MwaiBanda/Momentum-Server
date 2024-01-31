@@ -176,14 +176,16 @@ definitions:
         type: string
       id:
         type: string
+      userId:
+        type: string
     type: object
   model.NoteRequest:
     properties:
       content:
         type: string
-      passage_id:
+      passageId:
         type: string
-      user_id:
+      userId:
         type: string
     type: object
   model.Notification:
@@ -210,8 +212,10 @@ definitions:
         type: string
       message:
         type: string
-      note:
-        $ref: '#/definitions/model.Note'
+      notes:
+        items:
+          $ref: '#/definitions/model.Note'
+        type: array
       order:
         type: integer
       type:
@@ -660,6 +664,47 @@ paths:
       summary: Update a Message
       tags:
       - Messages
+  /api/v1/messages/{messageId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a message's information by providing an Id
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: provide a message Id
+        in: path
+        name: messageId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Delete message information by Id
+      tags:
+      - Users
   /api/v1/messages/{userId}:
     get:
       consumes:
@@ -769,6 +814,47 @@ paths:
       summary: Update a Note in a Passage
       tags:
       - Messages
+  /api/v1/messages/notes{noteId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a note's information by providing an Id
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: provide note Id
+        in: path
+        name: noteId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.UserResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Delete note information by Id
+      tags:
+      - Users
   /api/v1/notifications:
     post:
       consumes:
