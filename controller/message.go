@@ -33,7 +33,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	var messages []model.Message
 	var unpublished []model.Message
 	userId := context.Params("userId")
-	cachedMessages, err := controller.Redis.Get(controller.Context, constants.MessageKey + "-" + userId).Result()
+	cachedMessages, err := controller.Redis.Get(controller.Context, constants.MessageKey+"-"+userId).Result()
 	if err == redis.Nil {
 		res, err := controller.PrismaClient.Message.FindMany(
 			db.Message.Published.Equals(true),
@@ -54,12 +54,13 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		result, _ := json.MarshalIndent(res, "", "  ")
 		if err := json.Unmarshal(result, &messages); err != nil {
 			fmt.Println(err)
-			
+
 		}
-		
-		if userId != constants.Admin && messages != nil{
-			controller.Redis.Set(controller.Context, constants.MessageKey + "-" + userId, string(result), time.Minute*30)
-		} else {
+
+		if userId != constants.Admin && messages != nil {
+			controller.Redis.Set(controller.Context, constants.MessageKey+"-"+userId, string(result), time.Hour*24)
+			controller.AddUserCacheSession(constants.MessageKey + "-" + userId)
+		} else if userId == constants.Admin{
 			res, err := controller.PrismaClient.Message.FindMany(
 				db.Message.Published.Equals(false),
 			).OrderBy(
@@ -68,7 +69,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 			if err != nil {
 				fmt.Println(err)
 			}
-	
+
 			result, _ := json.MarshalIndent(res, "", "  ")
 			if err := json.Unmarshal(result, &unpublished); err != nil {
 				fmt.Println(err)
@@ -91,7 +92,6 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	}
 	return context.JSON(model.MessageResponse{Data: messages})
 }
-
 
 // PostMessage godoc
 //
@@ -165,7 +165,7 @@ func (controller *Controller) PostMessage(context *fiber.Ctx) error {
 //	@Router			/api/v1/messages [put]
 func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
 	var message model.Message
-	go controller.Redis.Expire(controller.Context, constants.MessageKey, time.Second*0)
+	controller.DeleteUserCachedSessions()
 	if err := context.BodyParser(&message); err != nil {
 		return err
 	}
@@ -192,7 +192,7 @@ func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
 			).Tx())
 		}
 	}
-	
+
 	err := controller.PrismaClient.Prisma.Transaction(transactions...).Exec(controller.Context)
 	if err != nil {
 		log.Panic(err.Error())
@@ -220,12 +220,12 @@ func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
 		return err
 	}
 
-	_, err := controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0).Result()
+	_, err := controller.Redis.Expire(controller.Context, constants.MessageKey+"-"+note.UserID, time.Second*0).Result()
 	if err != nil {
 		return err
 	}
-	
-	 controller.PrismaClient.Note.CreateOne(
+
+	controller.PrismaClient.Note.CreateOne(
 		db.Note.Content.Set(note.Content),
 		db.Note.UserID.Set(note.UserID),
 		db.Note.PassageID.Set(note.PassageID),
@@ -253,15 +253,77 @@ func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
 		return err
 	}
 
-	_, err := controller.Redis.Expire(controller.Context, constants.MessageKey + "-" + note.UserID, time.Second*0).Result()
+	_, err := controller.Redis.Expire(controller.Context, constants.MessageKey+"-"+note.UserID, time.Second*0).Result()
 	if err != nil {
 		return err
 	}
-	 controller.PrismaClient.Note.FindUnique(
+	controller.PrismaClient.Note.FindUnique(
 		db.Note.ID.Equals(note.ID),
 	).Update(
 		db.Note.Content.Set(note.Content),
-
 	).Exec(controller.Context)
 	return context.JSON(note)
+}
+
+
+// DeleteNote godoc
+//
+//	@Summary		Delete note information by Id
+//	@Description	Delete a note's information by providing an Id
+//	@Accept			json
+//	@Produce		json
+//	@tags			Users
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			noteId			path		string	true	"provide note Id"
+//	@Success		200				{array}		model.UserResponse
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/messages/notes{noteId} [delete]
+func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
+	var note model.Note
+	res, err := controller.PrismaClient.Note.FindUnique(
+		db.Note.ID.Equals(context.Params("noteId")),
+	).Delete().Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, &note); err != nil {
+		fmt.Println(err)
+	}
+
+	return context.JSON(note)
+}
+
+// DeleteMessage godoc
+//
+//	@Summary		Delete message information by Id
+//	@Description	Delete a message's information by providing an Id
+//	@Accept			json
+//	@Produce		json
+//	@tags			Users
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			messageId			path		string	true	"provide a message Id"
+//	@Success		200				{array}		model.UserResponse
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/messages/{messageId} [delete]
+func (controller *Controller) DeleteMessage(context *fiber.Ctx) error {
+	var message model.Message
+	res, err := controller.PrismaClient.Message.FindUnique(
+		db.Message.ID.Equals(context.Params("messageId")),
+	).Delete().Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, &message); err != nil {
+		fmt.Println(err)
+	}
+
+	return context.JSON(message)
 }

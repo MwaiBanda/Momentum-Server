@@ -279,3 +279,41 @@ func (controller *Controller) PostTransactionMail(mail model.TransactionMailRequ
 	fmt.Println("Email Sent!")
 
 }
+
+func (controller *Controller) AddUserCacheSession(key string) {
+	v, err := controller.Redis.Get(controller.Context, constants.UserCachedSessionKey).Result()
+	if err == redis.Nil {
+		if err := controller.Redis.Set(controller.Context, constants.UserCachedSessionKey, []string{key}, time.Hour*24).Err(); err != nil {
+			fmt.Println(err)
+		}
+	} else if err != nil {
+		fmt.Println(err)
+	} else {
+		var sessions []string
+		if err := json.Unmarshal([]byte(v), &sessions); err != nil {
+			fmt.Println(err)
+		}
+		sessions = append(sessions, key)
+		if err := controller.Redis.Set(controller.Context, constants.UserCachedSessionKey, sessions, time.Hour*24).Err(); err != nil {
+			fmt.Println(err)
+		}
+	}
+}
+
+func (controller *Controller) DeleteUserCachedSessions() {
+	v, err := controller.Redis.Get(controller.Context, constants.UserCachedSessionKey).Result()
+	if err == redis.Nil {
+		fmt.Println("No sessions")
+	} else if err != nil {
+		fmt.Println(err)
+	} else {
+		var sessions []string
+		if err := json.Unmarshal([]byte(v), &sessions); err != nil {
+			fmt.Println(err)
+		}
+		sessions = append(sessions, constants.UserCachedSessionKey)
+		if err := controller.Redis.Del(controller.Context, sessions...).Err(); err != nil {
+			fmt.Println(err)
+		}
+	}
+}
