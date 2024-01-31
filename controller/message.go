@@ -57,10 +57,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 
 		}
 
-		if userId != constants.Admin && messages != nil {
-			controller.Redis.Set(controller.Context, constants.MessageKey+"-"+userId, string(result), time.Hour*24)
-			controller.AddUserCacheSession(constants.MessageKey + "-" + userId)
-		} else if userId == constants.Admin{
+		if userId == constants.Admin{
 			res, err := controller.PrismaClient.Message.FindMany(
 				db.Message.Published.Equals(false),
 			).OrderBy(
@@ -75,7 +72,10 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 				fmt.Println(err)
 			}
 			messages = append(messages, unpublished...)
-		}
+		} else if messages != nil {
+			controller.Redis.Set(controller.Context, constants.MessageKey+"-"+userId, string(result), time.Hour*24)
+			controller.AddUserCacheSession(constants.MessageKey + "-" + userId)
+		} 
 	} else if err != nil {
 		fmt.Println(err.Error())
 	} else {

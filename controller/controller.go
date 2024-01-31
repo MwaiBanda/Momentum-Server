@@ -283,7 +283,11 @@ func (controller *Controller) PostTransactionMail(mail model.TransactionMailRequ
 func (controller *Controller) AddUserCacheSession(key string) {
 	v, err := controller.Redis.Get(controller.Context, constants.UserCachedSessionKey).Result()
 	if err == redis.Nil {
-		if err := controller.Redis.Set(controller.Context, constants.UserCachedSessionKey, []string{key}, time.Hour*24).Err(); err != nil {
+		str, err := json.Marshal([]string{key})
+		if err != nil {
+			fmt.Println(err)
+		}
+		if err := controller.Redis.Set(controller.Context, constants.UserCachedSessionKey, string(str), time.Hour*24).Err(); err != nil {
 			fmt.Println(err)
 		}
 	} else if err != nil {
@@ -294,7 +298,8 @@ func (controller *Controller) AddUserCacheSession(key string) {
 			fmt.Println(err)
 		}
 		sessions = append(sessions, key)
-		if err := controller.Redis.Set(controller.Context, constants.UserCachedSessionKey, sessions, time.Hour*24).Err(); err != nil {
+		str, _ := json.Marshal(sessions)
+		if err := controller.Redis.Set(controller.Context, constants.UserCachedSessionKey, string(str), time.Hour*24).Err(); err != nil {
 			fmt.Println(err)
 		}
 	}
