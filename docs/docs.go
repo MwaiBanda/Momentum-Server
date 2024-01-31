@@ -486,7 +486,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Messages"
                 ],
                 "summary": "Delete note information by Id",
                 "parameters": [
@@ -512,7 +512,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.UserResponse"
+                                "$ref": "#/definitions/model.Note"
                             }
                         }
                     },
@@ -547,7 +547,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Messages"
                 ],
                 "summary": "Delete message information by Id",
                 "parameters": [
@@ -573,7 +573,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.UserResponse"
+                                "$ref": "#/definitions/model.Message"
                             }
                         }
                     },

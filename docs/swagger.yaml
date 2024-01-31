@@ -688,7 +688,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.UserResponse'
+              $ref: '#/definitions/model.Message'
             type: array
         "400":
           description: Bad Request
@@ -704,7 +704,7 @@ paths:
             $ref: '#/definitions/model.HTTPError'
       summary: Delete message information by Id
       tags:
-      - Users
+      - Messages
   /api/v1/messages/{userId}:
     get:
       consumes:
@@ -838,7 +838,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.UserResponse'
+              $ref: '#/definitions/model.Note'
             type: array
         "400":
           description: Bad Request
@@ -854,7 +854,7 @@ paths:
             $ref: '#/definitions/model.HTTPError'
       summary: Delete note information by Id
       tags:
-      - Users
+      - Messages
   /api/v1/notifications:
     post:
       consumes:

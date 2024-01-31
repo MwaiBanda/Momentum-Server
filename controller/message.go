@@ -272,10 +272,10 @@ func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
 //	@Description	Delete a note's information by providing an Id
 //	@Accept			json
 //	@Produce		json
-//	@tags			Users
+//	@tags			Messages
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			noteId			path		string	true	"provide note Id"
-//	@Success		200				{array}		model.UserResponse
+//	@Success		200				{array}		model.Note
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
@@ -303,10 +303,10 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 //	@Description	Delete a message's information by providing an Id
 //	@Accept			json
 //	@Produce		json
-//	@tags			Users
+//	@tags			Messages
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			messageId		path		string	true	"provide a message Id"
-//	@Success		200				{array}		model.UserResponse
+//	@Success		200				{array}		model.Message
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
