@@ -476,7 +476,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/messages/notes{noteId}": {
+        "/api/v1/messages/notes/{noteId}": {
             "delete": {
                 "description": "Delete a note's information by providing an Id",
                 "consumes": [

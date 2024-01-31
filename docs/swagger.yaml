@@ -814,7 +814,7 @@ paths:
       summary: Update a Note in a Passage
       tags:
       - Messages
-  /api/v1/messages/notes{noteId}:
+  /api/v1/messages/notes/{noteId}:
     delete:
       consumes:
       - application/json

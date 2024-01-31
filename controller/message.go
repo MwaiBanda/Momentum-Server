@@ -279,7 +279,7 @@ func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
-//	@Router			/api/v1/messages/notes{noteId} [delete]
+//	@Router			/api/v1/messages/notes/{noteId} [delete]
 func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 	var note model.Note
 	res, err := controller.PrismaClient.Note.FindUnique(
