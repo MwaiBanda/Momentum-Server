@@ -52,6 +52,8 @@ definitions:
         type: string
       favourites:
         type: string
+      id:
+        type: string
       instructions:
         type: string
       least_favourites:
@@ -545,6 +547,78 @@ paths:
       summary: Post a Meal
       tags:
       - Meals
+    put:
+      consumes:
+      - application/json
+      description: Update a meal
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.MealRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Update a meal
+      tags:
+      - Meals
+  /api/v1/meals/{mealId}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a meal by providing an Id
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: provide meal Id
+        in: path
+        name: mealId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.MealResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Delete a meal
+      tags:
+      - Meals
   /api/v1/meals/meal:
     post:
       consumes:
@@ -583,6 +657,39 @@ paths:
           schema:
             $ref: '#/definitions/model.HTTPError'
       summary: Post a meal participant
+      tags:
+      - Meals
+    put:
+      consumes:
+      - application/json
+      description: Update a volunteered meal
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.VolunteeredMeal'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Update a volunteered meal
       tags:
       - Meals
   /api/v1/messages:
