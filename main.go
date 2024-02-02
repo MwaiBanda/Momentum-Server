@@ -44,7 +44,9 @@ func main() {
 
 	v1.Post("/meals", controller.PostMeal)
 	v1.Get("/meals", controller.GetAllMeals)
+	v1.Delete("/meals/:mealId", controller.DeleteMealById)
 	v1.Post("/meals/meal", controller.PostVolunteeredMealForMeal)
+	v1.Put("/meals/meal", controller.UpdateVolunteeredMeal)
 
 	v1.Post("/users", controller.PostUser)
 	v1.Get("/users/:userId", controller.GetUserById)
@@ -67,7 +69,7 @@ func main() {
 	v1.Put("/messages/notes", controller.UpdateUserNote)
 	v1.Delete("/messages/notes/:noteId", controller.DeleteNote)
 	v1.Delete("/messages/:messageId", controller.DeleteMessage)
-	
+
 	v1.Post("/notifications", controller.PostNotification)
 	
 	v1.Get("/events", controller.GetAllEvents)

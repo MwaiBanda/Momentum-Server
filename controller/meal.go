@@ -164,3 +164,112 @@ func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 
 	return context.JSON(mealResponse)
 }
+
+// UpdateMeal godoc
+//
+//	@Summary		Update a meal
+//	@Description	Update a meal
+//	@Accept			json
+//	@Produce		json
+//	@tags			Meals
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Success		200				{object}	model.MealRequest
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/meals [put]
+func (controller *Controller) UpdateMeal(context *fiber.Ctx) error {
+	meal := new(model.MealRequest)
+	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
+
+	if err := context.BodyParser(meal); err != nil {
+		log.Panic(err.Error())
+	}
+	err := controller.PrismaClient.Prisma.Transaction(
+		controller.PrismaClient.Meal.FindUnique(db.Meal.ID.Equals(meal.Id)).Update(
+			db.Meal.Reason.Set(meal.Reason),
+			db.Meal.Email.Set(meal.Email),
+			db.Meal.Phone.Set(meal.Phone),
+			db.Meal.City.Set(meal.City),
+			db.Meal.NumOfAdults.Set(meal.NumOfAdults),
+			db.Meal.NumberOfKids.Set(meal.NumberOfKids),
+			db.Meal.Street.Set(meal.Street),
+			db.Meal.PreferredTime.Set(meal.PreferredTime),
+			db.Meal.Favourites.Set(meal.Favourites),
+			db.Meal.LeastFavourites.Set(meal.LeastFavourites),
+			db.Meal.Allergies.Set(meal.Allergies),
+			db.Meal.Instructions.Set(meal.Instructions),
+			db.Meal.Recipient.Set(meal.Recipient),
+		).Tx(),
+	).Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return context.JSON(meal)
+}
+
+// DeleteMealById godoc
+//
+//	@Summary		Delete a meal
+//	@Description	delete a meal by providing an Id
+//	@Accept			json
+//	@Produce		json
+//	@tags			Meals
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			mealId			path		string	true	"provide meal Id"
+//	@Success		200				{object}	model.MealResponse
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/meals/{mealId} [delete]
+func (controller *Controller) DeleteMealById(context *fiber.Ctx) error {
+	var meal model.MealResponse
+	res, err := controller.PrismaClient.Meal.FindUnique(
+		db.Meal.ID.Equals(context.Params("mealId")),
+	).Delete().Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, &meal); err != nil {
+		fmt.Println(err)
+	}
+
+	return context.JSON(meal)
+}
+
+
+// UpdateVolunteeredMeal godoc
+//
+//	@Summary		Update a volunteered meal
+//	@Description	Update a volunteered meal 
+//	@Accept			json
+//	@Produce		json
+//	@tags			Meals
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Success		200				{object}	model.VolunteeredMeal
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/meals/meal [put]
+func (controller *Controller) UpdateVolunteeredMeal(context *fiber.Ctx) error {
+	meal := new(model.VolunteeredMeal)
+	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
+
+	if err := context.BodyParser(meal); err != nil {
+		log.Panic(err.Error())
+	}
+	err := controller.PrismaClient.Prisma.Transaction(
+		controller.PrismaClient.VolunteeredMeal.FindUnique(db.VolunteeredMeal.ID.Equals(meal.Id)).Update(
+			db.VolunteeredMeal.Description.Set(meal.Description),
+			db.VolunteeredMeal.Notes.Set(meal.Notes),
+		).Tx(),
+	).Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return context.JSON(meal)
+}

@@ -1,6 +1,7 @@
 package model
 
 type MealRequest struct {
+	Id			  	string                   `json:"id"`
 	Recipient       string                   `json:"recipient"`
 	Reason          string                   `json:"reason"`
 	Email           string                   `json:"email"`
