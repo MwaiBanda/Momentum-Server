@@ -219,7 +219,7 @@ func getBasePath(s string) string {
 }
 
 func (controller *Controller) EventRequest() EventReponse {
-	url := os.Getenv("PLANNING_CENTER_URL") + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-24*time.Hour).Format(time.RFC3339)
+	url := os.Getenv("PLANNING_CENTER_URL") + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-4*time.Hour).Format(time.RFC3339)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatalln("New Request", err)
