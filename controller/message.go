@@ -285,6 +285,7 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 	res, err := controller.PrismaClient.Note.FindUnique(
 		db.Note.ID.Equals(context.Params("noteId")),
 	).Delete().Exec(controller.Context)
+	
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -294,6 +295,10 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 		fmt.Println(err)
 	}
 
+	if _, err := controller.Redis.Expire(controller.Context, constants.MessageKey+"-"+note.UserID, time.Second*0).Result(); err != nil {
+		fmt.Println(err)
+	}
+	
 	return context.JSON(note)
 }
 
