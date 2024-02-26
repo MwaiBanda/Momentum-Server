@@ -38,7 +38,11 @@ func main() {
 	
 	middleware.ConfigureAppMiddleWare(app)
 	
-	api := app.Group("/api")
+	api := app.Group("/api", func(c *fiber.Ctx) error {
+		c.Set("Cache-Control", "no-cache")
+		return c.Next()
+	})
+
 	api.Get("/metrics", middleware.Monitor())
 	v1 := api.Group("/v1", middleware.BearerTokenAuthentication())
 
