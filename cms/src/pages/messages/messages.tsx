@@ -8,7 +8,7 @@ import AddMessageModal from "./modals/add-message";
 import { auth } from "../../util/firebase";
 import SigninModal from "../../components/signinmodal";
 import EditMessageModal from "./modals/edit-message";
-
+import { Rings } from 'react-loader-spinner'
 
 export const Messages = () => {
     const { data, isLoading } = useQuery({
@@ -24,7 +24,17 @@ export const Messages = () => {
     const [openEditModal, setOpenEditMessageModal] = useState(false);
     const [editableMessage, setEditableMessage] = useState<Message | null>(null);
 
-    if (isLoading) return <div>Loading...</div>
+    if (isLoading) return <div className="w-full h-screen flex flex-col justify-center items-center" >
+        <Rings
+            visible={true}
+            height="150"
+            width="150"
+            color="#ec750c"
+            ariaLabel="rings-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+        />
+    </div>
 
     return (
         <main className="w-full h-screen">
@@ -40,7 +50,7 @@ export const Messages = () => {
             Add Message
         </button>
         </div>
-        <div className="w-full h-screen flex flex-col justify-normal items-center">
+        <div className="lg:grid lg:grid-cols-4 lg:gap-4  md:grid md:grid-cols-2 md:gap-2  w-full h-screen flex flex-col justify-normal items-center">
             {data.data.map((message: Message) => (
                 <div key={message.id}>
                     <MessageCard message={message} onEditMessage={
@@ -66,7 +76,7 @@ export const Messages = () => {
 
 function MessageCard({ message, onEditMessage }: { message: Message, onEditMessage: (message: Message) => void }) {
   return (
-    <Card className="max-w-lg mt-6" renderImage={() => <img crossOrigin="anonymous" src={message.thumbnail} title="source: imgur.com" />} horizontal={false}>
+    <Card className="max-w-lg mt-6" renderImage={() => <img className="max-h-[210px]" crossOrigin="anonymous"  src={message.thumbnail} title="source: imgur.com" />} horizontal={false}>
         <div className="min-w-96 flex justify-between items-center">
         <div>
             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -75,10 +85,10 @@ function MessageCard({ message, onEditMessage }: { message: Message, onEditMessa
             <p className="font-normal text-gray-700 dark:text-gray-400">
                 {message.date}
             </p>
-            <p className="font-normal text-gray-700 dark:text-gray-400">
+            <p className="font-normal text-gray-700 dark:text-gray-400 line-clamp-1">
                 {message.series}
             </p>
-            <p className="font-normal text-gray-700 dark:text-gray-400">
+            <p className="font-normal text-gray-700 dark:text-gray-400 line-clamp-1">
                 {message.title}
             </p>
         </div>
