@@ -1,10 +1,8 @@
 
-import { Nav } from "../../components/nav"
+import { MomentumNavigation } from "../../components/navigation"
 import { useQuery } from "react-query"
 import axios from "axios"
 import { TransactionTable } from "./table/transaction-table"
-import { useState } from "react"
-import SigninModal from "@/components/signinmodal"
 import { Rings } from "react-loader-spinner"
 
 export const Payments = () => {
@@ -15,7 +13,6 @@ export const Payments = () => {
           return data
         },
     })
-    const [openAuthModal, setOpenAuthModal] = useState(false);
 
     if (isLoading) return <div className="w-full h-screen flex flex-col justify-center items-center" >
         <Rings
@@ -30,9 +27,9 @@ export const Payments = () => {
     </div>
     return (
         <main className="w-full h-screen">
-            <Nav onSigninClick={() => {setOpenAuthModal(true)}}/>
-            <TransactionTable data={data} />
-            <SigninModal openModal={openAuthModal} setOpenModal={setOpenAuthModal}/>
+            <MomentumNavigation content={
+                <TransactionTable data={data} />
+            }/>
         </main>
     )
 }

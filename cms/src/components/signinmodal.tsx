@@ -4,7 +4,7 @@ import { auth } from "../util/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 
-export default function SigninModal({ openModal, setOpenModal }: { openModal: boolean, setOpenModal: (open: boolean) => void }) {
+export default function SigninModal({ openModal, setOpenModal, onSignInComplete }: { openModal: boolean, setOpenModal: (open: boolean) => void, onSignInComplete: (message: string) => void}) {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   return (
@@ -33,11 +33,11 @@ export default function SigninModal({ openModal, setOpenModal }: { openModal: bo
                 .then((userCredential) => {
                   const user = userCredential.user;
                   setOpenModal(false)
-                  alert(`Signed in as ${user?.email}`)
+                  onSignInComplete(`Signed in as ${user?.email}`)
                 }).catch((error) => {
                   const errorCode = error.code;
                   const errorMessage = error.message;
-                  alert(`Error: ${errorCode} ${errorMessage}`)
+                  onSignInComplete(`Error: ${errorCode} ${errorMessage}`)
                 })
               }}>Log in to your account</Button>
             </div>

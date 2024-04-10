@@ -1,15 +1,30 @@
 import { useMutation } from "react-query";
-import { Nav } from "../../components/nav"
+import { MomentumNavigation } from "../../components/navigation"
 import { Button, Card, Label, TextInput, Textarea } from 'flowbite-react';
 import axios from "axios";
 import { useState } from "react";
 import { auth } from "../../util/firebase";
+import { Radio } from 'flowbite-react';
 
 interface Notification {
     title: string;
     body: string;
     topic: string;
 };
+
+export const Notifications = () => {
+    const [openAuthModal, setOpenAuthModal] = useState(false);
+
+    return (
+        <main className="w-full h-screen">
+            <MomentumNavigation content={
+                <div className="w-full h-screen flex justify-center items-center">
+                <NotificationCard setOpenAuthModal={() => { setOpenAuthModal(true) }}/>
+                </div>
+            } showAuth={openAuthModal}/>
+        </main>
+    )
+}
 
 function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void}){
     const [title, setTitle] = useState("")
@@ -90,19 +105,5 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
     );
 }
 
-export const Notifications = () => {
-    const [openAuthModal, setOpenAuthModal] = useState(false);
 
-    return (
-        <main className="w-full h-screen">
-            <Nav onSigninClick={() => { setOpenAuthModal(true) }}/>
-            <div className="w-full h-screen flex justify-center items-center">
-                <NotificationCard setOpenAuthModal={() => { setOpenAuthModal(true) }}/>
-            </div>
-            <SigninModal openModal={openAuthModal} setOpenModal={setOpenAuthModal}/>
-        </main>
-    )
-}
-import { Radio } from 'flowbite-react';
-import SigninModal from "@/components/signinmodal";
 

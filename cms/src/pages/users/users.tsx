@@ -1,11 +1,9 @@
-import { Nav } from "../../components/nav"
+import { MomentumNavigation } from "../../components/navigation"
 
 export const Users = () => {
     return (
         <div className="w-full">
-        <Nav onSigninClick={() => {
-            
-        }}/>
+        <MomentumNavigation />
         </div>
     )
 }

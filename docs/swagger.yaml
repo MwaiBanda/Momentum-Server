@@ -693,6 +693,45 @@ paths:
       tags:
       - Meals
   /api/v1/messages:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a message's information
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Post a message
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Delete message information
+      tags:
+      - Messages
     post:
       consumes:
       - application/json
@@ -769,47 +808,6 @@ paths:
           schema:
             $ref: '#/definitions/model.HTTPError'
       summary: Update a Message
-      tags:
-      - Messages
-  /api/v1/messages/{messageId}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a message's information by providing an Id
-      parameters:
-      - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: provide a message Id
-        in: path
-        name: messageId
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Message'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-      summary: Delete message information by Id
       tags:
       - Messages
   /api/v1/messages/{userId}:

@@ -304,31 +304,33 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 
 // DeleteMessage godoc
 //
-//	@Summary		Delete message information by Id
-//	@Description	Delete a message's information by providing an Id
+//	@Summary		Delete message information 
+//	@Description	Delete a message's information 
 //	@Accept			json
 //	@Produce		json
 //	@tags			Messages
-//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			messageId		path		string	true	"provide a message Id"
-//	@Success		200				{array}		model.Message
+//	@Param			Authorization	header		string			true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body		model.Message	true	"Post a message"
+//	@Success		200				{object}	model.Message
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
-//	@Router			/api/v1/messages/{messageId} [delete]
+//	@Router			/api/v1/messages [delete]
 func (controller *Controller) DeleteMessage(context *fiber.Ctx) error {
 	var message model.Message
-	res, err := controller.PrismaClient.Message.FindUnique(
+	var transactions []transaction.Param
+	for _, passage := range message.Passages {
+		transactions = append(transactions, controller.PrismaClient.Passage.FindUnique(
+			db.Passage.ID.Equals(passage.ID),
+		).Delete().Tx())
+	}
+	transactions = append(transactions,  controller.PrismaClient.Message.FindUnique(
 		db.Message.ID.Equals(context.Params("messageId")),
-	).Delete().Exec(controller.Context)
+	).Delete().Tx())
+
+	err := controller.PrismaClient.Prisma.Transaction(transactions...).Exec(controller.Context)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err.Error())
 	}
-
-	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, &message); err != nil {
-		fmt.Println(err)
-	}
-
 	return context.JSON(message)
 }
