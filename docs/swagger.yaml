@@ -814,7 +814,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get a list of messages available
+      description: get a list of messages available for a user
       parameters:
       - description: Provide a bearer token
         example: Bearer XXX-xxx-XXX-xxx-XX
@@ -843,7 +843,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Show a list of messages available
+      summary: Show a list of messages available for a user
       tags:
       - Messages
   /api/v1/messages/notes:
@@ -958,6 +958,42 @@ paths:
           schema:
             $ref: '#/definitions/model.HTTPError'
       summary: Delete note information by Id
+      tags:
+      - Messages
+  /api/v1/messages/unpublished:
+    get:
+      consumes:
+      - application/json
+      description: get a list of unpublished messages available
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.MessageResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Show a list of unpublished messages available
       tags:
       - Messages
   /api/v1/notifications:

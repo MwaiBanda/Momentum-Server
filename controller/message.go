@@ -18,8 +18,8 @@ import (
 
 // GetAllMessages godoc
 //
-//	@Summary		Show a list of messages available
-//	@Description	get a list of messages available
+//	@Summary		Show a list of messages available for a user
+//	@Description	get a list of messages available for a user
 //	@Accept			json
 //	@Produce		json
 //	@tags			Messages
@@ -31,7 +31,6 @@ import (
 //	@Router			/api/v1/messages/{userId} [get]
 func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	var messages []model.Message
-	var unpublished []model.Message
 	userId := context.Params("userId")
 	cachedMessages, err := controller.Redis.Get(controller.Context, constants.MessageKey+"-"+userId).Result()
 	if err == redis.Nil {
@@ -56,23 +55,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 			fmt.Println(err)
 
 		}
-
-		if userId == constants.Admin{
-			res, err := controller.PrismaClient.Message.FindMany(
-				db.Message.Published.Equals(false),
-			).OrderBy(
-				db.Message.CreatedOn.Order(db.SortOrderDesc),
-			).Exec(controller.Context)
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			result, _ := json.MarshalIndent(res, "", "  ")
-			if err := json.Unmarshal(result, &unpublished); err != nil {
-				fmt.Println(err)
-			}
-			messages = append(messages, unpublished...)
-		} else if messages != nil {
+		if messages != nil && userId != constants.Admin {
 			controller.Redis.Set(controller.Context, constants.MessageKey+"-"+userId, string(result), time.Hour*24)
 			controller.AddUserCacheSession(constants.MessageKey + "-" + userId)
 		} 
@@ -93,6 +76,36 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 	return context.JSON(model.MessageResponse{Data: messages})
 }
 
+// GetUnpublishedMessages godoc
+//
+//	@Summary		Show a list of unpublished messages available
+//	@Description	get a list of unpublished messages available
+//	@Accept			json
+//	@Produce		json
+//	@tags			Messages
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Success		200				{array}		model.MessageResponse
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/messages/unpublished [get]
+func (controller *Controller) GetUnpublishedMessages(context *fiber.Ctx) error {
+	var unpublished []model.Message
+	res, err := controller.PrismaClient.Message.FindMany(
+		db.Message.Published.Equals(false),
+	).OrderBy(
+		db.Message.CreatedOn.Order(db.SortOrderDesc),
+	).Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, &unpublished); err != nil {
+		fmt.Println(err)
+	}
+	return context.JSON(unpublished)
+}
 // PostMessage godoc
 //
 //	@Summary		Post a Message

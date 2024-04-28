@@ -10,11 +10,15 @@ import EditMessageModal from "./modals/edit-message";
 import { Rings } from 'react-loader-spinner'
 
 export const Messages = () => {
-    const { data, isLoading } = useQuery({
+    const [unpublished, setUnpublished] = useState<Message[]>([]);
+    const { data: messages, isLoading } = useQuery({
         queryKey: ['message'],
         queryFn: async () => {
           const { data } = await axios.get('/api/v1/messages/admin')
           return data
+        },
+        onSuccess(data) {
+            setUnpublished(data.data.filter((m: Message) => m.published == false))
         },
     })
 
@@ -51,50 +55,70 @@ export const Messages = () => {
                 <MomentumNavigation content={
                     <>
                     <div className="w-full flex justify-center items-end">
-                    <TextInput
-                         className="lg:w-[500px] w-[240px] ml-4 rounded-none" 
-                         type="text" 
-                         placeholder={`Search by "${searchTags[0]}"`}
-                         onChange={(e) => {
-                            setSearchText(e.target.value)
-                         }}
-                     />        
-                    <button className="bg-momentum-orange hover:bg-momentum-orange text-white font-bold py-2.5 px-4 rounded-none max-h-[42px] ml-[-5px] z-10 rounded-r-lg" onClick={() => {
-                        if (auth.currentUser) {
-                                setOpenMessageModal(true)
-                        } else {
-                                setShowAuthModal(true)
-                        }
-                        }}>
-                            Add Message
-                    </button>
-                </div>
-                <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-4  md: md:grid-cols-3  w-full">
-                    {data.data?.filter((m: Message) => {
-                        return m.title.toLowerCase().includes(searchText.toLowerCase()) ||
-                        m.preacher.toLowerCase().includes(searchText.toLowerCase()) ||
-                        m.date.toLowerCase().includes(searchText.toLowerCase()) ||
-                        m.series.toLowerCase().includes(searchText.toLowerCase()) ||
-                        searchText.length === 0
-                    })?.map((message: Message) => (
-                        <div key={message.id}>
-                            <MessageCard message={message} onEditMessage={
-                                (message) => {
-                                    if (auth.currentUser) {
-                                        setEditableMessage(message)
-                                        setOpenEditMessageModal(true)
-                                    } else {
-                                        setShowAuthModal(true)
-                                    }
-                                }
-                            }/>
-                        </div>
-                    ))}
-                </div>
-                </>
-                } showAuth={showAuthModal} />
-                <AddMessageModal openModal={openModal} setOpenModal={setOpenMessageModal}/>
-                <EditMessageModal openModal={openEditModal} setOpenModal={setOpenEditMessageModal} message={editableMessage}/>
+                        <TextInput
+                            className="lg:w-[500px] w-[240px] ml-4 rounded-none" 
+                            type="text" 
+                            placeholder={`Search by "${searchTags[0]}"`}
+                            onChange={(e) => {
+                                setSearchText(e.target.value)
+                            }}
+                        />        
+                        <button className="bg-momentum-orange hover:bg-momentum-orange text-white font-bold py-2.5 px-4 rounded-none max-h-[42px] ml-[-5px] z-10 rounded-r-lg" onClick={() => {
+                            if (auth.currentUser) {
+                                    setOpenMessageModal(true)
+                            } else {
+                                    setShowAuthModal(true)
+                            }
+                            }}>
+                                Add Message
+                        </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-4  md: md:grid-cols-3  w-full">
+                        {unpublished.filter((m: Message) => {
+                                return m.title.toLowerCase().includes(searchText.toLowerCase()) ||
+                                m.preacher.toLowerCase().includes(searchText.toLowerCase()) ||
+                                m.date.toLowerCase().includes(searchText.toLowerCase()) ||
+                                m.series.toLowerCase().includes(searchText.toLowerCase()) ||
+                                searchText.length === 0
+                            })?.map((message: Message) => (
+                                <div key={message.id}>
+                                    <MessageCard message={message} onEditMessage={
+                                        (message) => {
+                                            if (auth.currentUser) {
+                                                setEditableMessage(message)
+                                                setOpenEditMessageModal(true)
+                                            } else {
+                                                setShowAuthModal(true)
+                                            }
+                                        }
+                                    }/>
+                                </div>
+                            ))}
+                            {messages.data?.filter((m: Message) => {
+                                return m.title.toLowerCase().includes(searchText.toLowerCase()) ||
+                                m.preacher.toLowerCase().includes(searchText.toLowerCase()) ||
+                                m.date.toLowerCase().includes(searchText.toLowerCase()) ||
+                                m.series.toLowerCase().includes(searchText.toLowerCase()) ||
+                                searchText.length === 0
+                            })?.map((message: Message) => (
+                                <div key={message.id}>
+                                    <MessageCard message={message} onEditMessage={
+                                        (message) => {
+                                            if (auth.currentUser) {
+                                                setEditableMessage(message)
+                                                setOpenEditMessageModal(true)
+                                            } else {
+                                                setShowAuthModal(true)
+                                            }
+                                        }
+                                    }/>
+                                </div>
+                            ))}
+                    </div>
+                    </>
+                    } showAuth={showAuthModal} />
+                    <AddMessageModal openModal={openModal} setOpenModal={setOpenMessageModal}/>
+                    <EditMessageModal openModal={openEditModal} setOpenModal={setOpenEditMessageModal} message={editableMessage}/>
             </main>
         </>
     )
