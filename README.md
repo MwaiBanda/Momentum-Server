@@ -1,5 +1,5 @@
 ### `Momentum Server`
-<b>`LIVE(GO Backend)`</b>
+<b>`LIVE`</b>
 https://services.momentumchurch.dev/
 
 <b>`CMS(Typescript + React)`</b>
