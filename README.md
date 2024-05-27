@@ -1,6 +1,9 @@
 ### `Momentum Server`
-<b>`LIVE`</b>
+<b>`LIVE(GO Backend)`</b>
 https://services.momentumchurch.dev/
+
+<b>`CMS(Typescript + React)`</b>
+https://services.momentumchurch.dev/dashboard
 
 ----
 Backend built with Fiber for Android &amp; iOS apps providing User, Meals, Semons, Payments & Transactions CRUD functionality, 
