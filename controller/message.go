@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"sort"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -39,6 +38,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		).With(
 			db.Message.Passages.Fetch().OrderBy(
 				db.Passage.CreatedOn.Order(db.SortOrderAsc),
+				db.Passage.Order.Order(db.ASC),
 			).With(
 				db.Passage.Notes.Fetch(
 					db.Note.UserID.Equals(userId),
@@ -58,7 +58,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 		if messages != nil && userId != constants.Admin {
 			controller.Redis.Set(controller.Context, constants.MessageKey+"-"+userId, string(result), time.Hour*24)
 			controller.AddUserCacheSession(constants.MessageKey + "-" + userId)
-		} 
+		}
 	} else if err != nil {
 		fmt.Println(err.Error())
 	} else {
@@ -66,13 +66,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 			fmt.Println(err)
 		}
 	}
-	for _, message := range messages {
-		if message.HasOrder {
-			sort.Slice(message.Passages, func(i, j int) bool {
-				return message.Passages[i].Order < message.Passages[j].Order
-			})
-		}
-	}
+
 	return context.JSON(model.MessageResponse{Data: messages})
 }
 
@@ -92,10 +86,17 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 func (controller *Controller) GetUnpublishedMessages(context *fiber.Ctx) error {
 	var unpublished []model.Message
 	res, err := controller.PrismaClient.Message.FindMany(
-		db.Message.Published.Equals(false),
+		db.Message.Not(
+			db.Message.Published.Equals(true),
+		),
+	).With(
+		db.Message.Passages.Fetch().OrderBy(
+			db.Passage.Order.Order(db.SortOrderAsc),
+		),
 	).OrderBy(
 		db.Message.CreatedOn.Order(db.SortOrderDesc),
 	).Exec(controller.Context)
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -104,8 +105,9 @@ func (controller *Controller) GetUnpublishedMessages(context *fiber.Ctx) error {
 	if err := json.Unmarshal(result, &unpublished); err != nil {
 		fmt.Println(err)
 	}
-	return context.JSON(unpublished)
+	return context.JSON(model.MessageResponse{Data: unpublished})
 }
+
 // PostMessage godoc
 //
 //	@Summary		Post a Message
@@ -278,7 +280,6 @@ func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
 	return context.JSON(note)
 }
 
-
 // DeleteNote godoc
 //
 //	@Summary		Delete note information by Id
@@ -298,7 +299,7 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 	res, err := controller.PrismaClient.Note.FindUnique(
 		db.Note.ID.Equals(context.Params("noteId")),
 	).Delete().Exec(controller.Context)
-	
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -311,14 +312,14 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 	if _, err := controller.Redis.Expire(controller.Context, constants.MessageKey+"-"+note.UserID, time.Second*0).Result(); err != nil {
 		fmt.Println(err)
 	}
-	
+
 	return context.JSON(note)
 }
 
 // DeleteMessage godoc
 //
-//	@Summary		Delete message information 
-//	@Description	Delete a message's information 
+//	@Summary		Delete message information
+//	@Description	Delete a message's information
 //	@Accept			json
 //	@Produce		json
 //	@tags			Messages
@@ -337,7 +338,7 @@ func (controller *Controller) DeleteMessage(context *fiber.Ctx) error {
 			db.Passage.ID.Equals(passage.ID),
 		).Delete().Tx())
 	}
-	transactions = append(transactions,  controller.PrismaClient.Message.FindUnique(
+	transactions = append(transactions, controller.PrismaClient.Message.FindUnique(
 		db.Message.ID.Equals(context.Params("messageId")),
 	).Delete().Tx())
 

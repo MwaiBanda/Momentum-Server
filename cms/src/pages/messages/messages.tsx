@@ -10,15 +10,18 @@ import EditMessageModal from "./modals/edit-message";
 import { Rings } from 'react-loader-spinner'
 
 export const Messages = () => {
-    const [unpublished, setUnpublished] = useState<Message[]>([]);
     const { data: messages, isLoading } = useQuery({
-        queryKey: ['message'],
+        queryKey: ['message-admin'],
         queryFn: async () => {
           const { data } = await axios.get('/api/v1/messages/admin')
           return data
         },
-        onSuccess(data) {
-            setUnpublished(data.data.filter((m: Message) => m.published == false))
+    })
+    const { data: unpublished } = useQuery({
+        queryKey: ['message-unpublished'],
+        queryFn: async () => {
+          const { data } = await axios.get('/api/v1/messages/unpublished')
+          return data
         },
     })
 
@@ -73,8 +76,11 @@ export const Messages = () => {
                                 Add Message
                         </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-4  md: md:grid-cols-3  w-full">
-                        {unpublished.filter((m: Message) => {
+                    {unpublished.data && <>
+                     <h6 className="mt-2 font-bold text-lg">Private</h6>
+                     <p className="text-sm text-gray-500">View & Edit Staged Content Prior To Publishing</p>
+                     <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-4  md: md:grid-cols-3  w-full">
+                            {unpublished.data.filter((m: Message) => {
                                 return m.title.toLowerCase().includes(searchText.toLowerCase()) ||
                                 m.preacher.toLowerCase().includes(searchText.toLowerCase()) ||
                                 m.date.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -94,6 +100,12 @@ export const Messages = () => {
                                     }/>
                                 </div>
                             ))}
+                    </div>
+                    </>}
+                    <h6 className="mt-5 font-bold text-lg">Public</h6>
+                    <p className="text-sm text-gray-500">View & Edit Current Publicly Available Content</p>
+                    <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 lg:gap-4  md: md:grid-cols-3  w-full">
+                
                             {messages.data?.filter((m: Message) => {
                                 return m.title.toLowerCase().includes(searchText.toLowerCase()) ||
                                 m.preacher.toLowerCase().includes(searchText.toLowerCase()) ||
