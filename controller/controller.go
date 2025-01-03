@@ -195,7 +195,7 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 
 	switch getBasePath(endpoint) {
 	case constants.StripeEphemeralKeyRoute:
-		req.Header.Add("Stripe-Version", "2020-08-27")
+		req.Header.Add("Stripe-Version", os.Getenv("STRIPE_VERSION"))
 	default:
 		break
 	}
