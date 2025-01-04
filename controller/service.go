@@ -14,7 +14,7 @@ import (
 //	@Description	get a list of volunteer services available
 //	@Accept			json
 //	@Produce		json
-//	@tags			Messages
+//	@tags			Services
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Success		200				{array}		model.Service
 //	@Failure		400				{object}	model.HTTPError

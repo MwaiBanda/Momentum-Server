@@ -340,6 +340,17 @@ definitions:
       total:
         type: string
     type: object
+  model.Service:
+    properties:
+      id:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
   model.TransactionRequest:
     properties:
       amount:
@@ -1116,6 +1127,42 @@ paths:
       summary: Show a list of sermons
       tags:
       - Sermons
+  /api/v1/services:
+    get:
+      consumes:
+      - application/json
+      description: get a list of volunteer services available
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Service'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Show a list of volunteer services available
+      tags:
+      - Services
   /api/v1/transactions:
     get:
       consumes:
