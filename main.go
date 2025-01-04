@@ -35,9 +35,9 @@ func main() {
 			return "8085"
 		}
 	}()
-	
+
 	middleware.ConfigureAppMiddleWare(app)
-	
+
 	api := app.Group("/api", func(c *fiber.Ctx) error {
 		c.Set("Cache-Control", "no-cache")
 		return c.Next()
@@ -65,6 +65,7 @@ func main() {
 	v1.Post("/transactions", controller.PostTransaction)
 
 	v1.Get("/sermons", controller.GetAllSermons)
+	v1.Get("/services", controller.GetAllServices)
 
 	v1.Post("/messages", controller.PostMessage)
 	v1.Put("/messages", controller.UpdateMessage)
@@ -76,9 +77,9 @@ func main() {
 	v1.Delete("/messages/:messageId", controller.DeleteMessage)
 
 	v1.Post("/notifications", controller.PostNotification)
-	
+
 	v1.Get("/events", controller.GetAllEvents)
-	
+
 	app.Get("/*", swagger.HandlerDefault)
 	app.Get("/*", swagger.New(swagger.Config{
 		URL:          "https://services.momentumchurch.dev/doc.json",
@@ -88,6 +89,5 @@ func main() {
 
 	defer controller.DisconectPrismaClient()
 
-	 
 	log.Fatal(app.Listen(":" + port))
 }
