@@ -41,13 +41,13 @@ func (controller *Controller) GetAllServices(context *fiber.Ctx) error {
 
 // GetServiceByType godoc
 //
-//	@Summary		Delete a meal
-//	@Description	delete a meal by providing an Id
+//	@Summary		Get Service By Type
+//	@Description	delete a Service by providing an Type
 //	@Accept			json
 //	@Produce		json
 //	@tags			Services
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			mealId			path		string	true	"provide meal Id"
+//	@Param			type			path		string	true	"provide service type"
 //	@Success		200				{object}	model.MealResponse
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError

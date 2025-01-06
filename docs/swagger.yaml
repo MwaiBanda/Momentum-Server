@@ -1232,7 +1232,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: delete a meal by providing an Id
+      description: delete a Service by providing an Type
       parameters:
       - description: Provide a bearer token
         example: Bearer XXX-xxx-XXX-xxx-XX
@@ -1240,9 +1240,9 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: provide meal Id
+      - description: provide service type
         in: path
-        name: mealId
+        name: type
         required: true
         type: string
       produces:
@@ -1264,7 +1264,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Delete a meal
+      summary: Get Service By Type
       tags:
       - Services
   /api/v1/transactions:

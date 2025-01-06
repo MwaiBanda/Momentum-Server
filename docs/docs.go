@@ -1153,7 +1153,7 @@ const docTemplate = `{
         },
         "/api/v1/services/{type}": {
             "get": {
-                "description": "delete a meal by providing an Id",
+                "description": "delete a Service by providing an Type",
                 "consumes": [
                     "application/json"
                 ],
@@ -1163,7 +1163,7 @@ const docTemplate = `{
                 "tags": [
                     "Services"
                 ],
-                "summary": "Delete a meal",
+                "summary": "Get Service By Type",
                 "parameters": [
                     {
                         "type": "string",
@@ -1175,8 +1175,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "provide meal Id",
-                        "name": "mealId",
+                        "description": "provide service type",
+                        "name": "type",
                         "in": "path",
                         "required": true
                     }
