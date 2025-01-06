@@ -59,7 +59,9 @@ func (controller *Controller) GetServiceByType(context *fiber.Ctx) error {
 		db.Service.Type.Equals(context.Params("type")),
 	).With(
 		db.Service.Services.Fetch().With(
-			db.VolunteerService.Days.Fetch(),
+			db.VolunteerService.Days.Fetch().With(
+				db.VolunteeredServiceDay.User.Fetch(),
+			),
 		),
 	).Exec(controller.Context)
 	if err != nil {
