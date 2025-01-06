@@ -351,6 +351,21 @@ definitions:
       type:
         type: string
     type: object
+  model.ServiceResponse:
+    properties:
+      id:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      services:
+        items:
+          $ref: '#/definitions/model.VolunteerService'
+        type: array
+      type:
+        type: string
+    type: object
   model.TransactionRequest:
     properties:
       amount:
@@ -405,6 +420,36 @@ definitions:
           $ref: '#/definitions/model.MealResponse'
         type: array
       phone:
+        type: string
+    type: object
+  model.VolunteerService:
+    properties:
+      days:
+        items:
+          $ref: '#/definitions/model.VolunteerServiceDay'
+        type: array
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      organizer:
+        type: string
+      phone:
+        type: string
+      service_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.VolunteerServiceDay:
+    properties:
+      date:
+        type: string
+      id:
+        type: string
+      notes:
         type: string
     type: object
   model.VolunteerServiceDayRequest:
@@ -1251,7 +1296,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.MealResponse'
+            $ref: '#/definitions/model.ServiceResponse'
         "400":
           description: Bad Request
           schema:

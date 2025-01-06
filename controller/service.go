@@ -48,7 +48,7 @@ func (controller *Controller) GetAllServices(context *fiber.Ctx) error {
 //	@tags			Services
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			type			path		string	true	"provide service type"
-//	@Success		200				{object}	model.MealResponse
+//	@Success		200				{object}	model.ServiceResponse
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
@@ -80,7 +80,7 @@ func (controller *Controller) GetServiceByType(context *fiber.Ctx) error {
 //	@Summary		Post a voluteer service
 //	@Description	Used to post a voluteer service
 //	@tags			Services
-//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			Authorization	header	string							true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Param			data			body	model.VolunteerServiceRequest	true	"Post a meal"
 //	@Accept			json
 //	@Produce		json

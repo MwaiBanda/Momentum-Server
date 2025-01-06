@@ -1185,7 +1185,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealResponse"
+                            "$ref": "#/definitions/model.ServiceResponse"
                         }
                     },
                     "400": {
@@ -2202,6 +2202,29 @@ const docTemplate = `{
                 }
             }
         },
+        "model.ServiceResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.VolunteerService"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "model.TransactionRequest": {
             "type": "object",
             "properties": {
@@ -2284,6 +2307,52 @@ const docTemplate = `{
                     }
                 },
                 "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.VolunteerService": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.VolunteerServiceDay"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizer": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.VolunteerServiceDay": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
                     "type": "string"
                 }
             }
