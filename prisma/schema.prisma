@@ -42,6 +42,7 @@ model Service {
   type      String
   Image     String
   createdOn DateTime @default(now())
+  services  VolunteerService[]
 }
 
 model Note {
@@ -64,10 +65,54 @@ model User {
   phone              String
   createdOn          DateTime          @default(now())
   organisedMeal      Meal[]
+  organisedService     VolunteerService[]
   mealParticipations MealParticipant[]
+  volunteerServiceParticipations VolunteeredServiceParticipant[]
   notes              Note[]
   transactions       Transaction[]
   volunteeredMeals   VolunteeredMeal[]
+  volunteeredServiceDays VolunteeredServiceDay[]
+}
+
+model VolunteerService {
+  id              String            @id @default(cuid())
+  description          String
+  email           String
+  phone           String
+  organizer            String
+  serviceId String?
+  userId          String?
+  createdOn       DateTime          @default(now())
+  user            User?             @relation(fields: [userId], references: [id])
+  service            Service?             @relation(fields: [serviceId], references: [id])
+  participants    VolunteeredServiceParticipant[]
+  days           VolunteeredServiceDay[]
+
+  @@index([userId, serviceId])
+}
+
+model VolunteeredServiceDay {
+  id          String        @id @default(cuid())
+  notes       String
+  userId      String?
+  serviceId      String
+  createdOn   DateTime      @default(now())
+  date        String        @default("")
+  service        VolunteerService?         @relation(fields: [serviceId], references: [id])
+  user        User?         @relation(fields: [userId], references: [id])
+
+  @@index([userId, serviceId])
+}
+
+model VolunteeredServiceParticipant {
+  userId     String
+  serviceId     String
+  assignedAt DateTime @default(now())
+  id         String   @default(cuid())
+  service       VolunteerService     @relation(fields: [serviceId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@id([id, userId, serviceId])
 }
 
 model Meal {

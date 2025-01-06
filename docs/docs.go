@@ -1091,6 +1091,122 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Used to post a voluteer service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Post a voluteer service",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Post a meal",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.VolunteerServiceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.MealResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/services/{type}": {
+            "get": {
+                "description": "delete a meal by providing an Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Delete a meal",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "provide meal Id",
+                        "name": "mealId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.MealResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/transactions": {
@@ -2168,6 +2284,46 @@ const docTemplate = `{
                     }
                 },
                 "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.VolunteerServiceDayRequest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.VolunteerServiceRequest": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.VolunteerServiceDayRequest"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizer": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
