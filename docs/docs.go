@@ -2354,6 +2354,9 @@ const docTemplate = `{
                 },
                 "notes": {
                     "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.UserResponse"
                 }
             }
         },

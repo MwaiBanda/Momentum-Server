@@ -30,6 +30,7 @@ type VolunteerServiceDay struct {
 	Id		  string `json:"id"`
 	Notes     string `json:"notes"`
 	Date       string `json:"date"`
+	User 	UserResponse `json:"user"`
 }
   
 type VolunteerServiceRequest struct {

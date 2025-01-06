@@ -451,6 +451,8 @@ definitions:
         type: string
       notes:
         type: string
+      user:
+        $ref: '#/definitions/model.UserResponse'
     type: object
   model.VolunteerServiceDayRequest:
     properties:
