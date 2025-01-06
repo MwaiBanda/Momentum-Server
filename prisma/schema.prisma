@@ -39,7 +39,7 @@ model Passage {
 model Service {
   id        String   @id @default(cuid())
   name      String
-  type      String
+  type      String    @unique
   Image     String
   createdOn DateTime @default(now())
   services  VolunteerService[]
