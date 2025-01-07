@@ -122,3 +122,35 @@ func (controller *Controller) PostVolunteerService(context *fiber.Ctx) error {
 
 	return context.JSON(volunteerRequest)
 }
+
+
+// UpdateVolunteeredMeal godoc
+//
+//	@Summary		Update a volunteered service day
+//	@Description	Update a volunteered service day 
+//	@Accept			json
+//	@Produce		json
+//	@tags			Meals
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Success		200				{object}	model.VolunteerServiceDay
+//	@Failure		400				{object}	model.HTTPError
+//	@Failure		404				{object}	model.HTTPError
+//	@Failure		500				{object}	model.HTTPError
+//	@Router			/api/v1/services/day [put]
+func (controller *Controller) UpdateVolunteeredDay(context *fiber.Ctx) error {
+	day := new(model.VolunteerServiceDay)
+
+	if err := context.BodyParser(day); err != nil {
+		log.Panic(err.Error())
+	}
+	err := controller.PrismaClient.Prisma.Transaction(
+		controller.PrismaClient.VolunteeredServiceDay.FindUnique(db.VolunteeredServiceDay.ID.Equals(day.Id)).Update(
+			db.VolunteeredServiceDay.Notes.Set(day.Notes),
+		).Tx(),
+	).Exec(controller.Context)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return context.JSON(day)
+}

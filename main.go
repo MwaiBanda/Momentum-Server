@@ -65,9 +65,11 @@ func main() {
 	v1.Post("/transactions", controller.PostTransaction)
 
 	v1.Get("/sermons", controller.GetAllSermons)
+	
 	v1.Get("/services", controller.GetAllServices)
 	v1.Post("/services", controller.PostVolunteerService)
 	v1.Get("/services/:type", controller.GetServiceByType)
+	v1.Put("/services/day", controller.UpdateVolunteeredDay)
 
 	v1.Post("/messages", controller.PostMessage)
 	v1.Put("/messages", controller.UpdateMessage)

@@ -1314,6 +1314,40 @@ paths:
       summary: Get Service By Type
       tags:
       - Services
+  /api/v1/services/day:
+    put:
+      consumes:
+      - application/json
+      description: Update a volunteered service day
+      parameters:
+      - description: Provide a bearer token
+        example: Bearer XXX-xxx-XXX-xxx-XX
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.VolunteerServiceDay'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Update a volunteered service day
+      tags:
+      - Meals
   /api/v1/transactions:
     get:
       consumes:
