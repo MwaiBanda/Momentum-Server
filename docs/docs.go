@@ -1161,7 +1161,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Meals"
+                    "Services"
                 ],
                 "summary": "Update a volunteered service day",
                 "parameters": [

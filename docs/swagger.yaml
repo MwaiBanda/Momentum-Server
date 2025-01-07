@@ -1347,7 +1347,7 @@ paths:
             $ref: '#/definitions/model.HTTPError'
       summary: Update a volunteered service day
       tags:
-      - Meals
+      - Services
   /api/v1/transactions:
     get:
       consumes:

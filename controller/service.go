@@ -130,7 +130,7 @@ func (controller *Controller) PostVolunteerService(context *fiber.Ctx) error {
 //	@Description	Update a volunteered service day 
 //	@Accept			json
 //	@Produce		json
-//	@tags			Meals
+//	@tags			Services
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
 //	@Success		200				{object}	model.VolunteerServiceDay
 //	@Failure		400				{object}	model.HTTPError
