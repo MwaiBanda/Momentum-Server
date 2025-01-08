@@ -1,14 +1,17 @@
 package controller
 
 import (
+	"Momentum/constants"
 	"Momentum/model"
 	"Momentum/prisma/db"
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/lucsky/cuid"
+	"github.com/redis/go-redis/v9"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
 )
 
@@ -27,14 +30,24 @@ import (
 //	@Router			/api/v1/services [get]
 func (controller *Controller) GetAllServices(context *fiber.Ctx) error {
 	var services []model.Service
-	res, err := controller.PrismaClient.Service.FindMany().Exec(controller.Context)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, &services); err != nil {
-		fmt.Println(err)
+	cachedTabs, err := controller.Redis.Get(controller.Context, constants.TabsKey).Result()
+	if err == redis.Nil {
+		res, err := controller.PrismaClient.Service.FindMany().Exec(controller.Context)
+		if err != nil {
+			fmt.Println(err)
+		}
+	
+		result, _ := json.MarshalIndent(res, "", "  ")
+		if err := json.Unmarshal(result, &services); err != nil {
+			fmt.Println(err)
+		}
+		controller.Redis.Set(controller.Context, constants.TabsKey, string(result), time.Hour*24)
+	} else if err != nil {
+		log.Println(err.Error())
+	} else {
+		if err := json.Unmarshal([]byte(cachedTabs), &services); err != nil {
+			fmt.Println(err)
+		}
 	}
 	return context.JSON(services)
 }

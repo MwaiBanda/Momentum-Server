@@ -7,6 +7,7 @@ var (
 	DashboardPaymentsRoute      = "/payments"
 	DashboardUsersRoute         = "/users"
 	MealsKey                    = "meals"
+	TabsKey                     = "tabs"
 	EventsKey                   = "events"
 	MessageKey                  = "messages"
 	UserKeyPrefix               = "user-"
