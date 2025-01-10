@@ -1326,6 +1326,12 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: Post a day
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.VolunteerServiceDay'
       produces:
       - application/json
       responses:
