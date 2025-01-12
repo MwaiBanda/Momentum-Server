@@ -144,8 +144,8 @@ func (controller *Controller) PostVolunteerService(context *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@tags			Services
-//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			data			body	model.VolunteerServiceDay	true	"Post a day"
+//	@Param			Authorization	header		string						true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			data			body		model.VolunteerServiceDay	true	"Post a day"
 //	@Success		200				{object}	model.VolunteerServiceDay
 //	@Failure		400				{object}	model.HTTPError
 //	@Failure		404				{object}	model.HTTPError
@@ -160,6 +160,7 @@ func (controller *Controller) UpdateVolunteeredDay(context *fiber.Ctx) error {
 	err := controller.PrismaClient.Prisma.Transaction(
 		controller.PrismaClient.VolunteeredServiceDay.FindUnique(db.VolunteeredServiceDay.ID.Equals(day.Id)).Update(
 			db.VolunteeredServiceDay.Notes.Set(day.Notes),
+			db.VolunteeredServiceDay.UserID.Set(day.User.Id),
 		).Tx(),
 	).Exec(controller.Context)
 	if err != nil {
