@@ -20,6 +20,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
@@ -146,20 +147,18 @@ func (controller *Controller) GetPlanningCenterToken() Token {
 	var tokenResponse TokenResponse
 	var cachedToken, err = controller.Redis.Get(controller.Context, constants.TokenKey).Result()
 	if err == redis.Nil {
-		resp, err := controller.HttpClient.Post(os.Getenv("PLANNING_CENTER_TOKEN_URL"), "application/json", nil)
-		if err != nil {
+		agent := fiber.Post(os.Getenv("PLANNING_CENTER_TOKEN_URL"))
+		agent.Set("Content-Type", "application/json")
+		statusCode, body, errors := agent.Bytes()
+		log.Println("GetPlanningCenterToken[REQUEST]", statusCode, string(body), errors)
+		if errors != nil {
+			log.Panic("GetPlanningCenterToken", errors)
+		}
+		if err := json.Unmarshal(body, &tokenResponse); err != nil {
 			log.Println("GetPlanningCenterToken", err)
 		}
-		defer resp.Body.Close()
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Println("GetPlanningCenterToken", err)
-		}
-		if err := json.Unmarshal(data, &tokenResponse); err != nil {
-			log.Println("GetPlanningCenterToken", err)
-		}
-		if err = controller.Redis.Set(controller.Context, constants.TokenKey, string(data), 1*time.Hour+30*time.Minute).Err(); err != nil {
-			log.Println("[GetPlanningCenterToken]", err.Error())
+		if err := controller.Redis.Set(controller.Context, constants.TokenKey, string(body), 1*time.Hour+30*time.Minute).Err(); err != nil {
+			log.Println("GetPlanningCenterToken[Redis]", err)
 		}
 	} else if err != nil {
 		log.Println("GetPlanningCenterToken", err)
@@ -220,32 +219,22 @@ func getBasePath(s string) string {
 
 func (controller *Controller) EventRequest() EventReponse {
 	url := os.Getenv("PLANNING_CENTER_URL") + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-4*time.Hour).Format(time.RFC3339)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		log.Fatalln("New Request", err)
-	}
-
+	agent := fiber.Get(url)
+	agent.Set("Content-Type", "application/json")
 	token := controller.GetPlanningCenterToken()
-	if err != nil {
-		log.Println(err)
-	}
-	req.Header.Add("Authorization", token.Type+" "+token.Attributes.Token)
-
-	resp, err := controller.HttpClient.Do(req)
-	if err != nil {
-		log.Panic("Request", err)
-	}
-
+	agent.Set("Authorization", token.Type+" "+token.Attributes.Token)
+	statusCode, body, err := agent.Bytes()
+	
 	return EventReponse{
-		ReadData: func() ([]byte, error) {
-			defer resp.Body.Close()
-			return io.ReadAll(resp.Body)
+		ReadData: func() ([]byte, []error) {
+			log.Println("EventRequest[REQUEST]", statusCode, string(body), err)
+			return body, err
 		},
 	}
 }
 
 type EventReponse struct {
-	ReadData func() ([]byte, error)
+	ReadData func() ([]byte, []error)
 }
 
 func (controller *Controller) PostTransactionMail(mail model.TransactionMailRequest) {

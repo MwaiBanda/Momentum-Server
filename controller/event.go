@@ -4,7 +4,6 @@ import (
 	"Momentum/constants"
 	"Momentum/model"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -34,6 +33,7 @@ func (controller *Controller) GetAllEvents(context *fiber.Ctx) error {
 		if err != nil {
 			log.Panic("Request", err)
 		}
+		log.Println("Data", string(data))
 		if err := json.Unmarshal(data, &eventResponse); err != nil {
 			log.Println(err)
 		}
@@ -42,7 +42,7 @@ func (controller *Controller) GetAllEvents(context *fiber.Ctx) error {
 		log.Println(err.Error())
 	} else {
 		if err := json.Unmarshal([]byte(cachedEvents), &eventResponse); err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
 	return context.JSON(eventResponse)

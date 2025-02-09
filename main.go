@@ -32,7 +32,7 @@ func main() {
 		if len(os.Getenv("PORT")) > 0 {
 			return os.Getenv("PORT")
 		} else {
-			return "8085"
+			return "8080"
 		}
 	}()
 

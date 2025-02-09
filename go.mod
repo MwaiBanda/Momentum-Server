@@ -6,7 +6,7 @@ require (
 	github.com/GeertJohan/go.rice v1.0.3
 	github.com/gofiber/fiber/v2 v2.49.0
 	github.com/gofiber/swagger v0.1.12
-	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
+	github.com/iancoleman/strcase v0.2.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lucsky/cuid v1.2.1
 	github.com/redis/go-redis/v9 v9.0.5
