@@ -2,3 +2,4 @@
 /out
 .env
 .idea
+node_modules

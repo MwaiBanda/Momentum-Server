@@ -25,6 +25,23 @@ React frontend is exposed in the backend, and react-router is used for in-app ro
 and react-router handles mapping the route to its corresponding page
 
 ----
+### Database (Neon Postgres)
+
+Prisma uses Postgres connection settings from `DATABASE_URL` and `DIRECT_URL`.
+
+- Set `DATABASE_URL` to your Neon pooled connection URL.
+- Set `DIRECT_URL` to your Neon direct connection URL.
+
+Then regenerate Prisma Go client after schema changes:
+
+`go run github.com/steebchen/prisma-client-go generate`
+
+To push schema changes to Neon:
+
+- `npm run db:push-neon`
+- or `npm run prisma:push`
+
+----
 ### [API Documentation](https://services.momentumchurch.dev/)
 The API provides users to access, edit and upload content
 

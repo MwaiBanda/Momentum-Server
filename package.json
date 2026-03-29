@@ -1,0 +1,20 @@
+{
+  "name": "momentum-prisma-tools",
+  "private": true,
+  "scripts": {
+    "prisma:validate": "prisma validate --schema prisma/schema.prisma",
+    "prisma:generate": "go run github.com/steebchen/prisma-client-go generate",
+    "prisma:push": "go run github.com/steebchen/prisma-client-go db push",
+    "db:export-sql": "pg_dump \"$DATABASE_URL\" > prisma/neon-sync.sql",
+    "db:push-turso": "go run github.com/steebchen/prisma-client-go db push",
+    "db:sync-turso": "npm run db:push-turso",
+    "db:reset-turso": "go run github.com/steebchen/prisma-client-go db push --force-reset",
+    "db:sync-turso:reset": "npm run db:reset-turso",
+    "db:push-neon": "npm run db:push-turso",
+    "db:sync-neon": "npm run db:sync-turso",
+    "db:reset-neon": "npm run db:reset-turso"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.1"
+  }
+}
