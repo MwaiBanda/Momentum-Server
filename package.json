@@ -15,6 +15,6 @@
     "db:reset-neon": "npm run db:reset-turso"
   },
   "devDependencies": {
-    "prisma": "^7.4.1"
+    "prisma": "^7.7.0"
   }
 }
