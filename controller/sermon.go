@@ -8,7 +8,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -26,7 +26,7 @@ import (
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/sermons [get]
-func (controller *Controller) GetAllSermons(context *fiber.Ctx) error {
+func (controller *Controller) GetAllSermons(context fiber.Ctx) error {
 	pageNumber := context.Query("page", "1")
 	sermons := new(model.SermonResponse)
 	var cachedSermons, err = controller.Redis.Get(controller.Context, constants.SermonKeyPrefix+pageNumber).Result()

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"firebase.google.com/go/v4/messaging"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 // PostNotification godoc
@@ -22,10 +22,10 @@ import (
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/notifications [post]
-func (controller *Controller) PostNotification(context *fiber.Ctx) error {
+func (controller *Controller) PostNotification(context fiber.Ctx) error {
 	notification := new(model.Notification)
-	
-	if err := context.BodyParser(notification); err != nil {
+
+	if err := context.Bind().Body(notification); err != nil {
 		log.Panic(err.Error())
 	}
 

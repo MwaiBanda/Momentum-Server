@@ -8,14 +8,13 @@ import (
 	"log"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
-
 
 // GetAllTransactions godoc
 //
 //	@Summary		Show a list of all transactions
-//	@Description	get a list of all transactions 
+//	@Description	get a list of all transactions
 //	@Accept			json
 //	@Produce		json
 //	@tags			Transactions
@@ -25,7 +24,7 @@ import (
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/transactions [get]
-func (controller *Controller) GetAllTransactions(context *fiber.Ctx) error {
+func (controller *Controller) GetAllTransactions(context fiber.Ctx) error {
 	var transactions []model.TransactionResponse
 	res, err := controller.PrismaClient.Transaction.FindMany().OrderBy(
 		db.Transaction.CreatedOn.Order(db.SortOrderDesc),
@@ -57,7 +56,7 @@ func (controller *Controller) GetAllTransactions(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/transactions/{userId} [get]
-func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error {
+func (controller *Controller) GetTransactionsByUserId(context fiber.Ctx) error {
 	var transactions []model.TransactionResponse
 	res, err := controller.PrismaClient.Transaction.FindMany(
 		db.Transaction.UserID.Equals(context.Params("userId")),
@@ -87,10 +86,10 @@ func (controller *Controller) GetTransactionsByUserId(context *fiber.Ctx) error 
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/transactions [post]
-func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
+func (controller *Controller) PostTransaction(context fiber.Ctx) error {
 	transaction := new(model.TransactionRequest)
 	transactionResponse := new(model.TransactionResponse)
-	if err := context.BodyParser(transaction); err != nil {
+	if err := context.Bind().Body(transaction); err != nil {
 		log.Panic(err.Error())
 	}
 	res, err := controller.PrismaClient.Transaction.CreateOne(
@@ -134,7 +133,7 @@ func (controller *Controller) PostTransaction(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/transactions/{transactionId} [delete]
-func (controller *Controller) DeleteTransactionsById(context *fiber.Ctx) error {
+func (controller *Controller) DeleteTransactionsById(context fiber.Ctx) error {
 
 	var transaction model.TransactionResponse
 	res, err := controller.PrismaClient.Transaction.FindUnique(

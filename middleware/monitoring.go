@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
+	"github.com/gofiber/contrib/v3/monitor"
+	"github.com/gofiber/fiber/v3"
 )
 
 func Monitor() fiber.Handler {

@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/lucsky/cuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
@@ -28,7 +28,7 @@ import (
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/services [get]
-func (controller *Controller) GetAllServices(context *fiber.Ctx) error {
+func (controller *Controller) GetAllServices(context fiber.Ctx) error {
 	var services []model.Service
 	cachedTabs, err := controller.Redis.Get(controller.Context, constants.TabsKey).Result()
 	if err == redis.Nil {
@@ -36,7 +36,7 @@ func (controller *Controller) GetAllServices(context *fiber.Ctx) error {
 		if err != nil {
 			fmt.Println(err)
 		}
-	
+
 		result, _ := json.MarshalIndent(res, "", "  ")
 		if err := json.Unmarshal(result, &services); err != nil {
 			fmt.Println(err)
@@ -66,7 +66,7 @@ func (controller *Controller) GetAllServices(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/services/{type} [get]
-func (controller *Controller) GetServiceByType(context *fiber.Ctx) error {
+func (controller *Controller) GetServiceByType(context fiber.Ctx) error {
 	var service model.ServiceResponse
 	res, err := controller.PrismaClient.Service.FindUnique(
 		db.Service.Type.Equals(context.Params("type")),
@@ -89,7 +89,6 @@ func (controller *Controller) GetServiceByType(context *fiber.Ctx) error {
 	return context.JSON(service)
 }
 
-
 // PostVolunteerService godoc
 //
 //	@Summary		Post a voluteer service
@@ -104,10 +103,10 @@ func (controller *Controller) GetServiceByType(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/services [post]
-func (controller *Controller) PostVolunteerService(context *fiber.Ctx) error {
+func (controller *Controller) PostVolunteerService(context fiber.Ctx) error {
 	volunteerRequest := new(model.VolunteerServiceRequest)
 	volunteerServiceId := cuid.New()
-	if err := context.BodyParser(volunteerRequest); err != nil {
+	if err := context.Bind().Body(volunteerRequest); err != nil {
 		log.Panic(err.Error())
 	}
 
@@ -136,11 +135,10 @@ func (controller *Controller) PostVolunteerService(context *fiber.Ctx) error {
 	return context.JSON(volunteerRequest)
 }
 
-
 // UpdateVolunteeredMeal godoc
 //
 //	@Summary		Update a volunteered service day
-//	@Description	Update a volunteered service day 
+//	@Description	Update a volunteered service day
 //	@Accept			json
 //	@Produce		json
 //	@tags			Services
@@ -151,10 +149,10 @@ func (controller *Controller) PostVolunteerService(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/services/day [put]
-func (controller *Controller) UpdateVolunteeredDay(context *fiber.Ctx) error {
+func (controller *Controller) UpdateVolunteeredDay(context fiber.Ctx) error {
 	day := new(model.VolunteerServiceDay)
 
-	if err := context.BodyParser(day); err != nil {
+	if err := context.Bind().Body(day); err != nil {
 		log.Panic(err.Error())
 	}
 	err := controller.PrismaClient.Prisma.Transaction(

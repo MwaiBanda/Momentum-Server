@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine
+FROM golang:1.26.2-alpine
 WORKDIR /dir
 
 COPY  ./cms/dist/. ./cms/dist/.

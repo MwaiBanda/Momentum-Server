@@ -20,7 +20,6 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
-	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
@@ -147,12 +146,20 @@ func (controller *Controller) GetPlanningCenterToken() Token {
 	var tokenResponse TokenResponse
 	var cachedToken, err = controller.Redis.Get(controller.Context, constants.TokenKey).Result()
 	if err == redis.Nil {
-		agent := fiber.Post(os.Getenv("PLANNING_CENTER_TOKEN_URL"))
-		agent.Set("Content-Type", "application/json")
-		statusCode, body, errors := agent.Bytes()
-		log.Println("GetPlanningCenterToken[REQUEST]", statusCode, string(body), errors)
-		if errors != nil {
-			log.Panic("GetPlanningCenterToken", errors)
+		req, reqErr := http.NewRequest(http.MethodPost, os.Getenv("PLANNING_CENTER_TOKEN_URL"), nil)
+		if reqErr != nil {
+			log.Panic("GetPlanningCenterToken", reqErr)
+		}
+		req.Header.Set("Content-Type", "application/json")
+		resp, reqErr := controller.HttpClient.Do(req)
+		if reqErr != nil {
+			log.Panic("GetPlanningCenterToken", reqErr)
+		}
+		defer resp.Body.Close()
+		body, reqErr := io.ReadAll(resp.Body)
+		log.Println("GetPlanningCenterToken[REQUEST]", resp.StatusCode, string(body), reqErr)
+		if reqErr != nil {
+			log.Panic("GetPlanningCenterToken", reqErr)
 		}
 		if err := json.Unmarshal(body, &tokenResponse); err != nil {
 			log.Println("GetPlanningCenterToken", err)
@@ -219,16 +226,31 @@ func getBasePath(s string) string {
 
 func (controller *Controller) EventRequest() EventReponse {
 	url := os.Getenv("PLANNING_CENTER_URL") + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-4*time.Hour).Format(time.RFC3339)
-	agent := fiber.Get(url)
-	agent.Set("Content-Type", "application/json")
 	token := controller.GetPlanningCenterToken()
-	agent.Set("Authorization", token.Type+" "+token.Attributes.Token)
-	statusCode, body, err := agent.Bytes()
-	
+	req, reqErr := http.NewRequest(http.MethodGet, url, nil)
+	if reqErr != nil {
+		return EventReponse{ReadData: func() ([]byte, []error) { return nil, []error{reqErr} }}
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", token.Type+" "+token.Attributes.Token)
+	resp, reqErr := controller.HttpClient.Do(req)
+	var body []byte
+	if reqErr == nil {
+		defer resp.Body.Close()
+		body, reqErr = io.ReadAll(resp.Body)
+	}
+	statusCode := 0
+	if resp != nil {
+		statusCode = resp.StatusCode
+	}
+
 	return EventReponse{
 		ReadData: func() ([]byte, []error) {
-			log.Println("EventRequest[REQUEST]", statusCode, string(body), err)
-			return body, err
+			log.Println("EventRequest[REQUEST]", statusCode, string(body), reqErr)
+			if reqErr != nil {
+				return body, []error{reqErr}
+			}
+			return body, nil
 		},
 	}
 }

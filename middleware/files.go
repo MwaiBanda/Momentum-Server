@@ -3,14 +3,12 @@ package middleware
 import (
 	"Momentum/constants"
 
-	rice "github.com/GeertJohan/go.rice"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/static"
 )
 
 func configureFiles(app *fiber.App) {
-	app.Use("/assets", filesystem.New(filesystem.Config{
-		Root:   rice.MustFindBox("../cms/dist/assets").HTTPBox(),
+	app.Use("/assets", static.New("../cms/dist/assets", static.Config{
 		Browse: true,
 	}))
 
@@ -21,8 +19,7 @@ func configureFiles(app *fiber.App) {
 		constants.DashboardPaymentsRoute,
 		constants.DashboardUsersRoute,
 	} {
-		app.Use(route, filesystem.New(filesystem.Config{
-			Root:   rice.MustFindBox("../cms/dist").HTTPBox(),
+		app.Use(route, static.New("../cms/dist", static.Config{
 			Browse: true,
 		}))
 	}

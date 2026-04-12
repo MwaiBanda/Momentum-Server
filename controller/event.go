@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -25,9 +25,9 @@ import (
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/events [get]
-func (controller *Controller) GetAllEvents(context *fiber.Ctx) error {
+func (controller *Controller) GetAllEvents(context fiber.Ctx) error {
 	eventResponse := new(model.EventReponse)
-	cachedEvents, err := controller.Redis.Get(controller.Context, constants.EventsKey).Result()	
+	cachedEvents, err := controller.Redis.Get(controller.Context, constants.EventsKey).Result()
 	if err == redis.Nil {
 		data, err := controller.EventRequest().ReadData()
 		if err != nil {

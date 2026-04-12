@@ -4,13 +4,14 @@ import (
 	"Momentum/constants"
 	"Momentum/model"
 	"encoding/json"
-	"github.com/gofiber/fiber/v2"
-	"github.com/stripe/stripe-go/v74"
 	"log"
 	"net/url"
 	"os"
 	"strconv"
 	"sync"
+
+	"github.com/gofiber/fiber/v3"
+	"github.com/stripe/stripe-go/v74"
 )
 
 // PostPayment godoc
@@ -27,7 +28,7 @@ import (
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/payments [post]
-func (controller *Controller) PostPayment(context *fiber.Ctx) error {
+func (controller *Controller) PostPayment(context fiber.Ctx) error {
 	paymentRequest := new(model.PaymentRequest)
 	customer := new(stripe.Customer)
 
@@ -36,7 +37,7 @@ func (controller *Controller) PostPayment(context *fiber.Ctx) error {
 
 	waitGroup := new(sync.WaitGroup)
 
-	if err := context.BodyParser(paymentRequest); err != nil {
+	if err := context.Bind().Body(paymentRequest); err != nil {
 		log.Panic(err.Error())
 	}
 

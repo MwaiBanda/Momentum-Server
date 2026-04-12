@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/lucsky/cuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
@@ -29,11 +29,11 @@ import (
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/meals [post]
-func (controller *Controller) PostMeal(context *fiber.Ctx) error {
+func (controller *Controller) PostMeal(context fiber.Ctx) error {
 	mealRequest := new(model.MealRequest)
 	mealID := cuid.New()
 
-	if err := context.BodyParser(mealRequest); err != nil {
+	if err := context.Bind().Body(mealRequest); err != nil {
 		log.Panic(err.Error())
 	}
 	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
@@ -87,9 +87,9 @@ func (controller *Controller) PostMeal(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/meals/meal [post]
-func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) error {
+func (controller *Controller) PostVolunteeredMealForMeal(context fiber.Ctx) error {
 	meal := new(model.VolunteeredMealRequest)
-	if err := context.BodyParser(meal); err != nil {
+	if err := context.Bind().Body(meal); err != nil {
 		log.Panic(err.Error())
 	}
 	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
@@ -127,7 +127,7 @@ func (controller *Controller) PostVolunteeredMealForMeal(context *fiber.Ctx) err
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/meals [get]
-func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
+func (controller *Controller) GetAllMeals(context fiber.Ctx) error {
 	mealResponse := new([]model.MealResponse)
 	cachedMeal, err := controller.Redis.Get(controller.Context, constants.MealsKey).Result()
 	if err == redis.Nil {
@@ -178,11 +178,11 @@ func (controller *Controller) GetAllMeals(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/meals [put]
-func (controller *Controller) UpdateMeal(context *fiber.Ctx) error {
+func (controller *Controller) UpdateMeal(context fiber.Ctx) error {
 	meal := new(model.MealRequest)
 	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
 
-	if err := context.BodyParser(meal); err != nil {
+	if err := context.Bind().Body(meal); err != nil {
 		log.Panic(err.Error())
 	}
 	err := controller.PrismaClient.Prisma.Transaction(
@@ -223,7 +223,7 @@ func (controller *Controller) UpdateMeal(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/meals/{mealId} [delete]
-func (controller *Controller) DeleteMealById(context *fiber.Ctx) error {
+func (controller *Controller) DeleteMealById(context fiber.Ctx) error {
 	var meal model.MealResponse
 	res, err := controller.PrismaClient.Meal.FindUnique(
 		db.Meal.ID.Equals(context.Params("mealId")),
@@ -240,11 +240,10 @@ func (controller *Controller) DeleteMealById(context *fiber.Ctx) error {
 	return context.JSON(meal)
 }
 
-
 // UpdateVolunteeredMeal godoc
 //
 //	@Summary		Update a volunteered meal
-//	@Description	Update a volunteered meal 
+//	@Description	Update a volunteered meal
 //	@Accept			json
 //	@Produce		json
 //	@tags			Meals
@@ -254,11 +253,11 @@ func (controller *Controller) DeleteMealById(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/meals/meal [put]
-func (controller *Controller) UpdateVolunteeredMeal(context *fiber.Ctx) error {
+func (controller *Controller) UpdateVolunteeredMeal(context fiber.Ctx) error {
 	meal := new(model.VolunteeredMeal)
 	go controller.Redis.Expire(controller.Context, constants.MealsKey, time.Second*0)
 
-	if err := context.BodyParser(meal); err != nil {
+	if err := context.Bind().Body(meal); err != nil {
 		log.Panic(err.Error())
 	}
 	err := controller.PrismaClient.Prisma.Transaction(

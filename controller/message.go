@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/lucsky/cuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/steebchen/prisma-client-go/runtime/transaction"
@@ -28,7 +28,7 @@ import (
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/messages/{userId} [get]
-func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
+func (controller *Controller) GetAllMessages(context fiber.Ctx) error {
 	var messages []model.Message
 	userId := context.Params("userId")
 	cachedMessages, err := controller.Redis.Get(controller.Context, constants.MessageKey+"-"+userId).Result()
@@ -83,7 +83,7 @@ func (controller *Controller) GetAllMessages(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/messages/unpublished [get]
-func (controller *Controller) GetUnpublishedMessages(context *fiber.Ctx) error {
+func (controller *Controller) GetUnpublishedMessages(context fiber.Ctx) error {
 	var unpublished []model.Message
 	res, err := controller.PrismaClient.Message.FindMany(
 		db.Message.Not(
@@ -122,9 +122,9 @@ func (controller *Controller) GetUnpublishedMessages(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/messages [post]
-func (controller *Controller) PostMessage(context *fiber.Ctx) error {
+func (controller *Controller) PostMessage(context fiber.Ctx) error {
 	var message model.Message
-	if err := context.BodyParser(&message); err != nil {
+	if err := context.Bind().Body(&message); err != nil {
 		return err
 	}
 	messageId := cuid.New()
@@ -178,10 +178,10 @@ func (controller *Controller) PostMessage(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/messages [put]
-func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
+func (controller *Controller) UpdateMessage(context fiber.Ctx) error {
 	var message model.Message
 	controller.DeleteUserCachedSessions()
-	if err := context.BodyParser(&message); err != nil {
+	if err := context.Bind().Body(&message); err != nil {
 		return err
 	}
 	var transactions []transaction.Param
@@ -229,9 +229,9 @@ func (controller *Controller) UpdateMessage(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/messages/notes [post]
-func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
+func (controller *Controller) AddUserNoteToMessage(context fiber.Ctx) error {
 	note := new(model.NoteRequest)
-	if err := context.BodyParser(note); err != nil {
+	if err := context.Bind().Body(note); err != nil {
 		return err
 	}
 
@@ -262,9 +262,9 @@ func (controller *Controller) AddUserNoteToMessage(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/messages/notes [put]
-func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
+func (controller *Controller) UpdateUserNote(context fiber.Ctx) error {
 	note := new(model.Note)
-	if err := context.BodyParser(note); err != nil {
+	if err := context.Bind().Body(note); err != nil {
 		return err
 	}
 
@@ -294,7 +294,7 @@ func (controller *Controller) UpdateUserNote(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/messages/notes/{noteId} [delete]
-func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
+func (controller *Controller) DeleteNote(context fiber.Ctx) error {
 	var note model.Note
 	res, err := controller.PrismaClient.Note.FindUnique(
 		db.Note.ID.Equals(context.Params("noteId")),
@@ -330,7 +330,7 @@ func (controller *Controller) DeleteNote(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/messages [delete]
-func (controller *Controller) DeleteMessage(context *fiber.Ctx) error {
+func (controller *Controller) DeleteMessage(context fiber.Ctx) error {
 	var message model.Message
 	var transactions []transaction.Param
 	for _, passage := range message.Passages {

@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/swagger"
+	"github.com/gofiber/contrib/v3/swaggo"
+	"github.com/gofiber/fiber/v3"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -38,9 +38,9 @@ func main() {
 
 	middleware.ConfigureAppMiddleWare(app)
 
-	api := app.Group("/api", func(c *fiber.Ctx) error {
-		c.Set("Cache-Control", "no-cache")
-		return c.Next()
+	api := app.Group("/api", func(c fiber.Ctx) error {
+		c.Response().Header.Set("Cache-Control", "no-cache")
+		return nil
 	})
 
 	api.Get("/metrics", middleware.Monitor())
@@ -65,7 +65,7 @@ func main() {
 	v1.Post("/transactions", controller.PostTransaction)
 
 	v1.Get("/sermons", controller.GetAllSermons)
-	
+
 	v1.Get("/services", controller.GetAllServices)
 	v1.Post("/services", controller.PostVolunteerService)
 	v1.Get("/services/:type", controller.GetServiceByType)
@@ -84,8 +84,8 @@ func main() {
 
 	v1.Get("/events", controller.GetAllEvents)
 
-	app.Get("/*", swagger.HandlerDefault)
-	app.Get("/*", swagger.New(swagger.Config{
+	app.Get("/*", swaggo.HandlerDefault)
+	app.Get("/*", swaggo.New(swaggo.Config{
 		URL:          "https://services.momentumchurch.dev/doc.json",
 		DeepLinking:  false,
 		DocExpansion: "none",

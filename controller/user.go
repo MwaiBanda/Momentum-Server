@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -27,7 +27,7 @@ import (
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/users/{userId} [get]
-func (controller *Controller) GetUserById(context *fiber.Ctx) error {
+func (controller *Controller) GetUserById(context fiber.Ctx) error {
 	userId := context.Params("userId")
 	userResponse := new(model.UserResponse)
 	cachedUser, err := controller.Redis.Get(controller.Context, constants.UserKeyPrefix+userId).Result()
@@ -68,9 +68,9 @@ func (controller *Controller) GetUserById(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/users [post]
-func (controller *Controller) PostUser(context *fiber.Ctx) error {
+func (controller *Controller) PostUser(context fiber.Ctx) error {
 	userRequest := new(model.UserRequest)
-	if err := context.BodyParser(userRequest); err != nil {
+	if err := context.Bind().Body(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
 	res, err := controller.PrismaClient.User.CreateOne(
@@ -101,11 +101,11 @@ func (controller *Controller) PostUser(context *fiber.Ctx) error {
 //	@Failure		404	{object}	model.HTTPError
 //	@Failure		500	{object}	model.HTTPError
 //	@Router			/api/v1/users [put]
-func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
+func (controller *Controller) UpdateUser(context fiber.Ctx) error {
 	userRequest := new(model.UserRequest)
 	userResponse := new(model.UserResponse)
 
-	if err := context.BodyParser(userRequest); err != nil {
+	if err := context.Bind().Body(userRequest); err != nil {
 		log.Panic(err.Error())
 	}
 	onUpdateUser := func() {
@@ -166,7 +166,7 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 //	@Failure		404				{object}	model.HTTPError
 //	@Failure		500				{object}	model.HTTPError
 //	@Router			/api/v1/users/{userId} [delete]
-func (controller *Controller) DeleteUserById(context *fiber.Ctx) error {
+func (controller *Controller) DeleteUserById(context fiber.Ctx) error {
 	var user model.UserResponse
 	res, err := controller.PrismaClient.User.FindUnique(
 		db.User.ID.Equals(context.Params("userId")),
