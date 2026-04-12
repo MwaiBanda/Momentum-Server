@@ -40,7 +40,7 @@ func main() {
 
 	api := app.Group("/api", func(c fiber.Ctx) error {
 		c.Response().Header.Set("Cache-Control", "no-cache")
-		return nil
+		return c.Next()
 	})
 
 	api.Get("/metrics", middleware.Monitor())
@@ -84,8 +84,8 @@ func main() {
 
 	v1.Get("/events", controller.GetAllEvents)
 
-	app.Get("/*", swaggo.HandlerDefault)
-	app.Get("/*", swaggo.New(swaggo.Config{
+	app.Get("/swagger/*", swaggo.HandlerDefault)
+	app.Get("/swagger/*", swaggo.New(swaggo.Config{
 		URL:          "https://services.momentumchurch.dev/doc.json",
 		DeepLinking:  false,
 		DocExpansion: "none",
