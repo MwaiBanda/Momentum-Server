@@ -88,41 +88,60 @@ func (controller *Controller) GetTransactionsByUserId(context fiber.Ctx) error {
 //	@Router			/api/v1/transactions [post]
 func (controller *Controller) PostTransaction(context fiber.Ctx) error {
 	transaction := new(model.TransactionRequest)
-	transactionResponse := new(model.TransactionResponse)
+
 	if err := context.Bind().Body(transaction); err != nil {
 		log.Panic(err.Error())
 	}
+
+	var user *db.UserModel
+	var err error
+
+	if transaction.UserId != "" {
+		user, err = controller.PrismaClient.User.FindUnique(
+			db.User.ID.Equals(transaction.UserId),
+		).Exec(controller.Context)
+
+		if err != nil {
+			log.Panic(err.Error())
+		}
+	}
+
+	if user == nil {
+		user, err = controller.PrismaClient.User.CreateOne(
+			db.User.Fullname.Set(transaction.Fullname),
+			db.User.Email.Set(transaction.Email),
+			db.User.Phone.Set(transaction.Phone),
+		).Exec(controller.Context)
+
+		if err != nil {
+			log.Panic(err.Error())
+		}
+	}
+
 	res, err := controller.PrismaClient.Transaction.CreateOne(
 		db.Transaction.Amount.Set(transaction.Amount),
 		db.Transaction.Date.Set(transaction.Date),
 		db.Transaction.Description.Set(transaction.Description),
-		db.Transaction.User.ConnectOrCreate(
-			db.User.ID.Set(transaction.UserID),
-			db.User.Email.Equals(transaction.Email),
-			db.User.Fullname.Set(transaction.Fullname),
-			db.User.Email.Set(transaction.Email),
-			db.User.Phone.Set(transaction.Phone),
+		db.Transaction.User.Link(
+			db.User.ID.Equals(user.ID), 
 		),
 	).With(
 		db.Transaction.User.Fetch(),
 	).Exec(controller.Context)
-	result, _ := json.MarshalIndent(res, "", "  ")
-	if err := json.Unmarshal(result, transactionResponse); err != nil {
-		fmt.Println(err)
-	}
+
 	if err != nil {
 		log.Panic(err.Error())
 	}
 
 	controller.PostTransactionMail(model.TransactionMailRequest{
-		Amount:      transactionResponse.Amount,
-		Description: strings.ReplaceAll(transactionResponse.Description, ",", "<br>"),
-		Fullname:    transactionResponse.User.Fullname,
-		Email:       transactionResponse.User.Email,
-		Phone:       transactionResponse.User.Phone,
+		Amount:      res.Amount,
+		Description: strings.ReplaceAll(res.Description, ",", "<br>"),
+		Fullname:    res.User.Fullname,
+		Email:       res.User.Email,
+		Phone:       res.User.Phone,
 	})
 
-	return context.JSON(transactionResponse)
+	return context.JSON(res)
 }
 
 // DeleteTransactionsById godoc
