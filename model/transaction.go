@@ -5,6 +5,9 @@ type TransactionRequest struct {
 	Amount      int    `json:"amount"`
 	Date        string `json:"date"`
 	Description string `json:"description"`
+	Fullname    *string `json:"fullname"`
+	Email       *string `json:"email"`
+	Phone       *string `json:"phone"`
 	UserId      string `json:"userId"`
 }
 

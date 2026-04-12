@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/lucsky/cuid"
 )
 
 // GetAllTransactions godoc
@@ -107,10 +108,27 @@ func (controller *Controller) PostTransaction(context fiber.Ctx) error {
 	}
 
 	if user == nil {
+		var fullname, email, phone string
+		userID := transaction.UserId
+		if userID == "" {
+			userID = cuid.New()
+		}
+
+		if transaction.Fullname != nil {
+			fullname = *transaction.Fullname
+		}
+		if transaction.Email != nil {
+			email = *transaction.Email
+		}
+		if transaction.Phone != nil {
+			phone = *transaction.Phone
+		}
+
 		user, err = controller.PrismaClient.User.CreateOne(
-			db.User.Fullname.Set(transaction.Fullname),
-			db.User.Email.Set(transaction.Email),
-			db.User.Phone.Set(transaction.Phone),
+			db.User.ID.Set(userID),
+			db.User.Email.Set(email),
+			db.User.Fullname.Set(fullname),
+			db.User.Phone.Set(phone),
 		).Exec(controller.Context)
 
 		if err != nil {
@@ -123,7 +141,7 @@ func (controller *Controller) PostTransaction(context fiber.Ctx) error {
 		db.Transaction.Date.Set(transaction.Date),
 		db.Transaction.Description.Set(transaction.Description),
 		db.Transaction.User.Link(
-			db.User.ID.Equals(user.ID), 
+			db.User.ID.Equals(user.ID),
 		),
 	).With(
 		db.Transaction.User.Fetch(),
@@ -133,15 +151,21 @@ func (controller *Controller) PostTransaction(context fiber.Ctx) error {
 		log.Panic(err.Error())
 	}
 
+	transactionResponse := new(model.TransactionResponse)
+	result, _ := json.MarshalIndent(res, "", "  ")
+	if err := json.Unmarshal(result, transactionResponse); err != nil {
+		fmt.Println(err)
+	}
+
 	controller.PostTransactionMail(model.TransactionMailRequest{
-		Amount:      res.Amount,
-		Description: strings.ReplaceAll(res.Description, ",", "<br>"),
-		Fullname:    res.User.Fullname,
-		Email:       res.User.Email,
-		Phone:       res.User.Phone,
+		Amount:      transactionResponse.Amount,
+		Description: strings.ReplaceAll(transactionResponse.Description, ",", "<br>"),
+		Fullname:    transactionResponse.User.Fullname,
+		Email:       transactionResponse.User.Email,
+		Phone:       transactionResponse.User.Phone,
 	})
 
-	return context.JSON(res)
+	return context.JSON(transactionResponse)
 }
 
 // DeleteTransactionsById godoc
