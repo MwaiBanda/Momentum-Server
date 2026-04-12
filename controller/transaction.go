@@ -96,7 +96,13 @@ func (controller *Controller) PostTransaction(context fiber.Ctx) error {
 		db.Transaction.Amount.Set(transaction.Amount),
 		db.Transaction.Date.Set(transaction.Date),
 		db.Transaction.Description.Set(transaction.Description),
-		db.Transaction.User.Link(db.User.ID.Equals(transaction.UserId)),
+		db.Transaction.User.ConnectOrCreate(
+			db.User.ID.Set(transaction.UserID),
+			db.User.Email.Equals(transaction.Email),
+			db.User.Fullname.Set(transaction.Fullname),
+			db.User.Email.Set(transaction.Email),
+			db.User.Phone.Set(transaction.Phone),
+		),
 	).With(
 		db.Transaction.User.Fetch(),
 	).Exec(controller.Context)
