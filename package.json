@@ -15,6 +15,7 @@
     "db:reset-neon": "npm run db:reset-turso"
   },
   "devDependencies": {
-    "prisma": "^7.7.0"
+    "@tailwindcss/postcss": "^4.2.2",
+    "prisma": "^7.4.1"
   }
 }

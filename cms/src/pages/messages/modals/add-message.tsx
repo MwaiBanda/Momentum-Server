@@ -1,6 +1,6 @@
 import axios from "axios";
-import { Modal, Button } from "flowbite-react"
-import { Ref, RefObject, createRef, useRef, useState } from "react"
+import { Modal, Button, ModalBody, ModalHeader } from "flowbite-react"
+import { RefObject, createRef, useRef, useState } from "react"
 import { useMutation } from "react-query";
 import { MessageRequest } from "../../../models/message";
 import { TextField } from "@/components/textfield";
@@ -13,8 +13,8 @@ enum PassageType {
 
 type PassageHolder = {
     type: PassageType;
-    text: React.RefObject<HTMLInputElement>;
-    area: Ref<HTMLTextAreaElement>
+    text: React.RefObject<HTMLInputElement | null>;
+    area: React.RefObject<HTMLTextAreaElement | null>
 }
 
 
@@ -36,8 +36,8 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
 
     return (
         <Modal show={openModal} size="md" popup onClose={() => setOpenModal(false)} initialFocus={titleInputRef}>
-            <Modal.Header />
-            <Modal.Body>
+            <ModalHeader />
+            <ModalBody>
                 <div className="space-y-6">
                     <h3 className="text-xl font-medium text-gray-900 dark:text-white">Add Message</h3>
                     <TextField
@@ -156,7 +156,7 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                     </div>
 
                 </div>
-            </Modal.Body>
+            </ModalBody>
         </Modal>
     )
 }

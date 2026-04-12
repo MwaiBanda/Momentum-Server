@@ -75,13 +75,26 @@ func (controller *Controller) SetRedisClient(client *redis.Client) {
 }
 
 func (controller *Controller) InitPrismaClient(wg ...*sync.WaitGroup) {
-	prismaClient := db.NewClient()
-	if err := prismaClient.Prisma.Connect(); err != nil {
-		fmt.Println(err)
-	}
 	if len(wg) > 0 {
 		defer wg[0].Done()
 	}
+
+	prismaClient := db.NewClient()
+
+	var err error
+	for attempt := 1; attempt <= 5; attempt++ {
+		err = prismaClient.Prisma.Connect()
+		if err == nil {
+			break
+		}
+		log.Printf("Prisma connect attempt %d/5 failed: %v", attempt, err)
+		time.Sleep(time.Duration(attempt) * time.Second)
+	}
+
+	if err != nil {
+		log.Fatalf("Could not connect to Prisma after retries: %v", err)
+	}
+
 	controller.SetPrismaClient(prismaClient)
 	log.Println("Connected to Prisma")
 }

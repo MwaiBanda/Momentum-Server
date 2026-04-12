@@ -1,7 +1,7 @@
 import { Label, TextInput } from "flowbite-react"
 
 export function TextField({ reference, value, title, placeholder, id, onChange }: { 
-    reference?: React.RefObject<HTMLInputElement>, 
+    reference?: React.RefObject<HTMLInputElement | null>, 
     value?: string,
     title: string, 
     placeholder: string, 
@@ -11,7 +11,7 @@ export function TextField({ reference, value, title, placeholder, id, onChange }
     return (
         <div>
             <div className="mb-2 block">
-                <Label htmlFor={id} value={title} />
+                <Label htmlFor={id}>{title}</Label>
             </div>
             <TextInput id={id} ref={reference} placeholder={placeholder} value={value} onChange={onChange} required />
         </div>

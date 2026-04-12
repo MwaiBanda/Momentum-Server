@@ -1,8 +1,7 @@
 import { Label, Textarea } from "flowbite-react"
-import { Ref } from "react"
 
 export function TextArea({ reference, value, title, placeholder, id, onChange }: { 
-    reference?: Ref<HTMLTextAreaElement>,
+    reference?: React.RefObject<HTMLTextAreaElement | null>,
     title: string, 
     placeholder: string, 
     id: string,
@@ -12,7 +11,7 @@ export function TextArea({ reference, value, title, placeholder, id, onChange }:
     return (
         <div>
             <div className="mb-2 block">
-                <Label htmlFor={id} value={title} />
+                <Label htmlFor={id}>{title}</Label>
             </div>
             <Textarea id={id} ref={reference} placeholder={placeholder} value={value} onChange={onChange} required rows={6}/>
         </div>

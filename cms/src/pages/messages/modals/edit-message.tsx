@@ -2,7 +2,7 @@ import { TextArea } from "@/components/textarea";
 import { TextField } from "@/components/textfield";
 import { Message, Passage } from "@/models/message";
 import axios from "axios";
-import { Button, Modal, ToggleSwitch } from "flowbite-react";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader, ToggleSwitch } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 
@@ -46,8 +46,8 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
             setPassages([...message?.passages ?? []])
             setOpenModal(false)
         }}>
-            <Modal.Header />
-            <Modal.Body>
+            <ModalHeader />
+            <ModalBody>
             <div className="space-y-6">
                     <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit Message</h3>
                     <div>
@@ -174,8 +174,8 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                         }
                     })}
                 </div>
-            </Modal.Body>
-            <Modal.Footer>
+            </ModalBody>
+            <ModalFooter>
                 <Button className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                     mutation.mutate({
                         id: message?.id ?? "",
@@ -189,7 +189,7 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                     })
                     setOpenModal(false)
                 }}>Update</Button>
-            </Modal.Footer>
+            </ModalFooter>
         </Modal>
     )
 }

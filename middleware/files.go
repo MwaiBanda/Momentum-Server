@@ -8,7 +8,7 @@ import (
 )
 
 func configureFiles(app *fiber.App) {
-	app.Use("/assets", static.New("../cms/dist/assets", static.Config{
+	app.Use("/assets", static.New("cms/dist/assets", static.Config{
 		Browse: true,
 	}))
 
@@ -19,7 +19,14 @@ func configureFiles(app *fiber.App) {
 		constants.DashboardPaymentsRoute,
 		constants.DashboardUsersRoute,
 	} {
-		app.Use(route, static.New("../cms/dist", static.Config{
+		app.Use(route, func(c fiber.Ctx) error {
+			c.Response().Header.Set("Cache-Control", "no-store, no-cache, must-revalidate")
+			c.Response().Header.Set("Pragma", "no-cache")
+			c.Response().Header.Set("Expires", "0")
+			return c.Next()
+		})
+
+		app.Use(route, static.New("cms/dist", static.Config{
 			Browse: true,
 		}))
 	}

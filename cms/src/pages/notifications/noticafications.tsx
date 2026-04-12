@@ -48,7 +48,7 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
                 </p>
                 <div>
                     <div className="mb-2 block">
-                        <Label htmlFor="title" value="Title" />
+                        <Label htmlFor="title">Title</Label>
                     </div>
                     <TextInput id="title" type="text" required onChange={(e) => {
                         setTitle(e.target.value)
@@ -56,7 +56,7 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
                 </div>
                 <div>
                     <div className="mb-2 block">
-                        <Label htmlFor="body" value="Body" />
+                        <Label htmlFor="body">Body</Label>
                     </div>
                     <Textarea id="body" rows={5} required onChange={(e) => {
                         setBody(e.target.value)
@@ -64,18 +64,18 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
                 </div>
 
                 <div>
-                    <fieldset className="flex max-w-md flex-col gap-4" onChange={(e) => {setTopic((e.target as HTMLInputElement).value)}}>
+                    <fieldset className="flex max-w-md flex-col gap-4">
                         <legend className="mb-4">Choose your target audience</legend>
                         <div className="flex items-center gap-2">
-                            <Radio id="all-users" name="audience" value="MomentumUsers" defaultChecked />
+                            <Radio id="all-users" name="audience" value="MomentumUsers" defaultChecked onChange={(e) => setTopic(e.target.value)} />
                             <Label htmlFor="all-users">All Users</Label>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Radio id="android" name="audience" value="MomentumAndroid" />
+                            <Radio id="android" name="audience" value="MomentumAndroid" onChange={(e) => setTopic(e.target.value)} />
                             <Label htmlFor="android">Android</Label>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Radio id="ios" name="audience" value="MomentumIOS" />
+                            <Radio id="ios" name="audience" value="MomentumIOS" onChange={(e) => setTopic(e.target.value)} />
                             <Label htmlFor="ios">iOS</Label>
                         </div>
                     </fieldset>
