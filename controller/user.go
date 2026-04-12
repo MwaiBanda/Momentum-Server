@@ -109,9 +109,14 @@ func (controller *Controller) UpdateUser(context *fiber.Ctx) error {
 		log.Panic(err.Error())
 	}
 	onUpdateUser := func() {
-		res, err := controller.PrismaClient.User.FindUnique(
+		res, err := controller.PrismaClient.User.UpsertOne(
 			db.User.ID.Equals(userRequest.Id),
 		).Update(
+			db.User.Email.Set(userRequest.Email),
+			db.User.Fullname.Set(userRequest.Fullname),
+			db.User.Phone.Set(userRequest.Phone),
+		).Create(
+			db.User.ID.Set(userRequest.Id),
 			db.User.Email.Set(userRequest.Email),
 			db.User.Fullname.Set(userRequest.Fullname),
 			db.User.Phone.Set(userRequest.Phone),
