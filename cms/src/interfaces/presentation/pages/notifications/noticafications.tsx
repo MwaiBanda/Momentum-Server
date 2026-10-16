@@ -1,16 +1,11 @@
 import { useMutation } from "react-query";
 import { MomentumNavigation } from "../../components/navigation"
 import { Button, Card, Label, TextInput, Textarea } from 'flowbite-react';
-import axios from "axios";
+import { useApplication } from "@/interfaces/presentation/application-context";
 import { useState } from "react";
-import { auth } from "../../util/firebase";
 import { Radio } from 'flowbite-react';
 
-interface Notification {
-    title: string;
-    body: string;
-    topic: string;
-};
+import type { NotificationRequest } from "@/domain/notification/entity";
 
 export const Notifications = () => {
     const [openAuthModal, setOpenAuthModal] = useState(false);
@@ -21,19 +16,18 @@ export const Notifications = () => {
                 <div className="w-full h-screen flex justify-center items-center">
                 <NotificationCard setOpenAuthModal={() => { setOpenAuthModal(true) }}/>
                 </div>
-            } showAuth={openAuthModal}/>
+            } showAuth={openAuthModal} onShowAuthChange={setOpenAuthModal}/>
         </main>
     )
 }
 
 function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void}){
+    const application = useApplication();
     const [title, setTitle] = useState("")
     const [body, setBody] = useState("")
     const [topic, setTopic] = useState("MomentumUsers")
 
-    const mutation = useMutation((data: Notification) => {
-        return axios.post('/api/v1/notifications', data)
-    }, {
+    const mutation = useMutation((data: NotificationRequest) => application.notification.send(data), {
         onSuccess: () => {
             alert("Notification sent successfully")
         }
@@ -84,7 +78,7 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
                 <Button className="bg-momentum-orange hover:bg-momentum-orange  enabled:hover:bg-momentum-orange" type="submit" onClick={
                     (e) => {
                         e.preventDefault();
-                        if (auth.currentUser) {
+                        if (application.auth.currentUser()) {
                             if (title === "" || body === "") {
                                 alert("Please fill in all fields")
                                 return
@@ -104,6 +98,3 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
         </Card>
     );
 }
-
-
-

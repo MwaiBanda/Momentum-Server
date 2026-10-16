@@ -7,14 +7,13 @@ export const Home = () => {
 
     useEffect(() => {
         navigate('/messages')
-    }, [])
+    }, [navigate])
     return (
         <div className="w-full">
         <MomentumNavigation />
         </div>
     )
 }
-
 
 
 

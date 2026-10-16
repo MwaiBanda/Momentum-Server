@@ -1,45 +1,42 @@
-import { TextArea } from "@/components/textarea";
-import { TextField } from "@/components/textfield";
-import { Message, Passage } from "@/models/message";
-import axios from "axios";
+import { TextArea } from "@/interfaces/presentation/components/textarea";
+import { TextField } from "@/interfaces/presentation/components/textfield";
+import { Message, Passage } from "@/domain/message/entity";
+import { useApplication } from "@/interfaces/presentation/application-context";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, ToggleSwitch } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "react-query";
 
 export default function EditMessageModal({ message, openModal, setOpenModal }: { message: Message | null, openModal: boolean, setOpenModal: (open: boolean) => void }) {
-    const [title, setTitle] = useState("");
-    const [series, setSeries] = useState("");
-    const [preacher, setPreacher] = useState("");
-    const [image, setImage] = useState("");
-    const [date, setDate] = useState("");
-    const [published, setPublished] = useState(false);
-    const [passages, setPassages] = useState<Passage[]>([]);
+    const application = useApplication();
+    const [title, setTitle] = useState(() => message?.title ?? "");
+    const [series, setSeries] = useState(() => message?.series ?? "");
+    const [preacher, setPreacher] = useState(() => message?.preacher ?? "");
+    const [image, setImage] = useState(() => message?.thumbnail ?? "");
+    const [date, setDate] = useState(() => message?.date ?? "");
+    const [published, setPublished] = useState(() => message?.published ?? false);
+    const [passages, setPassages] = useState<Passage[]>(() => [...message?.passages ?? []]);
     const [passagesToUpdate, setPassagesToUpdate] = useState<Passage[]>([]);
 
-    const mutation = useMutation((data: Message) => {
-        return axios.put('/api/v1/messages', data)
-    }, {
+    const mutation = useMutation((data: Message) => application.message.update(data), {
         onSuccess: () => {
             alert("Message posted successfully")
         }
     })
 
-    useEffect(() => {
-        console.log(message)
-        if (message) {
-            setTitle(message.title)
-            setPublished(message.published)
-            setSeries(message.series)
-            setPreacher(message.preacher)
-            setImage(message.thumbnail)
-            setDate(message.date)
-            setPassages([...message?.passages ?? []])
-        }
-    } ,[message])
+    const updatePassage = (index: number, updatedPassage: Passage) => {
+        setPassages((currentPassages) => currentPassages.map((passage, currentIndex) => (
+            currentIndex === index ? updatedPassage : passage
+        )));
+        setPassagesToUpdate((currentPassages) => {
+            const matchesPassage = (passage: Passage) => updatedPassage.id !== undefined
+                ? passage.id === updatedPassage.id
+                : passage.order === updatedPassage.order;
 
-    useEffect(() => {
-        console.log(passagesToUpdate)
-    }, [passagesToUpdate])
+            return currentPassages.some(matchesPassage)
+                ? currentPassages.map((passage) => matchesPassage(passage) ? updatedPassage : passage)
+                : [...currentPassages, updatedPassage];
+        });
+    };
 
     return (
         <Modal show={openModal} size="md" popup onClose={() =>{ 
@@ -108,19 +105,13 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                                     placeholder="Enter the header of the passage"
                                     id={`edit-header${index + 1}`}
                                     onChange={(event) => {
-                                        let temp: Passage = {
+                                        const temp: Passage = {
                                             id: passage.id,
                                             header: event.target.value,
                                             type: passage.type,
                                             order: passage.order
                                         }
-                                        passages[index] = temp
-                                        if (passagesToUpdate.find(passage => passage.id === temp.id) === undefined) {
-                                            setPassagesToUpdate([...passagesToUpdate, temp])
-                                        } else {    
-                                            setPassagesToUpdate([...passagesToUpdate.filter(passage => passage.id !== temp.id), temp])
-                                        }
-                                        setPassages([...passages])
+                                        updatePassage(index, temp)
                                     }}
                                 />
                             </>
@@ -132,20 +123,14 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                                     placeholder="Enter the verse of the passage"
                                     id={`edit-verse${index + 1}`}
                                     onChange={(event) => {
-                                        let temp: Passage = {
+                                        const temp: Passage = {
                                             id: passage.id,
                                             verse: event.target.value,
                                             message: passage.message,
                                             type: passage.type,
                                             order: passage.order
                                         }
-                                        passages[index] = temp
-                                        if (passagesToUpdate.filter(passage => passage.id === temp.id).length === 0) {
-                                            setPassagesToUpdate([...passagesToUpdate, temp])
-                                        } else {    
-                                            setPassagesToUpdate([...passagesToUpdate.filter(passage => passage.id !== temp.id), temp])
-                                        }
-                                        setPassages([...passages])
+                                        updatePassage(index, temp)
                                     }}
                                 />
                                 <TextArea
@@ -154,20 +139,14 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                                     placeholder="Enter the message of the passage"
                                     id={`edit-message${index + 1}`}
                                     onChange={(event) => {
-                                        let temp: Passage = {
+                                        const temp: Passage = {
                                             id: passage.id,
                                             verse: passage.verse,
                                             message: event.target.value,
                                             type: passage.type,
                                             order: passage.order
                                         }
-                                        passages[index] = temp
-                                        if (passagesToUpdate.filter(passage => passage.id === temp.id).length === 0) {
-                                            setPassagesToUpdate([...passagesToUpdate, temp])
-                                        } else {    
-                                            setPassagesToUpdate([...passagesToUpdate.filter(passage => passage.id !== temp.id), temp])
-                                        }
-                                        setPassages([...passages])
+                                        updatePassage(index, temp)
                                     }}
                                 />
                             </>

@@ -9,15 +9,15 @@ import {
 } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/interfaces/presentation/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/interfaces/presentation/components/ui/dropdown-menu"
 
-import { Input } from "@/components/ui/input"
+import { Input } from "@/interfaces/presentation/components/ui/input"
 
 import {
   Table,
@@ -26,11 +26,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Transaction } from "@/models/transaction"
-import { columns, features } from "./columns"
+} from "@/interfaces/presentation/components/ui/table"
+import { Transaction } from "@/domain/transaction/entity"
+import { useApplication } from "@/interfaces/presentation/application-context"
+import { createColumns, features } from "./columns"
 
 export function TransactionTable({ data }: { data: Transaction[] }) {
+    const application = useApplication()
+    const columns = createColumns(application.auth)
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
       []

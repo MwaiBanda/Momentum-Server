@@ -1,29 +1,25 @@
 import { useQuery } from "react-query"
 import { MomentumNavigation } from "../../components/navigation"
 import { Card, TextInput } from 'flowbite-react';
-import axios from "axios"
-import { Message } from "../../models/message"
+import { useApplication } from "@/interfaces/presentation/application-context";
+import { Message } from "@/domain/message/entity"
 import { useEffect, useState } from "react";
 import AddMessageModal from "./modals/add-message";
-import { auth } from "../../util/firebase";
 import EditMessageModal from "./modals/edit-message";
 import { Rings } from 'react-loader-spinner'
 
 export const Messages = () => {
+    const application = useApplication();
     const { data: messages, isLoading } = useQuery({
         queryKey: ['message-admin'],
-        queryFn: async () => {
-          const { data } = await axios.get('/api/v1/messages/admin')
-          return data
-        },
+        queryFn: () => application.message.listAdmin(),
     })
     const { data: unpublished } = useQuery({
         queryKey: ['message-unpublished'],
-        queryFn: async () => {
-          const { data } = await axios.get('/api/v1/messages/unpublished')
-          return data
-        },
+        queryFn: () => application.message.listUnpublished(),
     })
+    const unpublishedMessages = unpublished?.data ?? [];
+    const publishedMessages = messages?.data ?? [];
 
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [searchText, setSearchText] = useState("");
@@ -67,7 +63,7 @@ export const Messages = () => {
                             }}
                         />        
                         <button className="bg-momentum-orange hover:bg-momentum-orange text-white font-bold py-2.5 px-4 rounded-none max-h-[42px] ml-[-5px] z-10 rounded-r-lg" onClick={() => {
-                            if (auth.currentUser) {
+                            if (application.auth.currentUser()) {
                                     setOpenMessageModal(true)
                             } else {
                                     setShowAuthModal(true)
@@ -76,11 +72,11 @@ export const Messages = () => {
                                 Add Message
                         </button>
                     </div>
-                    {unpublished.data && <>
+                    {unpublished?.data && <>
                      <h6 className="mt-2 font-bold text-lg">Private</h6>
                      <p className="text-sm text-gray-500">View & Edit Staged Content Prior To Publishing</p>
                      <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-4">
-                            {unpublished.data.filter((m: Message) => {
+                            {unpublishedMessages.filter((m: Message) => {
                                 return m.title.toLowerCase().includes(searchText.toLowerCase()) ||
                                 m.preacher.toLowerCase().includes(searchText.toLowerCase()) ||
                                 m.date.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -90,7 +86,7 @@ export const Messages = () => {
                                 <div key={message.id}>
                                     <MessageCard message={message} onEditMessage={
                                         (message) => {
-                                            if (auth.currentUser) {
+                                            if (application.auth.currentUser()) {
                                                 setEditableMessage(message)
                                                 setOpenEditMessageModal(true)
                                             } else {
@@ -106,7 +102,7 @@ export const Messages = () => {
                     <p className="text-sm text-gray-500">View & Edit Current Publicly Available Content</p>
                     <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-4">
                 
-                            {messages.data?.filter((m: Message) => {
+                            {publishedMessages.filter((m: Message) => {
                                 return m.title.toLowerCase().includes(searchText.toLowerCase()) ||
                                 m.preacher.toLowerCase().includes(searchText.toLowerCase()) ||
                                 m.date.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -116,7 +112,7 @@ export const Messages = () => {
                                 <div key={message.id}>
                                     <MessageCard message={message} onEditMessage={
                                         (message) => {
-                                            if (auth.currentUser) {
+                                            if (application.auth.currentUser()) {
                                                 setEditableMessage(message)
                                                 setOpenEditMessageModal(true)
                                             } else {
@@ -128,9 +124,9 @@ export const Messages = () => {
                             ))}
                     </div>
                     </>
-                    } showAuth={showAuthModal} />
+                    } showAuth={showAuthModal} onShowAuthChange={setShowAuthModal} />
                     <AddMessageModal openModal={openModal} setOpenModal={setOpenMessageModal}/>
-                    <EditMessageModal openModal={openEditModal} setOpenModal={setOpenEditMessageModal} message={editableMessage}/>
+                    <EditMessageModal key={editableMessage?.id ?? "edit-message"} openModal={openEditModal} setOpenModal={setOpenEditMessageModal} message={editableMessage}/>
             </main>
         </>
     )
@@ -169,4 +165,3 @@ function MessageCard({ message, onEditMessage }: { message: Message, onEditMessa
     </Card>
   );
 }
-

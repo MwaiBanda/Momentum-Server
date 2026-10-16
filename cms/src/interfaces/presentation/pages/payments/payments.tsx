@@ -1,16 +1,16 @@
 
 import { MomentumNavigation } from "../../components/navigation"
 import { useQuery } from "react-query"
-import axios from "axios"
+import { useApplication } from "@/interfaces/presentation/application-context";
 import { TransactionTable } from "./table/transaction-table"
 import { Rings } from "react-loader-spinner"
 
 export const Payments = () => {
+    const application = useApplication();
     const { data, isLoading } = useQuery({
         queryKey: ['transactions'],
         queryFn: async () => {
-          const { data } = await axios.get('/api/v1/transactions')
-          return data
+          return application.transaction.list()
         },
     })
 
@@ -28,7 +28,7 @@ export const Payments = () => {
     return (
         <main className="w-full h-screen">
             <MomentumNavigation content={
-                <TransactionTable data={data} />
+                <TransactionTable data={data ?? []} />
             }/>
         </main>
     )
@@ -36,9 +36,6 @@ export const Payments = () => {
 
 
   
-
-
-
 
 
 

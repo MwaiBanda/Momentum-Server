@@ -1,4 +1,4 @@
-import { Transaction, User } from "@/models/transaction"
+import { Transaction, User } from "@/domain/transaction/entity"
 import {
     ColumnDef,
     columnFilteringFeature,
@@ -12,9 +12,9 @@ import {
     tableFeatures,
 } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { auth } from "@/util/firebase";
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import type { AuthUseCase } from "@/application/service/auth/usecase";
+import { Button } from "@/interfaces/presentation/components/ui/button"
+import { Checkbox } from "@/interfaces/presentation/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,9 +22,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"  
+} from "@/interfaces/presentation/components/ui/dropdown-menu"
 
-"use client"
 export const features = tableFeatures({
   columnFilteringFeature,
   columnVisibilityFeature,
@@ -36,7 +35,7 @@ export const features = tableFeatures({
   sortedRowModel: createSortedRowModel(),
 })
 
-export const columns: ColumnDef<typeof features, Transaction>[] = [
+export const createColumns = (auth: AuthUseCase): ColumnDef<typeof features, Transaction>[] => [
     {
       id: "select",
       header: ({ table }) => (
@@ -63,7 +62,7 @@ export const columns: ColumnDef<typeof features, Transaction>[] = [
       accessorKey: "date",
       header: "Date",
       cell: ({ row }) => (
-        <div className="capitalize">{auth.currentUser ? row.getValue("date") : (row.getValue("date") as string).split("").map(() => "*").join("")}</div>
+        <div className="capitalize">{auth.currentUser() ? row.getValue("date") : (row.getValue("date") as string).split("").map(() => "*").join("")}</div>
       ),
     },
     {
@@ -79,13 +78,13 @@ export const columns: ColumnDef<typeof features, Transaction>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="capitalize">{auth.currentUser ? (row.getValue("user") as User).fullname : (row.index == 0 ? "🔒 Signin to view information" : "")}</div>,
+      cell: ({ row }) => <div className="capitalize">{auth.currentUser() ? (row.getValue("user") as User).fullname : (row.index == 0 ? "🔒 Signin to view information" : "")}</div>,
     },
     {
       accessorKey: "description",
       header: "Description",
       cell: ({ row }) => (
-        <div className="capitalize">{auth.currentUser ? row.getValue("description") : (row.getValue("description") as string).split("").map(() => "*").join("")}</div>
+        <div className="capitalize">{auth.currentUser() ? row.getValue("description") : (row.getValue("description") as string).split("").map(() => "*").join("")}</div>
       ),
     },
     {
@@ -101,7 +100,7 @@ export const columns: ColumnDef<typeof features, Transaction>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className={auth.currentUser ? "lowercase" : "capitalize"}>{auth.currentUser ? (row.getValue("user") as User).email : (row.index == 0 ? "🔒 Signin to view information" : "")}</div>,
+      cell: ({ row }) => <div className={auth.currentUser() ? "lowercase" : "capitalize"}>{auth.currentUser() ? (row.getValue("user") as User).email : (row.index == 0 ? "🔒 Signin to view information" : "")}</div>,
     },
     {
       accessorKey: "createdOn",
@@ -116,7 +115,7 @@ export const columns: ColumnDef<typeof features, Transaction>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{auth.currentUser ? (new Date(row.getValue("createdOn")).toLocaleDateString()) : (row.getValue("createdOn") as string).split("").map(() => "*").join("")}</div>,
+      cell: ({ row }) =>       <div className="lowercase">{auth.currentUser() ? (new Date(row.getValue("createdOn")).toLocaleDateString()) : (row.getValue("createdOn") as string).split("").map(() => "*").join("")}</div>,
     },
     {
       accessorKey: "amount",
@@ -129,7 +128,7 @@ export const columns: ColumnDef<typeof features, Transaction>[] = [
           currency: "USD",
         }).format(amount)
   
-        return <div className="text-right font-medium">{auth.currentUser ? formatted : formatted.split("").map(() => { return "$" }).slice(0, formatted.length - 2).join("")}</div>
+        return <div className="text-right font-medium">{auth.currentUser() ? formatted : formatted.split("").map(() => { return "$" }).slice(0, formatted.length - 2).join("")}</div>
       },
     },
     {

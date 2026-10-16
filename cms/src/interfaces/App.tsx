@@ -1,18 +1,13 @@
-import {QueryClientProvider} from 'react-query';
-import './App.css'
-import {ReactQueryDevtools} from "react-query/devtools";
 import {RouterProvider} from "react-router-dom";
-import "./index.css";
-import {router} from "./router/router.tsx";
-import "./util/interceptors.ts"
-import {queryClient} from "./util/constants.ts";
+import { router } from "@/interfaces/router/router";
+import { AppProviders } from "./presentation/providers";
+import type { ApplicationServices } from "@/application/services";
 
-function App() {
+function App({ application }: { application: ApplicationServices }) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <AppProviders application={application}>
       <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </AppProviders>
   )
 }
 

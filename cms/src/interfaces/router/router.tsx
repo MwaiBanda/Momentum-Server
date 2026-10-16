@@ -1,10 +1,10 @@
 import {createBrowserRouter} from "react-router-dom";
-import {Home} from "../pages/home.tsx";
-import { Messages } from "../pages/messages/messages.tsx";
-import { Notifications } from "../pages/notifications/noticafications.tsx";
-import { Payments } from "../pages/payments/payments.tsx";
-import { Users } from "../pages/users/users.tsx";
-import { HOME, MESSAGES, NOFICATIONS, PAYMENTS, USERS } from "../util/constants.ts";
+import {Home} from "../presentation/pages/home.tsx";
+import { Messages } from "../presentation/pages/messages/messages.tsx";
+import { Notifications } from "../presentation/pages/notifications/noticafications.tsx";
+import { Payments } from "../presentation/pages/payments/payments.tsx";
+import { Users } from "../presentation/pages/users/users.tsx";
+import { HOME, MESSAGES, NOFICATIONS, PAYMENTS, USERS } from "@/application/config/constants";
 
 export const router = createBrowserRouter([
     {

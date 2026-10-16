@@ -8,8 +8,8 @@ import {
   ToastToggle,
 } from 'flowbite-react';
 import { useLocation } from 'react-router-dom';
-import {MESSAGES, NOFICATIONS, PAYMENTS} from "../util/constants";
-import { auth } from '../util/firebase';
+import { MESSAGES, NOFICATIONS, PAYMENTS } from "@/application/config/constants";
+import { useApplication } from "@/interfaces/presentation/application-context";
 import { useEffect, useState } from 'react';
 import SigninModal from './signinmodal';
 import MomentumFooter from './footer';
@@ -17,21 +17,11 @@ import { HiFire } from "react-icons/hi";
 
 
 function AuthNavlink({ onSigninClick }: { onSigninClick: () => void}){
-  const [isSignedIn, setSignedIn] = useState(auth.currentUser ? true : false)
+  const { auth } = useApplication();
+  const [isSignedIn, setSignedIn] = useState(() => auth.currentUser() !== null)
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setSignedIn(true)
-      } else {
-        setSignedIn(false)
-      }
-    })
-    if (auth.currentUser) {
-      setSignedIn(true)
-    } else {
-      setSignedIn(false)
-    }
-  }, [auth.currentUser])
+    return auth.subscribe((user) => setSignedIn(user !== null))
+  }, [auth])
   if (isSignedIn) {
     return <NavbarLink className="cursor-pointer" onClick={() => {
       auth.signOut().then(() => {
@@ -45,16 +35,26 @@ function AuthNavlink({ onSigninClick }: { onSigninClick: () => void}){
   }
 }
 
-export function MomentumNavigation({ content, showAuth}: { content?: React.ReactNode, showAuth?: boolean}) {
+type MomentumNavigationProps = {
+  content?: React.ReactNode;
+  showAuth?: boolean;
+  onShowAuthChange?: (open: boolean) => void;
+};
+
+export function MomentumNavigation({ content, showAuth, onShowAuthChange }: MomentumNavigationProps) {
     const location = useLocation();
-    const [openAuthModal, setOpenAuthModal] = useState(false);
+    const [internalAuthModalOpen, setInternalAuthModalOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
-    useEffect(() => {
-        if (showAuth) {
-          setOpenAuthModal(true)
-        }
-    }, [showAuth])
+    const isAuthModalControlled = showAuth !== undefined && onShowAuthChange !== undefined;
+    const openAuthModal = isAuthModalControlled ? showAuth : internalAuthModalOpen;
+    const setOpenAuthModal = (open: boolean) => {
+      if (isAuthModalControlled) {
+        onShowAuthChange(open);
+      } else {
+        setInternalAuthModalOpen(open);
+      }
+    };
     return (
       <>
         <Navbar fluid rounded className="w-full  px-0 sm:px-0" >

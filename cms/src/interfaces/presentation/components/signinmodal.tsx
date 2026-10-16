@@ -1,10 +1,10 @@
 import { Button, Label, Modal, ModalBody, ModalHeader, TextInput } from "flowbite-react";
 import { useRef } from "react";
-import { auth } from "../util/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useApplication } from "@/interfaces/presentation/application-context";
 
 
 export default function SigninModal({ openModal, setOpenModal, onSignInComplete }: { openModal: boolean, setOpenModal: (open: boolean) => void, onSignInComplete: (message: string) => void}) {
+  const { auth } = useApplication();
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   return (
@@ -29,11 +29,10 @@ export default function SigninModal({ openModal, setOpenModal, onSignInComplete 
             <div className="w-full">
               <Button className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                 
-                signInWithEmailAndPassword(auth, emailInputRef.current?.value as string, passwordInputRef.current?.value as string)
-                .then((userCredential) => {
-                  const user = userCredential.user;
+                auth.signIn(emailInputRef.current?.value ?? "", passwordInputRef.current?.value ?? "")
+                .then((user) => {
                   setOpenModal(false)
-                  onSignInComplete(`Signed in as ${user?.email}`)
+                  onSignInComplete(`Signed in as ${user.email}`)
                 }).catch((error) => {
                   const errorCode = error.code;
                   const errorMessage = error.message;

@@ -1,10 +1,10 @@
-import axios from "axios";
 import { Modal, Button, ModalBody, ModalHeader } from "flowbite-react"
 import { RefObject, createRef, useRef, useState } from "react"
 import { useMutation } from "react-query";
-import { MessageRequest } from "../../../models/message";
-import { TextField } from "@/components/textfield";
-import { TextArea } from "@/components/textarea";
+import { useApplication } from "@/interfaces/presentation/application-context";
+import { MessageRequest } from "@/domain/message/entity";
+import { TextField } from "@/interfaces/presentation/components/textfield";
+import { TextArea } from "@/interfaces/presentation/components/textarea";
 
 enum PassageType {
     Header,
@@ -19,6 +19,7 @@ type PassageHolder = {
 
 
 export default function AddMessageModal({ openModal, setOpenModal }: { openModal: boolean, setOpenModal: (open: boolean) => void }) {
+    const application = useApplication();
     const [refs, setRefs] = useState<PassageHolder[]>([]);
     const titleInputRef = useRef<HTMLInputElement>(null);
     const seriesInputRef = useRef<HTMLInputElement>(null);
@@ -26,9 +27,7 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
     const imageInputRef = useRef<HTMLInputElement>(null);
     const dateInputRef = useRef<HTMLInputElement>(null);
 
-    const mutation = useMutation((data: MessageRequest) => {
-        return axios.post('/api/v1/messages', data)
-    }, {
+    const mutation = useMutation((data: MessageRequest) => application.message.create(data), {
         onSuccess: () => {
             alert("Message posted successfully")
         }
@@ -76,7 +75,7 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                                 case PassageType.Header:
                                     return (
                                         <TextArea
-                                            reference={passage.area!!}
+                                            reference={passage.area}
                                             title={`Add header`}
                                             placeholder="Enter the header of the passage"
                                             id={`header${index + 1}`}
@@ -86,13 +85,13 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                                     return (
                                         <div>
                                             <TextField
-                                                reference={passage.text!!}
+                                                reference={passage.text}
                                                 title={`Add verse`}
                                                 placeholder="Enter the verse of the passage"
                                                 id={`verse${index + 1}`}
                                             />
                                             <TextArea
-                                                reference={passage.area!!}
+                                                reference={passage.area}
                                                 title={`Add message`}
                                                 placeholder="Enter the message of the passage"
                                                 id={`message${index + 1}`}
@@ -160,7 +159,3 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
         </Modal>
     )
 }
-
-
-
-
