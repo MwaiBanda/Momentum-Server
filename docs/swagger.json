@@ -481,6 +481,44 @@
                 }
             }
         },
+        "/api/v1/messages/admin": {
+            "get": {
+                "description": "get published messages without user-specific passage notes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Show all published messages for the CMS",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/message.MessageListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/messages/notes": {
             "put": {
                 "description": "Used to update a user note in a passage",

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient } from "@/infrastructure/query/client";
 import type { ApplicationServices } from "@/application/services";
 import { ApplicationContext } from "./application-context";

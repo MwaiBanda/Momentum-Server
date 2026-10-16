@@ -6,6 +6,23 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
+const adminUserID = "admin"
+
+// ListAdmin godoc
+//
+//	@Summary		Show all published messages for the CMS
+//	@Description	get published messages without user-specific passage notes
+//	@Accept			json
+//	@Produce		json
+//	@tags			Messages
+//	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Success		200	{object}	message.MessageListResponse
+//	@Failure		500	{object} http.ErrorResponse
+//	@Router			/api/v1/messages/admin [get]
+func (handler *Handler) ListAdmin(ctx fiber.Ctx) error {
+	return handler.listPublished(ctx, adminUserID, "ListAdminMessages")
+}
+
 // ListPublishedByUser godoc
 //
 //	@Summary		Show published messages available for a user
@@ -20,14 +37,18 @@ import (
 //	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages/{userId} [get]
 func (handler *Handler) ListPublishedByUser(ctx fiber.Ctx) error {
+	return handler.listPublished(ctx, ctx.Params("userId"), "ListPublishedMessages")
+}
+
+func (handler *Handler) listPublished(ctx fiber.Ctx, userID string, operation string) error {
 	if handler.messages == nil {
-		log.Printf("[ListPublishedMessages] handler dependencies are not initialized")
+		log.Printf("[%s] handler dependencies are not initialized", operation)
 		return fiber.ErrInternalServerError
 	}
 
-	response, err := handler.messages.ListPublishedByUser(ctx.Context(), ctx.Params("userId"))
+	response, err := handler.messages.ListPublishedByUser(ctx.Context(), userID)
 	if err != nil {
-		return handler.mapError("ListPublishedMessages", err)
+		return handler.mapError(operation, err)
 	}
 
 	return ctx.JSON(response)

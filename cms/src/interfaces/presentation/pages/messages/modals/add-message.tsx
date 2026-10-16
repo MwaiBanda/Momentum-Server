@@ -1,6 +1,6 @@
 import { Modal, Button, ModalBody, ModalHeader } from "flowbite-react"
 import { RefObject, createRef, useRef, useState } from "react"
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useApplication } from "@/interfaces/presentation/application-context";
 import { MessageRequest } from "@/domain/message/entity";
 import { TextField } from "@/interfaces/presentation/components/textfield";
@@ -27,7 +27,8 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
     const imageInputRef = useRef<HTMLInputElement>(null);
     const dateInputRef = useRef<HTMLInputElement>(null);
 
-    const mutation = useMutation((data: MessageRequest) => application.message.create(data), {
+    const mutation = useMutation({
+        mutationFn: (data: MessageRequest) => application.message.create(data),
         onSuccess: () => {
             alert("Message posted successfully")
         }

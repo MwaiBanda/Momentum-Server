@@ -1051,6 +1051,31 @@ paths:
       summary: Show published messages available for a user
       tags:
       - Messages
+  /api/v1/messages/admin:
+    get:
+      consumes:
+      - application/json
+      description: get published messages without user-specific passage notes
+      parameters:
+      - description: Provide a bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/message.MessageListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Show all published messages for the CMS
+      tags:
+      - Messages
   /api/v1/messages/notes:
     post:
       consumes:

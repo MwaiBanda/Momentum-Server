@@ -4,6 +4,7 @@ import tsParser from "@typescript-eslint/parser";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 
 export default [
   {
@@ -12,6 +13,7 @@ export default [
   eslint.configs.recommended,
   ...tseslint.configs["flat/recommended"],
   reactHooks.configs.flat.recommended,
+  jsxA11y.flatConfigs.recommended,
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
     languageOptions: {

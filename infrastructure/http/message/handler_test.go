@@ -85,6 +85,7 @@ func (fake *fakeUseCase) DeleteNote(ctx context.Context, id string) (application
 func newTestApp(messages applicationmessage.UseCase) *fiber.App {
 	handler := GetInstance(messages)
 	app := fiber.New()
+	app.Get("/messages/admin", handler.ListAdmin)
 	app.Get("/messages/unpublished", handler.ListUnpublished)
 	app.Get("/messages/:userId", handler.ListPublishedByUser)
 	app.Post("/messages", handler.Create)
@@ -132,6 +133,59 @@ func TestListPublishedByUserReturnsResponse(t *testing.T) {
 	}
 	if receivedUserID != "user-1" {
 		t.Fatalf("user ID = %q, want %q", receivedUserID, "user-1")
+	}
+
+	var actual applicationmessage.MessageListResponse
+	if err := json.NewDecoder(response.Body).Decode(&actual); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("response = %#v, want %#v", actual, expected)
+	}
+}
+
+func TestListAdminReturnsPublishedMessageContract(t *testing.T) {
+	expected := applicationmessage.MessageListResponse{
+		Data: []applicationmessage.MessageResponse{{ID: "message-1", Title: "Message", Published: true}},
+	}
+	var receivedUserID string
+	messages := &fakeUseCase{
+		listPublished: func(_ context.Context, userID string) (applicationmessage.MessageListResponse, error) {
+			receivedUserID = userID
+			return expected, nil
+		},
+	}
+
+	response := performRequest(t, newTestApp(messages), http.MethodGet, "/messages/admin", "")
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want %d", response.StatusCode, http.StatusOK)
+	}
+	if receivedUserID != "admin" {
+		t.Fatalf("admin user ID = %q, want %q", receivedUserID, "admin")
+	}
+
+	var actual applicationmessage.MessageListResponse
+	if err := json.NewDecoder(response.Body).Decode(&actual); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("response = %#v, want %#v", actual, expected)
+	}
+}
+
+func TestListUnpublishedReturnsMessageListContract(t *testing.T) {
+	expected := applicationmessage.MessageListResponse{
+		Data: []applicationmessage.MessageResponse{{ID: "draft-1", Title: "Draft", Published: false}},
+	}
+	messages := &fakeUseCase{
+		listUnpublished: func(context.Context) (applicationmessage.MessageListResponse, error) {
+			return expected, nil
+		},
+	}
+
+	response := performRequest(t, newTestApp(messages), http.MethodGet, "/messages/unpublished", "")
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want %d", response.StatusCode, http.StatusOK)
 	}
 
 	var actual applicationmessage.MessageListResponse

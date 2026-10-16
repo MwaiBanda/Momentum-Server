@@ -22,7 +22,7 @@ API errors use a consistent JSON response with `code` and `message` fields.
   - Fiber
 - #### `CMS` Dependencies
     - React
-    - React Query
+    - TanStack Query
     - TailwindCSS
     - React Router
     
@@ -33,7 +33,7 @@ API for tools that have not added TypeScript 7 support yet.
 The CMS follows the backend's dependency boundaries: `domain/` contains entities and
 contracts, `application/` contains feature services, `infrastructure/` contains HTTP,
 authentication, and query adapters, and `interfaces/` contains the React presentation
-layer. `app/` is the CMS composition root.
+layer. `main.tsx` is the CMS composition root, analogous to the backend's `main.go`.
 
 ----
 ### Database (Neon Postgres)

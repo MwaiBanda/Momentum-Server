@@ -1,6 +1,6 @@
 
 import { MomentumNavigation } from "../../components/navigation"
-import { useQuery } from "react-query"
+import { useQuery } from "@tanstack/react-query"
 import { useApplication } from "@/interfaces/presentation/application-context";
 import { TransactionTable } from "./table/transaction-table"
 import { Rings } from "react-loader-spinner"
@@ -36,7 +36,6 @@ export const Payments = () => {
 
 
   
-
 
 
 

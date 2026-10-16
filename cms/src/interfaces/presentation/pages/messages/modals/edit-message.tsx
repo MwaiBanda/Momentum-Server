@@ -4,7 +4,7 @@ import { Message, Passage } from "@/domain/message/entity";
 import { useApplication } from "@/interfaces/presentation/application-context";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, ToggleSwitch } from "flowbite-react";
 import { useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export default function EditMessageModal({ message, openModal, setOpenModal }: { message: Message | null, openModal: boolean, setOpenModal: (open: boolean) => void }) {
     const application = useApplication();
@@ -17,7 +17,8 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
     const [passages, setPassages] = useState<Passage[]>(() => [...message?.passages ?? []]);
     const [passagesToUpdate, setPassagesToUpdate] = useState<Passage[]>([]);
 
-    const mutation = useMutation((data: Message) => application.message.update(data), {
+    const mutation = useMutation({
+        mutationFn: (data: Message) => application.message.update(data),
         onSuccess: () => {
             alert("Message posted successfully")
         }

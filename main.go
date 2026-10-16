@@ -197,6 +197,7 @@ func main() {
 
 	v1.Post("/messages", httpHandlers.Message.Create)
 	v1.Put("/messages", httpHandlers.Message.Update)
+	v1.Get("/messages/admin", httpHandlers.Message.ListAdmin)
 	v1.Get("/messages/unpublished", httpHandlers.Message.ListUnpublished)
 	v1.Get("/messages/:userId", httpHandlers.Message.ListPublishedByUser)
 	v1.Post("/messages/notes", httpHandlers.Message.CreateNote)

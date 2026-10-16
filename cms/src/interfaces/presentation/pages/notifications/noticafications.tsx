@@ -1,4 +1,4 @@
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { MomentumNavigation } from "../../components/navigation"
 import { Button, Card, Label, TextInput, Textarea } from 'flowbite-react';
 import { useApplication } from "@/interfaces/presentation/application-context";
@@ -27,7 +27,8 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
     const [body, setBody] = useState("")
     const [topic, setTopic] = useState("MomentumUsers")
 
-    const mutation = useMutation((data: NotificationRequest) => application.notification.send(data), {
+    const mutation = useMutation({
+        mutationFn: (data: NotificationRequest) => application.notification.send(data),
         onSuccess: () => {
             alert("Notification sent successfully")
         }
