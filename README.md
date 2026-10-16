@@ -78,7 +78,10 @@ cms/src/
 └── main.tsx                       Composition root
 ```
 
-### System flow
+### Architecture at a glance
+
+Solid arrows show request and runtime flow. Dashed arrows show dependency
+direction, implementation, and composition-root wiring.
 
 ```mermaid
 flowchart TB
@@ -101,8 +104,10 @@ flowchart TB
     browser --> presentation
     presentation --> application
     application --> domain
-    infrastructure -. "implements ports and adapters" .-> application
+    infrastructure -. "implements domain contracts" .-> domain
     composition -. "wires dependencies" .-> presentation
+    composition -.-> application
+    composition -.-> infrastructure
     infrastructure --> postgres
     infrastructure --> redis
     infrastructure --> integrations
@@ -220,7 +225,7 @@ information.
 
 This endpoint allows users to get their own information.
 
-<img width="1430" alt="Screenshot of the get user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/20bc554d-2b7e-427b-85f-bb75a121ae15">
+<img width="1430" alt="Screenshot of the get user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/20bc554d-2b7e-4272-b85f-bb75a121ae15">
 
 ------
 
@@ -228,7 +233,7 @@ This endpoint allows users to get their own information.
 
 This endpoint allows users to post user information.
 
-<img width="1430" alt="Screenshot of the post user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/49171553-4afa-4afa-aba3-2aa97b280cf2">
+<img width="1430" alt="Screenshot of the post user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/49171553-ae04-4afa-aba3-2aa97b280cf2">
 
 ------
 
@@ -299,7 +304,7 @@ This endpoint allows users to fetch all meals available.
 
 This endpoint allows users to post a meal.
 
-<img width="1430" alt="Screenshot of the post meal endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/ed153b05-7368-4d1d-b805-56490fb31d3f">
+<img width="1430" alt="Screenshot of the post meal endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/ed153b05-7368-4d46-b805-56490fb31d3f">
 
 ------
 
