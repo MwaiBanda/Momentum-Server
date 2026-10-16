@@ -1,5 +1,99 @@
 basePath: /
 definitions:
+  message.CreateNoteInput:
+    properties:
+      content:
+        type: string
+      passageId:
+        type: string
+      userId:
+        type: string
+    type: object
+  message.MessageInput:
+    properties:
+      createdOn:
+        type: string
+      date:
+        type: string
+      hasOrder:
+        type: boolean
+      id:
+        type: string
+      passages:
+        items:
+          $ref: '#/definitions/message.PassageResponse'
+        type: array
+      preacher:
+        type: string
+      published:
+        type: boolean
+      series:
+        type: string
+      thumbnail:
+        type: string
+      title:
+        type: string
+    type: object
+  message.MessageListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/message.MessageResponse'
+        type: array
+    type: object
+  message.MessageResponse:
+    properties:
+      createdOn:
+        type: string
+      date:
+        type: string
+      hasOrder:
+        type: boolean
+      id:
+        type: string
+      passages:
+        items:
+          $ref: '#/definitions/message.PassageResponse'
+        type: array
+      preacher:
+        type: string
+      published:
+        type: boolean
+      series:
+        type: string
+      thumbnail:
+        type: string
+      title:
+        type: string
+    type: object
+  message.NoteResponse:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      userId:
+        type: string
+    type: object
+  message.PassageResponse:
+    properties:
+      header:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      notes:
+        items:
+          $ref: '#/definitions/message.NoteResponse'
+        type: array
+      order:
+        type: integer
+      type:
+        type: string
+      verse:
+        type: string
+    type: object
   model.Attribute:
     properties:
       all_day_event:
@@ -140,56 +234,6 @@ definitions:
       user_id:
         type: string
     type: object
-  model.Message:
-    properties:
-      createdOn:
-        type: string
-      date:
-        type: string
-      hasOrder:
-        type: boolean
-      id:
-        type: string
-      passages:
-        items:
-          $ref: '#/definitions/model.PassageResponse'
-        type: array
-      preacher:
-        type: string
-      published:
-        type: boolean
-      series:
-        type: string
-      thumbnail:
-        type: string
-      title:
-        type: string
-    type: object
-  model.MessageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/model.Message'
-        type: array
-    type: object
-  model.Note:
-    properties:
-      content:
-        type: string
-      id:
-        type: string
-      userId:
-        type: string
-    type: object
-  model.NoteRequest:
-    properties:
-      content:
-        type: string
-      passageId:
-        type: string
-      userId:
-        type: string
-    type: object
   model.Notification:
     properties:
       body:
@@ -205,25 +249,6 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/model.UserResponse'
-    type: object
-  model.PassageResponse:
-    properties:
-      header:
-        type: string
-      id:
-        type: string
-      message:
-        type: string
-      notes:
-        items:
-          $ref: '#/definitions/model.Note'
-        type: array
-      order:
-        type: integer
-      type:
-        type: string
-      verse:
-        type: string
     type: object
   model.PaymentRequest:
     properties:
@@ -866,52 +891,12 @@ paths:
       tags:
       - Meals
   /api/v1/messages:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a message's information
-      parameters:
-      - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Post a message
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.Message'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Message'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-      summary: Delete message information
-      tags:
-      - Messages
     post:
       consumes:
       - application/json
       description: Used to post a message
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -921,20 +906,16 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.Message'
+          $ref: '#/definitions/message.MessageInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Message'
+            $ref: '#/definitions/message.MessageResponse'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
@@ -950,24 +931,23 @@ paths:
       description: Used to update a message
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: Post a message
+      - description: Update a message
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.Message'
+          $ref: '#/definitions/message.MessageInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Message'
+            $ref: '#/definitions/message.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -983,16 +963,20 @@ paths:
       summary: Update a Message
       tags:
       - Messages
-  /api/v1/messages/{userId}:
-    get:
+  /api/v1/messages/{messageId}:
+    delete:
       consumes:
       - application/json
-      description: get a list of messages available for a user
+      description: Delete a message and its passages and notes
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
+        required: true
+        type: string
+      - description: provide message Id
+        in: path
+        name: messageId
         required: true
         type: string
       produces:
@@ -1001,9 +985,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.MessageResponse'
-            type: array
+            $ref: '#/definitions/message.MessageResponse'
         "400":
           description: Bad Request
           schema:
@@ -1016,7 +998,41 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Show a list of messages available for a user
+      summary: Delete message information
+      tags:
+      - Messages
+  /api/v1/messages/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: get published messages and that user's passage notes
+      parameters:
+      - description: Provide a bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: provide user Id
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/message.MessageListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.HTTPError'
+      summary: Show published messages available for a user
       tags:
       - Messages
   /api/v1/messages/notes:
@@ -1026,24 +1042,25 @@ paths:
       description: Used to add user notes to a passage
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
+      - description: Post a note
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/message.CreateNoteInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.NoteRequest'
+            $ref: '#/definitions/message.CreateNoteInput'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
@@ -1056,27 +1073,26 @@ paths:
     put:
       consumes:
       - application/json
-      description: Used to update a user notes in a passage
+      description: Used to update a user note in a passage
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: Post a note
+      - description: Update a note
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.Message'
+          $ref: '#/definitions/message.NoteResponse'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Note'
+            $ref: '#/definitions/message.NoteResponse'
         "400":
           description: Bad Request
           schema:
@@ -1099,7 +1115,6 @@ paths:
       description: Delete a note's information by providing an Id
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1115,9 +1130,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.Note'
-            type: array
+            $ref: '#/definitions/message.NoteResponse'
         "400":
           description: Bad Request
           schema:
@@ -1137,10 +1150,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: get a list of unpublished messages available
+      description: get unpublished messages and passages
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1151,22 +1163,12 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.MessageResponse'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/message.MessageListResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Show a list of unpublished messages available
+      summary: Show unpublished messages
       tags:
       - Messages
   /api/v1/notifications:

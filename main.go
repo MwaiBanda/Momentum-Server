@@ -2,17 +2,20 @@ package main
 
 import (
 	appconfig "Momentum/application/config"
+	messageService "Momentum/application/service/message"
 	userService "Momentum/application/service/user"
 	volunteerService "Momentum/application/service/volunteer_service"
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	httpHandler "Momentum/infrastructure/http"
+	messageHTTP "Momentum/infrastructure/http/message"
 	userHTTP "Momentum/infrastructure/http/user"
 	volunteerServiceHTTP "Momentum/infrastructure/http/volunteer_service"
 	firebaseClient "Momentum/infrastructure/messaging/firebase"
 	database "Momentum/infrastructure/persistence/db"
 	prismaClientFactory "Momentum/infrastructure/persistence/prisma"
 	redisCache "Momentum/infrastructure/persistence/redis"
+	messageRepository "Momentum/infrastructure/persistence/repository/message"
 	userRepository "Momentum/infrastructure/persistence/repository/user"
 	volunteerServiceRepository "Momentum/infrastructure/persistence/repository/volunteer_service"
 	"Momentum/middleware"
@@ -105,6 +108,10 @@ func main() {
 		volunteerServiceRepository.GetInstance(sqlDatabase),
 		cacheStore,
 	)
+	messages := messageService.GetInstance(
+		messageRepository.GetInstance(sqlDatabase),
+		cacheStore,
+	)
 	controller := handlers.NewController(handlers.Dependencies{
 		Configuration: *configuration,
 		PrismaClient:  prismaClient,
@@ -116,6 +123,7 @@ func main() {
 	httpHandlers := httpHandler.GetInstance(
 		userHTTP.GetInstance(users),
 		volunteerServiceHTTP.GetInstance(volunteerServices),
+		messageHTTP.GetInstance(messages),
 	)
 	app := fiber.New()
 	middleware.ConfigureAppMiddleWare(app)
@@ -153,14 +161,14 @@ func main() {
 	v1.Get("/services/:type", httpHandlers.VolunteerService.GetByType)
 	v1.Put("/services/day", httpHandlers.VolunteerService.UpdateDay)
 
-	v1.Post("/messages", controller.PostMessage)
-	v1.Put("/messages", controller.UpdateMessage)
-	v1.Get("/messages/unpublished", controller.GetUnpublishedMessages)
-	v1.Get("/messages/:userId", controller.GetAllMessages)
-	v1.Post("/messages/notes", controller.AddUserNoteToMessage)
-	v1.Put("/messages/notes", controller.UpdateUserNote)
-	v1.Delete("/messages/notes/:noteId", controller.DeleteNote)
-	v1.Delete("/messages/:messageId", controller.DeleteMessage)
+	v1.Post("/messages", httpHandlers.Message.Create)
+	v1.Put("/messages", httpHandlers.Message.Update)
+	v1.Get("/messages/unpublished", httpHandlers.Message.ListUnpublished)
+	v1.Get("/messages/:userId", httpHandlers.Message.ListPublishedByUser)
+	v1.Post("/messages/notes", httpHandlers.Message.CreateNote)
+	v1.Put("/messages/notes", httpHandlers.Message.UpdateNote)
+	v1.Delete("/messages/notes/:noteId", httpHandlers.Message.DeleteNote)
+	v1.Delete("/messages/:messageId", httpHandlers.Message.Delete)
 
 	v1.Post("/notifications", controller.PostNotification)
 

@@ -421,19 +421,18 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "description": "Post a message",
+                        "description": "Update a message",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Message"
+                            "$ref": "#/definitions/message.MessageInput"
                         }
                     }
                 ],
@@ -441,7 +440,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Message"
+                            "$ref": "#/definitions/message.MessageResponse"
                         }
                     },
                     "400": {
@@ -479,7 +478,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -491,7 +489,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Message"
+                            "$ref": "#/definitions/message.MessageInput"
                         }
                     }
                 ],
@@ -499,75 +497,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Message"
+                            "$ref": "#/definitions/message.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a message's information",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Messages"
-                ],
-                "summary": "Delete message information",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
-                        "description": "Provide a bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "Post a message",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Message"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.Message"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -583,7 +517,7 @@ const docTemplate = `{
         },
         "/api/v1/messages/notes": {
             "put": {
-                "description": "Used to update a user notes in a passage",
+                "description": "Used to update a user note in a passage",
                 "consumes": [
                     "application/json"
                 ],
@@ -597,19 +531,18 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "description": "Post a note",
+                        "description": "Update a note",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Message"
+                            "$ref": "#/definitions/message.NoteResponse"
                         }
                     }
                 ],
@@ -617,7 +550,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Note"
+                            "$ref": "#/definitions/message.NoteResponse"
                         }
                     },
                     "400": {
@@ -655,28 +588,30 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "Post a note",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/message.CreateNoteInput"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.NoteRequest"
+                            "$ref": "#/definitions/message.CreateNoteInput"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -706,7 +641,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -724,10 +658,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Note"
-                            }
+                            "$ref": "#/definitions/message.NoteResponse"
                         }
                     },
                     "400": {
@@ -753,7 +684,7 @@ const docTemplate = `{
         },
         "/api/v1/messages/unpublished": {
             "get": {
-                "description": "get a list of unpublished messages available",
+                "description": "get unpublished messages and passages",
                 "consumes": [
                     "application/json"
                 ],
@@ -763,11 +694,10 @@ const docTemplate = `{
                 "tags": [
                     "Messages"
                 ],
-                "summary": "Show a list of unpublished messages available",
+                "summary": "Show unpublished messages",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -778,10 +708,52 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.MessageResponse"
-                            }
+                            "$ref": "#/definitions/message.MessageListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/messages/{messageId}": {
+            "delete": {
+                "description": "Delete a message and its passages and notes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Delete message information",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provide a bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "provide message Id",
+                        "name": "messageId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/message.MessageResponse"
                         }
                     },
                     "400": {
@@ -807,7 +779,7 @@ const docTemplate = `{
         },
         "/api/v1/messages/{userId}": {
             "get": {
-                "description": "get a list of messages available for a user",
+                "description": "get published messages and that user's passage notes",
                 "consumes": [
                     "application/json"
                 ],
@@ -817,14 +789,20 @@ const docTemplate = `{
                 "tags": [
                     "Messages"
                 ],
-                "summary": "Show a list of messages available for a user",
+                "summary": "Show published messages available for a user",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "provide user Id",
+                        "name": "userId",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -832,20 +810,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.MessageResponse"
-                            }
+                            "$ref": "#/definitions/message.MessageListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -1687,6 +1656,150 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "message.CreateNoteInput": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "passageId": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "message.MessageInput": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "hasOrder": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "passages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/message.PassageResponse"
+                    }
+                },
+                "preacher": {
+                    "type": "string"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "series": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "message.MessageListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/message.MessageResponse"
+                    }
+                }
+            }
+        },
+        "message.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "hasOrder": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "passages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/message.PassageResponse"
+                    }
+                },
+                "preacher": {
+                    "type": "string"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "series": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "message.NoteResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "message.PassageResponse": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/message.NoteResponse"
+                    }
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "verse": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Attribute": {
             "type": "object",
             "properties": {
@@ -1900,83 +2013,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Message": {
-            "type": "object",
-            "properties": {
-                "createdOn": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "hasOrder": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "passages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.PassageResponse"
-                    }
-                },
-                "preacher": {
-                    "type": "string"
-                },
-                "published": {
-                    "type": "boolean"
-                },
-                "series": {
-                    "type": "string"
-                },
-                "thumbnail": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.MessageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Message"
-                    }
-                }
-            }
-        },
-        "model.Note": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.NoteRequest": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "passageId": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
         "model.Notification": {
             "type": "object",
             "properties": {
@@ -1999,35 +2035,6 @@ const docTemplate = `{
                 },
                 "user": {
                     "$ref": "#/definitions/model.UserResponse"
-                }
-            }
-        },
-        "model.PassageResponse": {
-            "type": "object",
-            "properties": {
-                "header": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Note"
-                    }
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "verse": {
-                    "type": "string"
                 }
             }
         },

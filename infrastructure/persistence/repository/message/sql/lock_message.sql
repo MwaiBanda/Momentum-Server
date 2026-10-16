@@ -1,0 +1,4 @@
+SELECT id
+FROM "Message"
+WHERE id = $1
+FOR UPDATE;
