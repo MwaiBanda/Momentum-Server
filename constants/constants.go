@@ -22,5 +22,4 @@ var (
 	Header                      = "header"
 	Message                     = "message"
 	Development                 = "development"
-	UserCachedSessionKey        = "user-cache-sessions"
 )

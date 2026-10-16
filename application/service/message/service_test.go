@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
@@ -94,6 +95,20 @@ func (store *fakeCache) Delete(_ context.Context, key string) error {
 	return nil
 }
 
+func (store *fakeCache) Increment(_ context.Context, key string) (int64, error) {
+	current := int64(0)
+	if value, found := store.values[key]; found {
+		parsed, err := strconv.ParseInt(string(value), 10, 64)
+		if err != nil {
+			return 0, err
+		}
+		current = parsed
+	}
+	current++
+	store.values[key] = []byte(strconv.FormatInt(current, 10))
+	return current, nil
+}
+
 func TestCreatePreservesLegacyResponseAndGeneratesPersistenceIDs(t *testing.T) {
 	repository := &fakeRepository{}
 	service := GetInstance(repository, nil)
@@ -142,7 +157,8 @@ func TestListPublishedByUserReadsCache(t *testing.T) {
 	}
 
 	cacheStore := newFakeCache()
-	cacheStore.values["messages-user-1"] = encoded
+	cacheStore.values["messages:version"] = []byte("0")
+	cacheStore.values["messages-v0-user-1"] = encoded
 	service := GetInstance(&fakeRepository{
 		published: []domainmessage.Message{{ID: "database-message"}},
 	}, cacheStore)
@@ -196,7 +212,7 @@ func TestUpdateMapsNotFound(t *testing.T) {
 
 func TestCreateNoteInvalidatesUserCache(t *testing.T) {
 	cacheStore := newFakeCache()
-	cacheStore.values["messages-user-1"] = []byte(`[]`)
+	cacheStore.values["messages:version"] = []byte("0")
 	repository := &fakeRepository{}
 	service := GetInstance(repository, cacheStore)
 
@@ -208,8 +224,27 @@ func TestCreateNoteInvalidatesUserCache(t *testing.T) {
 	if !reflect.DeepEqual(response, input) {
 		t.Fatalf("CreateNote() response = %#v, want %#v", response, input)
 	}
-	if _, found := cacheStore.values["messages-user-1"]; found {
-		t.Fatal("CreateNote() did not invalidate the user's message cache")
+	if string(cacheStore.values["messages:version"]) != "1" {
+		t.Fatalf("message cache version = %q, want %q", cacheStore.values["messages:version"], "1")
+	}
+}
+
+func TestMessageCacheVersionMakesOlderEntriesUnreachable(t *testing.T) {
+	cacheStore := newFakeCache()
+	cacheStore.values["messages:version"] = []byte("0")
+	cacheStore.values["messages-v0-user-1"] = []byte(`[{"id":"stale"}]`)
+	repository := &fakeRepository{
+		published: []domainmessage.Message{{ID: "fresh"}},
+	}
+	service := GetInstance(repository, cacheStore)
+	service.bumpMessageCacheVersion(context.Background())
+
+	response, err := service.ListPublishedByUser(context.Background(), "user-1")
+	if err != nil {
+		t.Fatalf("ListPublishedByUser() error = %v", err)
+	}
+	if len(response.Data) != 1 || response.Data[0].ID != "fresh" {
+		t.Fatalf("response = %#v, want fresh data after version bump", response.Data)
 	}
 }
 
@@ -230,3 +265,4 @@ func TestDeleteReturnsLegacyEmptyResponse(t *testing.T) {
 }
 
 var _ cache.Store = (*fakeCache)(nil)
+var _ cache.CounterStore = (*fakeCache)(nil)

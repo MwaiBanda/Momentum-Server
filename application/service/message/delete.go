@@ -19,6 +19,6 @@ func (service *Service) Delete(ctx context.Context, id string) (MessageResponse,
 		return MessageResponse{}, err
 	}
 
-	service.invalidateAllMessageCaches(ctx)
+	service.bumpMessageCacheVersion(ctx)
 	return MessageResponse{}, nil
 }

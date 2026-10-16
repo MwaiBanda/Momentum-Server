@@ -43,6 +43,6 @@ func (service *Service) Create(ctx context.Context, input MessageInput) (Message
 		return MessageResponse{}, err
 	}
 
-	service.invalidateAllMessageCaches(ctx)
+	service.bumpMessageCacheVersion(ctx)
 	return input, nil
 }

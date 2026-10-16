@@ -22,7 +22,7 @@ func (service *Service) CreateNote(ctx context.Context, input CreateNoteInput) (
 		return CreateNoteInput{}, err
 	}
 
-	service.invalidateMessageCache(ctx, input.UserID)
+	service.bumpMessageCacheVersion(ctx)
 	return input, nil
 }
 
@@ -31,7 +31,7 @@ func (service *Service) UpdateNote(ctx context.Context, input NoteResponse) (Not
 		return NoteResponse{}, ErrInvalidInput
 	}
 
-	updated, err := service.repository.UpdateNote(ctx, domainmessage.UpdateNoteParams{
+	_, err := service.repository.UpdateNote(ctx, domainmessage.UpdateNoteParams{
 		ID:      input.ID,
 		Content: input.Content,
 	})
@@ -42,7 +42,7 @@ func (service *Service) UpdateNote(ctx context.Context, input NoteResponse) (Not
 		return NoteResponse{}, err
 	}
 
-	service.invalidateMessageCache(ctx, updated.UserID)
+	service.bumpMessageCacheVersion(ctx)
 	return input, nil
 }
 
@@ -59,6 +59,6 @@ func (service *Service) DeleteNote(ctx context.Context, id string) (NoteResponse
 		return NoteResponse{}, err
 	}
 
-	service.invalidateMessageCache(ctx, deleted.UserID)
+	service.bumpMessageCacheVersion(ctx)
 	return toNoteResponse(deleted), nil
 }

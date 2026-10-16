@@ -109,4 +109,23 @@ func TestCacheReturnsUnavailableWhenClientIsMissing(t *testing.T) {
 	if err := cache.Delete(context.Background(), "key"); !errors.Is(err, applicationcache.ErrUnavailable) {
 		t.Fatalf("Delete() error = %v, want %v", err, applicationcache.ErrUnavailable)
 	}
+	if _, err := cache.Increment(context.Background(), "key"); !errors.Is(err, applicationcache.ErrUnavailable) {
+		t.Fatalf("Increment() error = %v, want %v", err, applicationcache.ErrUnavailable)
+	}
+}
+
+func TestCacheIncrementIsAtomic(t *testing.T) {
+	cache, _ := newTestCache(t)
+
+	first, err := cache.Increment(context.Background(), "messages:version")
+	if err != nil {
+		t.Fatalf("first Increment() error = %v", err)
+	}
+	second, err := cache.Increment(context.Background(), "messages:version")
+	if err != nil {
+		t.Fatalf("second Increment() error = %v", err)
+	}
+	if first != 1 || second != 2 {
+		t.Fatalf("Increment() values = %d, %d; want 1, 2", first, second)
+	}
 }

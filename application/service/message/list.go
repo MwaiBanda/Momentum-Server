@@ -2,24 +2,30 @@ package message
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"Momentum/application/cache"
 	"Momentum/constants"
 )
 
-const messageCacheTTL = 24 * time.Hour
+const (
+	messageCacheTTL        = 24 * time.Hour
+	messageCacheVersionKey = "messages:version"
+)
 
 func (service *Service) ListPublishedByUser(ctx context.Context, userID string) (MessageListResponse, error) {
 	if userID == "" {
 		return MessageListResponse{}, ErrInvalidInput
 	}
 
-	if userID != constants.Admin && service.cacheStore != nil {
-		cached, found, err := cache.Get[[]MessageResponse](ctx, service.cacheStore, messageCacheKey(userID))
+	cacheKey, cacheEnabled := service.versionedMessageCacheKey(ctx, userID)
+	if userID != constants.Admin && cacheEnabled {
+		cached, found, err := cache.Get[[]MessageResponse](ctx, service.cacheStore, cacheKey)
 		if err != nil {
-			log.Printf("[message-cache] get %q: %v", messageCacheKey(userID), err)
+			log.Printf("[message-cache] get %q: %v", cacheKey, err)
 		} else if found {
 			return MessageListResponse{Data: *cached}, nil
 		}
@@ -31,8 +37,10 @@ func (service *Service) ListPublishedByUser(ctx context.Context, userID string) 
 	}
 
 	response := toMessageListResponse(messages)
-	if userID != constants.Admin {
-		service.cacheMessages(ctx, userID, response.Data)
+	if userID != constants.Admin && cacheEnabled {
+		if err := cache.Set(ctx, service.cacheStore, cacheKey, response.Data, messageCacheTTL); err != nil {
+			log.Printf("[message-cache] set %q: %v", cacheKey, err)
+		}
 	}
 
 	return response, nil
@@ -46,82 +54,52 @@ func (service *Service) ListUnpublished(ctx context.Context) (MessageListRespons
 	return toMessageListResponse(messages), nil
 }
 
-func messageCacheKey(userID string) string {
-	return constants.MessageKey + "-" + userID
-}
-
-func (service *Service) cacheMessages(ctx context.Context, userID string, messages []MessageResponse) {
-	if service.cacheStore == nil {
-		return
+func (service *Service) versionedMessageCacheKey(ctx context.Context, userID string) (string, bool) {
+	if service.cacheStore == nil || userID == constants.Admin {
+		return "", false
 	}
 
-	key := messageCacheKey(userID)
-	if err := cache.Set(ctx, service.cacheStore, key, messages, messageCacheTTL); err != nil {
-		log.Printf("[message-cache] set %q: %v", key, err)
-		return
-	}
-
-	service.addCacheSession(ctx, key)
-}
-
-func (service *Service) invalidateMessageCache(ctx context.Context, userID string) {
-	if service.cacheStore == nil || userID == "" {
-		return
-	}
-
-	key := messageCacheKey(userID)
-	if err := service.cacheStore.Delete(ctx, key); err != nil {
-		log.Printf("[message-cache] delete %q: %v", key, err)
-	}
-}
-
-func (service *Service) invalidateAllMessageCaches(ctx context.Context) {
-	if service.cacheStore == nil {
-		return
-	}
-
-	keys, found, err := cache.Get[[]string](ctx, service.cacheStore, constants.UserCachedSessionKey)
+	version, err := service.messageCacheVersion(ctx)
 	if err != nil {
-		log.Printf("[message-cache] get sessions: %v", err)
-		return
+		log.Printf("[message-cache] read version: %v", err)
+		return "", false
+	}
+
+	return fmt.Sprintf("%s-v%d-%s", constants.MessageKey, version, userID), true
+}
+
+func (service *Service) messageCacheVersion(ctx context.Context) (int64, error) {
+	if _, ok := service.cacheStore.(cache.CounterStore); !ok {
+		return 0, fmt.Errorf("cache store does not support atomic counters")
+	}
+
+	value, found, err := service.cacheStore.Get(ctx, messageCacheVersionKey)
+	if err != nil {
+		return 0, err
 	}
 	if !found {
-		return
+		return 0, nil
 	}
 
-	for _, key := range *keys {
-		if err := service.cacheStore.Delete(ctx, key); err != nil {
-			log.Printf("[message-cache] delete %q: %v", key, err)
-		}
+	version, err := strconv.ParseInt(string(value), 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("parse cache version %q: %w", value, err)
 	}
-	if err := service.cacheStore.Delete(ctx, constants.UserCachedSessionKey); err != nil {
-		log.Printf("[message-cache] delete sessions: %v", err)
-	}
+	return version, nil
 }
 
-func (service *Service) addCacheSession(ctx context.Context, key string) {
+func (service *Service) bumpMessageCacheVersion(ctx context.Context) {
 	if service.cacheStore == nil {
 		return
 	}
 
-	sessions, found, err := cache.Get[[]string](ctx, service.cacheStore, constants.UserCachedSessionKey)
-	if err != nil {
-		log.Printf("[message-cache] get sessions: %v", err)
+	counterStore, ok := service.cacheStore.(cache.CounterStore)
+	if !ok {
+		log.Printf("[message-cache] cache store does not support atomic versioning")
 		return
 	}
 
-	if !found {
-		sessions = &[]string{key}
-	} else {
-		for _, existing := range *sessions {
-			if existing == key {
-				return
-			}
-		}
-		*sessions = append(*sessions, key)
-	}
-
-	if err := cache.Set(ctx, service.cacheStore, constants.UserCachedSessionKey, *sessions, messageCacheTTL); err != nil {
-		log.Printf("[message-cache] set sessions: %v", err)
+	if _, err := counterStore.Increment(ctx, messageCacheVersionKey); err != nil {
+		log.Printf("[message-cache] increment version: %v", err)
 	}
 }

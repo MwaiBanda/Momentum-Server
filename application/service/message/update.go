@@ -45,6 +45,6 @@ func (service *Service) Update(ctx context.Context, input MessageInput) (Message
 		}
 	}
 
-	service.invalidateAllMessageCaches(ctx)
+	service.bumpMessageCacheVersion(ctx)
 	return input, nil
 }

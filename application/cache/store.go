@@ -15,6 +15,10 @@ type Store interface {
 	Delete(ctx context.Context, key string) error
 }
 
+type CounterStore interface {
+	Increment(ctx context.Context, key string) (int64, error)
+}
+
 func Get[T any](ctx context.Context, store Store, key string) (*T, bool, error) {
 	value, found, err := store.Get(ctx, key)
 	if err != nil || !found {

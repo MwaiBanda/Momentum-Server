@@ -49,3 +49,11 @@ func (cache *Cache) Delete(ctx context.Context, key string) error {
 
 	return cache.client.Del(ctx, key).Err()
 }
+
+func (cache *Cache) Increment(ctx context.Context, key string) (int64, error) {
+	if cache == nil || cache.client == nil {
+		return 0, applicationcache.ErrUnavailable
+	}
+
+	return cache.client.Incr(ctx, key).Result()
+}
