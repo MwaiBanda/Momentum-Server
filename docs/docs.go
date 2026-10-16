@@ -1507,7 +1507,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1565,7 +1564,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1625,7 +1623,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1643,10 +1640,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.UserResponse"
-                            }
+                            "$ref": "#/definitions/user.Response"
                         }
                     },
                     "400": {
@@ -1684,7 +1678,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -2297,7 +2290,16 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
                 "id": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "userId": {
@@ -2497,6 +2499,26 @@ const docTemplate = `{
                 },
                 "volunteered_meal": {
                     "$ref": "#/definitions/model.VolunteeredMeal"
+                }
+            }
+        },
+        "user.Response": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
                 }
             }
         }

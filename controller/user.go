@@ -13,53 +13,12 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// GetUserById godoc
-//
-//	@Summary		Get user information by Id
-//	@Description	get a user information by providing an Id
-//	@Accept			json
-//	@Produce		json
-//	@tags			Users
-//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
-//	@Param			userId			path		string	true	"provide user Id"
-//	@Success		200				{array}		model.UserResponse
-//	@Failure		400				{object}	model.HTTPError
-//	@Failure		404				{object}	model.HTTPError
-//	@Failure		500				{object}	model.HTTPError
-//	@Router			/api/v1/users/{userId} [get]
-func (controller *Controller) GetUserById(context fiber.Ctx) error {
-	userId := context.Params("userId")
-	userResponse := new(model.UserResponse)
-	cachedUser, err := controller.Redis.Get(controller.Context, constants.UserKeyPrefix+userId).Result()
-	if err == redis.Nil {
-		res, err := controller.PrismaClient.User.FindFirst(db.UserWhereParam(
-			db.User.ID.Equals(userId),
-		)).Exec(controller.Context)
-		if err != nil {
-			fmt.Println(err)
-		}
-		result, _ := json.MarshalIndent(res, "", "  ")
-		if err := json.Unmarshal(result, userResponse); err != nil {
-			fmt.Println(err)
-		}
-		controller.Redis.Set(controller.Context, constants.UserKeyPrefix+userId, string(result), time.Hour*24)
-	} else if err != nil {
-		log.Println("[GetUserById]", err.Error())
-	} else {
-		if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
-			log.Println("[GetAllSermons]", err.Error())
-		}
-	}
-
-	return context.JSON(userResponse)
-}
-
 // PostUser godoc
 //
 //	@Summary		Post a user
 //	@Description	Used to post a user
 //	@tags			Users
-//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(******
 //	@Param			data			body	model.UserRequest	true	"Post a user"
 //	@Accept			json
 //	@Produce		json
@@ -92,7 +51,7 @@ func (controller *Controller) PostUser(context fiber.Ctx) error {
 //	@Summary		Update a user
 //	@Description	Used to update a user
 //	@tags			Users
-//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(******
 //	@Param			data			body	model.UserRequest	true	"Post a user"
 //	@Accept			json
 //	@Produce		json
@@ -159,7 +118,7 @@ func (controller *Controller) UpdateUser(context fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@tags			Users
-//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(Bearer XXX-xxx-XXX-xxx-XX)
+//	@Param			Authorization	header		string	true	"Provide a bearer token"	example(******
 //	@Param			userId			path		string	true	"provide user Id"
 //	@Success		200				{array}		model.UserResponse
 //	@Failure		400				{object}	model.HTTPError

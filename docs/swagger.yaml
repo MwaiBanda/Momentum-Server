@@ -374,7 +374,13 @@ definitions:
         type: string
       description:
         type: string
+      email:
+        type: string
+      fullname:
+        type: string
       id:
+        type: string
+      phone:
         type: string
       userId:
         type: string
@@ -505,6 +511,19 @@ definitions:
         type: string
       volunteered_meal:
         $ref: '#/definitions/model.VolunteeredMeal'
+    type: object
+  user.Response:
+    properties:
+      createdOn:
+        type: string
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
     type: object
 host: services.momentumchurch.dev
 info:
@@ -1510,7 +1529,6 @@ paths:
       description: Used to post a user
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1549,7 +1567,6 @@ paths:
       description: Used to update a user
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1589,7 +1606,6 @@ paths:
       description: Delete a user's information by providing an Id
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1629,7 +1645,6 @@ paths:
       description: get a user information by providing an Id
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1645,9 +1660,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.UserResponse'
-            type: array
+            $ref: '#/definitions/user.Response'
         "400":
           description: Bad Request
           schema:

@@ -1501,7 +1501,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1559,7 +1558,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1619,7 +1617,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1637,10 +1634,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.UserResponse"
-                            }
+                            "$ref": "#/definitions/user.Response"
                         }
                     },
                     "400": {
@@ -1678,7 +1672,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -2291,7 +2284,16 @@
                 "description": {
                     "type": "string"
                 },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
                 "id": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "userId": {
@@ -2491,6 +2493,26 @@
                 },
                 "volunteered_meal": {
                     "$ref": "#/definitions/model.VolunteeredMeal"
+                }
+            }
+        },
+        "user.Response": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
                 }
             }
         }

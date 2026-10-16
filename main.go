@@ -1,10 +1,15 @@
 package main
 
 import (
+	userService "Momentum/application/service/user"
 	"Momentum/constants"
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
+	httpHandler "Momentum/infrastructure/http"
+	userHTTP "Momentum/infrastructure/http/user"
 	database "Momentum/infrastructure/persistence/db"
+	redisCache "Momentum/infrastructure/persistence/redis"
+	userRepository "Momentum/infrastructure/persistence/repository/user"
 	"Momentum/middleware"
 	"context"
 	"log"
@@ -53,6 +58,11 @@ func main() {
 	}
 
 	controller := handlers.GetControllerInstance()
+	users := userService.GetInstance(
+		userRepository.GetInstance(sqlDatabase),
+		redisCache.NewCache(controller.Redis),
+	)
+	httpHandlers := httpHandler.GetInstance(userHTTP.GetInstance(users))
 	app := fiber.New()
 	port := func() string {
 		if len(os.Getenv("PORT")) > 0 {
@@ -79,7 +89,7 @@ func main() {
 	v1.Put("/meals/meal", controller.UpdateVolunteeredMeal)
 
 	v1.Post("/users", controller.PostUser)
-	v1.Get("/users/:userId", controller.GetUserById)
+	v1.Get("/users/:userId", httpHandlers.User.GetByID)
 	v1.Put("/users", controller.UpdateUser)
 	v1.Delete("/users/:userId", controller.DeleteUserById)
 
