@@ -18,9 +18,9 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	meal.VolunteerAssignmentInput
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		404	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		404	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/meals/meal [post]
 func (handler *Handler) AssignVolunteer(ctx fiber.Ctx) error {
 	if handler.meals == nil {

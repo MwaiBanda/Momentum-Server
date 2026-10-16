@@ -15,7 +15,7 @@ import (
 //	@tags			Transactions
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
 //	@Success		200	{array}	transaction.Response
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/transactions [get]
 func (handler *Handler) List(ctx fiber.Ctx) error {
 	if handler.transactions == nil {
@@ -40,8 +40,8 @@ func (handler *Handler) List(ctx fiber.Ctx) error {
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
 //	@Param			userId			path	string	true	"provide user Id"
 //	@Success		200	{array}	transaction.Response
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/transactions/{userId} [get]
 func (handler *Handler) ListByUser(ctx fiber.Ctx) error {
 	if handler.transactions == nil {

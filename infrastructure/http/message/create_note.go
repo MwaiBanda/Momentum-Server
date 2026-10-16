@@ -18,8 +18,8 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	message.CreateNoteInput
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages/notes [post]
 func (handler *Handler) CreateNote(ctx fiber.Ctx) error {
 	if handler.messages == nil {

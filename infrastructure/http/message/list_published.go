@@ -16,8 +16,8 @@ import (
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
 //	@Param			userId			path	string	true	"provide user Id"
 //	@Success		200	{object}	message.MessageListResponse
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages/{userId} [get]
 func (handler *Handler) ListPublishedByUser(ctx fiber.Ctx) error {
 	if handler.messages == nil {

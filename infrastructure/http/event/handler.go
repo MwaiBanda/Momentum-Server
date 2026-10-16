@@ -25,7 +25,7 @@ func GetInstance(events applicationevent.UseCase) *Handler {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	event.Response
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/events [get]
 func (handler *Handler) List(ctx fiber.Ctx) error {
 	if handler.events == nil {

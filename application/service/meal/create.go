@@ -13,15 +13,24 @@ func (service *Service) Create(ctx context.Context, input Input) (Input, error) 
 		return Input{}, ErrInvalidInput
 	}
 
-	meals := make([]domainmeal.CreateVolunteeredMealParams, 0, len(input.Meals))
-	for _, volunteeredMeal := range input.Meals {
-		meals = append(meals, domainmeal.CreateVolunteeredMealParams{
-			ID:   cuid.New(),
-			Date: volunteeredMeal.Date,
-		})
+	_, err := service.repository.Create(ctx, toCreateParams(input))
+	if err != nil {
+		return Input{}, err
 	}
 
-	_, err := service.repository.Create(ctx, domainmeal.CreateParams{
+	return input, service.invalidateCache(ctx)
+}
+
+func toCreateParams(input Input) domainmeal.CreateParams {
+	volunteeredMeals := make([]domainmeal.CreateVolunteeredMealParams, len(input.Meals))
+	for index, inputMeal := range input.Meals {
+		volunteeredMeals[index] = domainmeal.CreateVolunteeredMealParams{
+			ID:   cuid.New(),
+			Date: inputMeal.Date,
+		}
+	}
+
+	return domainmeal.CreateParams{
 		ID:              cuid.New(),
 		Recipient:       input.Recipient,
 		Reason:          input.Reason,
@@ -37,11 +46,6 @@ func (service *Service) Create(ctx context.Context, input Input) (Input, error) 
 		Allergies:       input.Allergies,
 		Instructions:    input.Instructions,
 		UserID:          input.UserID,
-		Meals:           meals,
-	})
-	if err != nil {
-		return Input{}, err
+		Meals:           volunteeredMeals,
 	}
-
-	return input, service.invalidateCache(ctx)
 }

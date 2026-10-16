@@ -27,8 +27,8 @@ func GetInstance(payments applicationpayment.UseCase) *Handler {
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
 //	@Param			data			body	payment.Input	true	"Create a payment"
 //	@Success		200	{object}	payment.Response
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/payments [post]
 func (handler *Handler) Create(ctx fiber.Ctx) error {
 	if handler.payments == nil {

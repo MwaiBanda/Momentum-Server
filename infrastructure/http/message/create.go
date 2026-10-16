@@ -18,8 +18,8 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	message.MessageResponse
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages [post]
 func (handler *Handler) Create(ctx fiber.Ctx) error {
 	if handler.messages == nil {

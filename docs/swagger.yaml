@@ -33,6 +33,15 @@ definitions:
           $ref: '#/definitions/event.Event'
         type: array
     type: object
+  http.ErrorResponse:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: Bad Request
+        type: string
+    type: object
   meal.Input:
     properties:
       allergies:
@@ -297,15 +306,6 @@ definitions:
       type:
         type: string
       verse:
-        type: string
-    type: object
-  model.HTTPError:
-    properties:
-      code:
-        example: 400
-        type: integer
-      message:
-        example: status bad request
         type: string
     type: object
   notification.Input:
@@ -692,7 +692,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Get all calendar events
       tags:
       - Events
@@ -719,7 +719,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Get all meals
       tags:
       - Meals
@@ -749,11 +749,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Post a meal
       tags:
       - Meals
@@ -783,15 +783,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Update a meal
       tags:
       - Meals
@@ -821,11 +821,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Delete a meal
       tags:
       - Meals
@@ -856,15 +856,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Assign a volunteer to a meal
       tags:
       - Meals
@@ -894,15 +894,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Update a volunteered meal
       tags:
       - Meals
@@ -933,11 +933,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Post a Message
       tags:
       - Messages
@@ -967,15 +967,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Update a Message
       tags:
       - Messages
@@ -1005,15 +1005,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Delete message information
       tags:
       - Messages
@@ -1043,11 +1043,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Show published messages available for a user
       tags:
       - Messages
@@ -1078,11 +1078,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Add a Note to a Passage
       tags:
       - Messages
@@ -1112,15 +1112,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Update a Note in a Passage
       tags:
       - Messages
@@ -1150,15 +1150,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Delete note information by Id
       tags:
       - Messages
@@ -1183,7 +1183,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Show unpublished messages
       tags:
       - Messages
@@ -1214,11 +1214,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Post a notification
       tags:
       - Notifications
@@ -1249,11 +1249,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Create a payment
       tags:
       - Payments
@@ -1283,11 +1283,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Show a list of sermons
       tags:
       - Sermons
@@ -1314,7 +1314,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Show a list of volunteer services available
       tags:
       - Services
@@ -1344,11 +1344,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Post a volunteer service
       tags:
       - Services
@@ -1378,15 +1378,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Get Service By Type
       tags:
       - Services
@@ -1417,15 +1417,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Update a volunteered service day
       tags:
       - Services
@@ -1452,7 +1452,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Show a list of all transactions
       tags:
       - Transactions
@@ -1482,11 +1482,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Post a transaction
       tags:
       - Transactions
@@ -1516,15 +1516,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Delete a transaction
       tags:
       - Transactions
@@ -1556,11 +1556,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Show a user's transactions
       tags:
       - Transactions
@@ -1591,11 +1591,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Post a user
       tags:
       - Users
@@ -1625,11 +1625,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Update a user
       tags:
       - Users
@@ -1659,15 +1659,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Delete user information by Id
       tags:
       - Users
@@ -1696,15 +1696,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/http.ErrorResponse'
       summary: Get user information by Id
       tags:
       - Users

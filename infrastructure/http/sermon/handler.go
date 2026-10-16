@@ -27,8 +27,8 @@ func GetInstance(sermons applicationsermon.UseCase) *Handler {
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
 //	@Param			page			query	integer	false	"Provide a page number"	default(1)
 //	@Success		200	{object}	sermon.Response
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/sermons [get]
 func (handler *Handler) List(ctx fiber.Ctx) error {
 	if handler.sermons == nil {

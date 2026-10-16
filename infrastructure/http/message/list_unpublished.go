@@ -15,7 +15,7 @@ import (
 //	@tags			Messages
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
 //	@Success		200	{object}	message.MessageListResponse
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages/unpublished [get]
 func (handler *Handler) ListUnpublished(ctx fiber.Ctx) error {
 	if handler.messages == nil {

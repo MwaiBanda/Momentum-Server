@@ -16,8 +16,8 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	meal.Response
-//	@Failure		404	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		404	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/meals/{mealId} [delete]
 func (handler *Handler) Delete(ctx fiber.Ctx) error {
 	if handler.meals == nil {

@@ -18,9 +18,9 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	message.NoteResponse
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		404	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		404	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages/notes [put]
 func (handler *Handler) UpdateNote(ctx fiber.Ctx) error {
 	if handler.messages == nil {

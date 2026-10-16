@@ -18,8 +18,8 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	user.Response
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/users [put]
 func (handler *Handler) Update(ctx fiber.Ctx) error {
 	var input userService.UpdateInput

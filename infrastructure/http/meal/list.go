@@ -11,7 +11,7 @@ import "github.com/gofiber/fiber/v3"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{array}	meal.Response
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/meals [get]
 func (handler *Handler) List(ctx fiber.Ctx) error {
 	if handler.meals == nil {

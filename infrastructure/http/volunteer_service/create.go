@@ -1,7 +1,6 @@
 package volunteer_service
 
 import (
-	"errors"
 	"log"
 
 	applicationservice "Momentum/application/service/volunteer_service"
@@ -19,8 +18,8 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	volunteer_service.CreateResponse
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
+//	@Failure		400	{object} http.ErrorResponse
+//	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/services [post]
 func (handler *Handler) Create(ctx fiber.Ctx) error {
 	if handler.services == nil {
@@ -35,11 +34,7 @@ func (handler *Handler) Create(ctx fiber.Ctx) error {
 
 	response, err := handler.services.Create(ctx.Context(), input)
 	if err != nil {
-		if errors.Is(err, applicationservice.ErrInvalidInput) {
-			return fiber.ErrBadRequest
-		}
-		log.Printf("[CreateVolunteerService] %v", err)
-		return fiber.ErrInternalServerError
+		return handler.mapError("CreateVolunteerService", err)
 	}
 
 	return ctx.JSON(response)

@@ -15,7 +15,7 @@ import (
 //	@tags			Services
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(******
 //	@Success		200				{array}		volunteer_service.ServiceResponse
-//	@Failure		500				{object}	model.HTTPError
+//	@Failure		500				{object} http.ErrorResponse
 //	@Router			/api/v1/services [get]
 func (handler *Handler) ListServices(ctx fiber.Ctx) error {
 	if handler.services == nil {

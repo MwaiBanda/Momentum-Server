@@ -158,7 +158,7 @@ func main() {
 		paymentHTTP.GetInstance(payments),
 		transactionHTTP.GetInstance(transactions),
 	)
-	app := fiber.New()
+	app := fiber.New(fiber.Config{ErrorHandler: httpHandler.ErrorHandler})
 	middleware.ConfigureAppMiddleWare(app)
 
 	api := app.Group("/api", func(c fiber.Ctx) error {

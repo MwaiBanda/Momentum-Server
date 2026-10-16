@@ -1,0 +1,9 @@
+.env
+.env.*
+.git
+.idea
+**/node_modules
+build
+coverage
+out
+*.log
