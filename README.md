@@ -5,6 +5,16 @@ https://services.momentumchurch.dev/
 <b>`CMS(Typescript + React)`</b>
 https://services.momentumchurch.dev/dashboard
 
+### PostgreSQL integration tests
+
+The repository integration test can run against an ephemeral PostgreSQL container:
+
+```bash
+bash scripts/test-postgres.sh
+```
+
+The script starts PostgreSQL on `127.0.0.1:55432`, runs the Goose migrations and User repository integration test, then removes the container and its temporary volume.
+
 ----
 Backend built with Fiber for Android &amp; iOS apps providing User, Meals, Semons, Payments & Transactions CRUD functionality, 
 interacts with Stripe API to facilitate payments, Prisma as ORM to connect to a Postgres instance, and provides CRUD functionality.
@@ -142,4 +152,3 @@ Users are allowed to post payment information to initiate stripe checkoot
 #### [Post a Payment](https://services.momentumchurch.dev/index.html#/Payments/post_api_v1_payments)
 This endpoint allows users to post payments
 <img width="1430" alt="Screenshot 2023-08-19 at 10 54 21 PM" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/f4b32fb6-4bd0-47d4-8128-4df7fe4d46d2">
-

@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"testing"
@@ -166,7 +165,7 @@ func TestGetByIDFallsBackWhenCacheFails(t *testing.T) {
 }
 
 func TestGetByIDTranslatesMissingUser(t *testing.T) {
-	repository := &fakeRepository{err: sql.ErrNoRows}
+	repository := &fakeRepository{err: domainuser.ErrNotFound}
 	service := GetInstance(repository, nil)
 
 	_, err := service.GetByID(context.Background(), "missing-user")

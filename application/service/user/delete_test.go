@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"testing"
 
@@ -43,7 +42,7 @@ func TestDeleteReturnsResponseAndInvalidatesCache(t *testing.T) {
 }
 
 func TestDeleteTranslatesMissingUser(t *testing.T) {
-	repository := &fakeRepository{err: sql.ErrNoRows}
+	repository := &fakeRepository{err: domainuser.ErrNotFound}
 	service := GetInstance(repository, nil)
 
 	_, err := service.Delete(context.Background(), "missing-user")

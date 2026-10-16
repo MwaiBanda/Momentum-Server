@@ -5,6 +5,8 @@ import (
 	"errors"
 	"time"
 
+	applicationcache "Momentum/application/cache"
+
 	"github.com/redis/go-redis/v9"
 )
 
@@ -18,7 +20,7 @@ func NewCache(client redis.UniversalClient) *Cache {
 
 func (cache *Cache) Get(ctx context.Context, key string) ([]byte, bool, error) {
 	if cache == nil || cache.client == nil {
-		return nil, false, errors.New("redis cache unavailable")
+		return nil, false, applicationcache.ErrUnavailable
 	}
 
 	value, err := cache.client.Get(ctx, key).Bytes()
@@ -34,7 +36,7 @@ func (cache *Cache) Get(ctx context.Context, key string) ([]byte, bool, error) {
 
 func (cache *Cache) Set(ctx context.Context, key string, value []byte, ttl time.Duration) error {
 	if cache == nil || cache.client == nil {
-		return errors.New("redis cache unavailable")
+		return applicationcache.ErrUnavailable
 	}
 
 	return cache.client.Set(ctx, key, value, ttl).Err()
@@ -42,7 +44,7 @@ func (cache *Cache) Set(ctx context.Context, key string, value []byte, ttl time.
 
 func (cache *Cache) Delete(ctx context.Context, key string) error {
 	if cache == nil || cache.client == nil {
-		return errors.New("redis cache unavailable")
+		return applicationcache.ErrUnavailable
 	}
 
 	return cache.client.Del(ctx, key).Err()

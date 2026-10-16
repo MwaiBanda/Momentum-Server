@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"log"
 
@@ -27,7 +26,7 @@ func (service *Service) GetByID(ctx context.Context, id string) (Response, error
 func (service *Service) loadByID(ctx context.Context, id string) (Response, error) {
 	userEntity, err := service.repository.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, domainuser.ErrNotFound) {
 			return Response{}, ErrNotFound
 		}
 		return Response{}, err

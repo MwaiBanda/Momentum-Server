@@ -509,6 +509,7 @@ ALTER TABLE ONLY public."VolunteeredServiceParticipant"
 --
 --
 
+SELECT pg_catalog.set_config('search_path', 'public', false);
 
 -- +goose Down
 DROP TABLE IF EXISTS public."VolunteeredServiceParticipant";

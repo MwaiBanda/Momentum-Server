@@ -2,14 +2,15 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"errors"
+
+	domainuser "Momentum/domain/user"
 )
 
 func (service *Service) Delete(ctx context.Context, id string) (Response, error) {
 	userEntity, err := service.repository.Delete(ctx, id)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, domainuser.ErrNotFound) {
 			return Response{}, ErrNotFound
 		}
 		return Response{}, err

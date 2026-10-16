@@ -30,6 +30,10 @@ func Migrate(ctx context.Context, database *sqlx.DB) error {
 		return fmt.Errorf("create migration provider: %w", err)
 	}
 
+	if _, err := goose.EnsureDBVersionContext(ctx, database.DB); err != nil {
+		return fmt.Errorf("initialize Goose version table: %w", err)
+	}
+
 	if _, err := provider.Up(ctx); err != nil {
 		return fmt.Errorf("run database migrations: %w", err)
 	}
