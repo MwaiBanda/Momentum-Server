@@ -20,4 +20,5 @@ type Repository interface {
 	GetByID(ctx context.Context, id string) (User, error)
 	Create(ctx context.Context, params CreateParams) (User, error)
 	Update(ctx context.Context, params UpdateParams) (User, error)
+	Delete(ctx context.Context, id string) (User, error)
 }

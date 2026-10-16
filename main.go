@@ -91,7 +91,7 @@ func main() {
 	v1.Post("/users", httpHandlers.User.Create)
 	v1.Get("/users/:userId", httpHandlers.User.GetByID)
 	v1.Put("/users", httpHandlers.User.Update)
-	v1.Delete("/users/:userId", controller.DeleteUserById)
+	v1.Delete("/users/:userId", httpHandlers.User.Delete)
 
 	v1.Post("/payments", controller.PostPayment)
 

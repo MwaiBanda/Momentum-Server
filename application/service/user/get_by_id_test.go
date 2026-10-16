@@ -19,6 +19,8 @@ type fakeRepository struct {
 	createParams domainuser.CreateParams
 	updateCalls  int
 	updateParams domainuser.UpdateParams
+	deleteCalls  int
+	deleteID     string
 }
 
 func (repository *fakeRepository) GetByID(context.Context, string) (domainuser.User, error) {
@@ -38,15 +40,23 @@ func (repository *fakeRepository) Update(_ context.Context, params domainuser.Up
 	return repository.user, repository.err
 }
 
+func (repository *fakeRepository) Delete(_ context.Context, id string) (domainuser.User, error) {
+	repository.deleteCalls++
+	repository.deleteID = id
+	return repository.user, repository.err
+}
+
 type fakeCache struct {
-	value    []byte
-	found    bool
-	getErr   error
-	setErr   error
-	getCalls int
-	setCalls int
-	key      string
-	ttl      time.Duration
+	value       []byte
+	found       bool
+	getErr      error
+	setErr      error
+	getCalls    int
+	setCalls    int
+	key         string
+	ttl         time.Duration
+	deleteCalls int
+	deletedKey  string
 }
 
 func (cache *fakeCache) Get(context.Context, string) ([]byte, bool, error) {
@@ -63,7 +73,9 @@ func (cache *fakeCache) Set(_ context.Context, key string, value []byte, ttl tim
 	return cache.setErr
 }
 
-func (cache *fakeCache) Delete(context.Context, string) error {
+func (cache *fakeCache) Delete(_ context.Context, key string) error {
+	cache.deleteCalls++
+	cache.deletedKey = key
 	return nil
 }
 
