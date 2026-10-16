@@ -6,5 +6,7 @@ import (
 )
 
 func configureHelmet(app *fiber.App) {
-	app.Use(helmet.New())
+	app.Use(helmet.New(helmet.Config{
+		CrossOriginEmbedderPolicy: "credentialless",
+	}))
 }
