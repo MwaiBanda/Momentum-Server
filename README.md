@@ -1,40 +1,56 @@
-# Momentum Server
+### `Momentum Server`
 
-Backend and content-management platform for the Momentum Church mobile apps and
-website.
+<b>`LIVE`</b>
 
-[Live API](https://services.momentumchurch.dev/) ·
-[CMS dashboard](https://services.momentumchurch.dev/dashboard) ·
-[Swagger documentation](https://services.momentumchurch.dev/swagger/index.html)
+https://services.momentumchurch.dev/
 
-## Overview
+<b>`CMS (Typescript + React)`</b>
 
-Momentum Server is a Go API backed by PostgreSQL and Redis. It supports the
-Momentum product surface across:
+https://services.momentumchurch.dev/dashboard
 
-- User accounts
-- Sermons and events
-- Messages and passages
-- Meals and volunteer services
-- Payments and transactions
-- Push notifications
+----
 
-The repository also contains the React CMS used to manage messages,
-notifications, and payment data. The CMS is compiled into static assets and
-served by the Go application, so the project can be deployed as one container.
+Momentum Server is a Fiber API for the Momentum mobile apps and CMS. It
+provides User, Meals, Sermons, Payments, Transactions, Messaging, Notifications,
+Events, and Volunteer Services functionality.
 
-## Why this project
+The backend uses PostgreSQL with `pgx`/`sqlx` and Goose migrations, Stripe for
+payments, and Redis for caching. Every `/api/v1` route requires bearer-token
+authentication. API errors use a consistent JSON response with `code` and
+`message` fields.
 
-This project is an exploration of a maintainable full-stack architecture for a
-small product team:
+-----
 
-- Direct SQL and Goose migrations instead of an ORM abstraction.
-- Explicit dependency boundaries between business logic and integrations.
-- A backend composition root that makes runtime dependencies visible.
-- A React CMS structured with the same domain, application, infrastructure, and
-  interface boundaries as the backend.
-- Automated validation through unit tests, integration tests, linting, Swagger
-  generation, and production Docker builds.
+- #### `Go` Dependencies
+  - PostgreSQL via `pgx`/`sqlx`
+  - Goose for database migrations
+  - Redis for caching
+  - Fiber
+  - Stripe
+  - Firebase
+
+- #### `Typescript` Dependencies
+  - React
+  - TanStack Query
+  - TailwindCSS
+  - React Router
+  - Flowbite React
+  - Firebase Authentication
+
+The React CMS is exposed by the backend, and React Router is used for in-app
+routing. The backend serves each CMS route and React Router maps the route to
+its corresponding page.
+
+The CMS compiler uses TypeScript 7. `@typescript/typescript6` is kept as the
+compatibility API for tools that have not added TypeScript 7 support yet.
+
+The CMS follows the same dependency boundaries as the backend:
+
+- `domain/` contains entities and contracts.
+- `application/` contains feature services and use cases.
+- `infrastructure/` contains HTTP, authentication, and query adapters.
+- `interfaces/` contains the React presentation layer.
+- `main.tsx` is the CMS composition root, analogous to `main.go`.
 
 ## Architecture
 
@@ -51,10 +67,6 @@ main.go
     └── persistence/               PostgreSQL, Redis, repositories, migrations
 ```
 
-`main.go` is the composition root. It loads configuration, opens dependencies,
-runs migrations, constructs repositories and services, and registers HTTP
-handlers and routes.
-
 ### CMS
 
 ```text
@@ -65,10 +77,6 @@ cms/src/
 ├── interfaces/                    Router, providers, pages, and components
 └── main.tsx                       Composition root
 ```
-
-The CMS presentation layer does not call Axios or Firebase directly. Those
-details are hidden behind application-facing contracts and infrastructure
-adapters.
 
 ### System flow
 
@@ -100,43 +108,17 @@ flowchart TB
     infrastructure --> integrations
 ```
 
-## Technology
+----
 
-### Backend
+### Database (Neon Postgres)
 
-- Go 1.26
-- Fiber
-- PostgreSQL
-- `pgx` and `sqlx`
-- Goose migrations
-- Redis
-- Stripe
-- Firebase Cloud Messaging
-- Swagger
+The application uses PostgreSQL connection settings from `DATABASE_URL`.
 
-### CMS
+- Set `DATABASE_URL` to your PostgreSQL connection URL.
+- Goose migrations run automatically during application startup.
+- Migration files live in `infrastructure/persistence/db/migrations`.
 
-- React 19
-- TypeScript 7
-- TanStack Query 5
-- React Router
-- Tailwind CSS
-- Flowbite React
-- Firebase Authentication
-- Vite
-
-## Local development
-
-### Prerequisites
-
-- Go 1.26+
-- Node.js 24+
-- Yarn 1.22+
-- PostgreSQL
-- Redis
-- Docker for integration tests and production image builds
-
-### Configuration
+### Application configuration
 
 Create a `.env` file in the repository root for local development:
 
@@ -148,124 +130,219 @@ REDIS_URL=redis://localhost:6379
 API_KEY=replace-with-a-local-development-key
 ```
 
-Optional integrations:
+Required:
 
-```dotenv
-FIREBASE_PROJECT_ID=
-SERMONCLOUD_URL=
-STRIPE_SECRET_KEY=
-STRIPE_PUBLISHABLE_KEY=
-STRIPE_VERSION=
-PLANNING_CENTER_URL=
-PLANNING_CENTER_TOKEN_URL=
-EMAIL_APP_PASSWORD=
+- `DATABASE_URL`
+- `REDIS_URL`
+- `API_KEY`
+
+Optional:
+
+- `FIREBASE_PROJECT_ID`
+- `SERMONCLOUD_URL`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_VERSION`
+- `PLANNING_CENTER_URL`
+- `PLANNING_CENTER_TOKEN_URL`
+- `EMAIL_APP_PASSWORD`
+
+`PORT` defaults to `8080`. Never commit real credentials. The browser-facing
+API key is client configuration and is not a secret; backend authorization
+remains authoritative.
+
+### Developer commands
+
+The root `Makefile` provides the common local workflows:
+
+```bash
+make help
+make run
+make build
+make test
+make test-postgres
+make swagger
+make fmt
+make check
+make docker-build
 ```
 
-Never commit real credentials. The browser-facing API key is a client
-configuration value, not a secret; backend authorization remains authoritative.
-
-### Build and run
-
-Build the CMS first so its assets are available to the Go server:
+Build the CMS before starting the Go server:
 
 ```bash
 cd cms
 yarn install --frozen-lockfile
+yarn lint
 yarn build
 cd ..
 make run
 ```
 
-The local dashboard is served at
-`http://localhost:8080/dashboard`.
+The local dashboard is served at:
+
+http://localhost:8080/dashboard
 
 For CMS development, `yarn dev` watches the frontend build output. The Go
 server continues to serve the generated files from `cms/dist`.
 
-## Useful commands
+### PostgreSQL integration tests
 
-Run these from the repository root:
-
-```bash
-make help            # Show available commands
-make run             # Start the API and dashboard
-make build           # Build the Go binary
-make test            # Run the Go test suite
-make test-postgres   # Run repository integration tests with ephemeral Postgres
-make swagger         # Regenerate Swagger documentation
-make fmt             # Format Go source files
-make check           # Check Git diff whitespace
-make docker-build    # Build the production image
-```
-
-CMS checks:
+The repository integration tests can run against an ephemeral PostgreSQL
+container:
 
 ```bash
-cd cms
-yarn lint
-yarn build
+make test-postgres
 ```
 
-## Testing
+The script starts PostgreSQL on `127.0.0.1:55432`, runs the Goose migrations and
+repository integration tests, then removes the container and its temporary
+volume.
 
-The test suite includes:
+----
 
-- Application service tests.
-- Repository tests.
-- Fiber handler and API contract tests.
-- Redis cache tests.
-- PostgreSQL integration tests using Docker.
-- CMS TypeScript, ESLint, and accessibility checks.
+### [API Documentation](https://services.momentumchurch.dev/swagger/index.html)
 
-The PostgreSQL integration workflow starts a temporary database on
-`127.0.0.1:55432`, applies the Goose migrations, runs repository tests, and
-removes the temporary container and volume.
+The API provides users and the CMS with access to create, edit, retrieve, and
+upload content.
 
-## API surface
+Each `/api/v1` route requires a bearer token.
 
-All `/api/v1` routes require bearer-token authentication.
+-----
 
-| Area | Examples |
-| --- | --- |
-| Users | Create, retrieve, update, and delete users |
-| Messages | Published, unpublished, passages, and notes |
-| Transactions | Create, list, and delete transactions |
-| Payments | Start Stripe checkout |
-| Meals | Create meals and assign volunteers |
-| Sermons | List sermon content |
-| Events | List Planning Center events |
-| Notifications | Send Firebase notifications |
+### [Users](https://services.momentumchurch.dev/swagger/index.html#/Users)
 
-### CMS routes
+Users are allowed to create accounts, retrieve, update, and delete their
+information.
 
-| Path | Purpose |
-| --- | --- |
-| `/dashboard` | CMS home |
-| `/messages` | Manage published and staged messages |
-| `/notifications` | Send user notifications |
-| `/payments` | View transactions |
-| `/users` | User area |
+------
 
-### API routes
+#### [Get User By Id](https://services.momentumchurch.dev/swagger/index.html#/Users/get_api_v1_users__userId_)
 
-All routes below are mounted under `/api/v1` and require bearer-token
-authentication.
+This endpoint allows users to get their own information.
 
-| Resource | Routes |
-| --- | --- |
-| Users | `POST /users`, `GET /users/:userId`, `PUT /users`, `DELETE /users/:userId` |
-| Meals | `POST /meals`, `GET /meals`, `PUT /meals`, `DELETE /meals/:mealId` |
-| Meal volunteers | `POST /meals/meal`, `PUT /meals/meal` |
-| Payments | `POST /payments` |
-| Transactions | `GET /transactions`, `GET /transactions/:userId`, `POST /transactions`, `DELETE /transactions/:transactionId` |
-| Sermons | `GET /sermons` |
-| Volunteer services | `GET /services`, `POST /services`, `GET /services/:type`, `PUT /services/day` |
-| Messages | `POST /messages`, `PUT /messages`, `GET /messages/admin`, `GET /messages/unpublished`, `GET /messages/:userId`, `DELETE /messages/:messageId` |
-| Message notes | `POST /messages/notes`, `PUT /messages/notes`, `DELETE /messages/notes/:noteId` |
-| Notifications | `POST /notifications` |
-| Events | `GET /events` |
+<img width="1430" alt="Screenshot of the get user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/20bc554d-2b7e-427b-85f-bb75a121ae15">
 
-The CMS message workflow uses:
+------
+
+#### [Post a User](https://services.momentumchurch.dev/swagger/index.html#/Users/post_api_v1_users)
+
+This endpoint allows users to post user information.
+
+<img width="1430" alt="Screenshot of the post user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/49171553-4afa-4afa-aba3-2aa97b280cf2">
+
+------
+
+#### [Update a User](https://services.momentumchurch.dev/swagger/index.html#/Users/put_api_v1_users)
+
+This endpoint allows users to update their own information.
+
+<img width="1430" alt="Screenshot of the update user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/44e4ce84-b8dd-4dd0-b0b0-39341a69e868">
+
+------
+
+#### [Delete a User](https://services.momentumchurch.dev/swagger/index.html#/Users/delete_api_v1_users__userId_)
+
+This endpoint allows users to delete their own information.
+
+<img width="1430" alt="Screenshot of the delete user endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/ce047e45-0c38-48af-b986-c6010651468b">
+
+-----
+
+### [Transactions](https://services.momentumchurch.dev/swagger/index.html#/Transactions)
+
+Users are allowed to create transactions after making a payment, then view and
+delete their transactions.
+
+------
+
+#### [Post a Transaction](https://services.momentumchurch.dev/swagger/index.html#/Transactions/post_api_v1_transactions)
+
+This endpoint allows users to post a transaction.
+
+<img width="1430" alt="Screenshot of the post transaction endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/609455c4-2ffb-4781-95b9-ecb1806e2588">
+
+------
+
+#### [Delete a Transaction](https://services.momentumchurch.dev/swagger/index.html#/Transactions/delete_api_v1_transactions__transactionId_)
+
+This endpoint allows users to delete a transaction.
+
+<img width="1430" alt="Screenshot of the delete transaction endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/cb2ec928-77c5-406e-9e8d-36890c210aa8">
+
+------
+
+#### [Get User Transactions](https://services.momentumchurch.dev/swagger/index.html#/Transactions/get_api_v1_transactions__userId_)
+
+This endpoint allows users to get their own transactions.
+
+<img width="1430" alt="Screenshot of the get transactions endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/1b967c37-7d87-48cf-83e3-08651316951d">
+
+-----
+
+### [Meals](https://services.momentumchurch.dev/swagger/index.html#/Meals)
+
+Users are allowed to organize meals. A meal contains the receiver's contact,
+food preferences, allergies, dates to send the meals, and volunteers to bring
+the meals.
+
+-----
+
+#### [Get All Meals](https://services.momentumchurch.dev/swagger/index.html#/Meals/get_api_v1_meals)
+
+This endpoint allows users to fetch all meals available.
+
+<img width="1430" alt="Screenshot of the get meals endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/1899cd3f-0813-44c1-8801-b7a50358e846">
+
+-----
+
+#### [Post a Meal](https://services.momentumchurch.dev/swagger/index.html#/Meals/post_api_v1_meals)
+
+This endpoint allows users to post a meal.
+
+<img width="1430" alt="Screenshot of the post meal endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/ed153b05-7368-4d1d-b805-56490fb31d3f">
+
+------
+
+#### [Post a Meal Participant](https://services.momentumchurch.dev/swagger/index.html#/Meals/post_api_v1_meals_meal)
+
+This endpoint allows users to volunteer as a participant in a meal.
+
+<img width="1430" alt="Screenshot of the post meal participant endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/fb3a12b6-2446-4408-a9ab-a9be5badf3c0">
+
+------
+
+### [Sermons](https://services.momentumchurch.dev/swagger/index.html#/Sermons)
+
+Users are allowed to view sermons. They contain preacher and video playback
+metadata.
+
+------
+
+#### [Get Sermons By Page #](https://services.momentumchurch.dev/swagger/index.html#/Sermons/get_api_v1_sermons)
+
+This endpoint allows users to get sermons.
+
+<img width="1430" alt="Screenshot of the get sermons endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/15c9b5bb-aba3-4c1d-b27c-7f09bfd0b582">
+
+-----
+
+### [Payments](https://services.momentumchurch.dev/swagger/index.html#/Payments)
+
+Users are allowed to post payment information to initiate Stripe checkout.
+
+------
+
+#### [Post a Payment](https://services.momentumchurch.dev/swagger/index.html#/Payments/post_api_v1_payments)
+
+This endpoint allows users to post payments.
+
+<img width="1430" alt="Screenshot of the post payment endpoint" src="https://github.com/MwaiBanda/Momentum-Server/assets/49708426/f4b32fb6-4bd0-47d4-8128-4df7fe4d46d2">
+
+-----
+
+### [Messages](https://services.momentumchurch.dev/swagger/index.html#/Messages)
+
+The CMS uses these endpoints to manage published and staged messages:
 
 ```text
 GET  /api/v1/messages/admin
@@ -274,28 +351,25 @@ POST /api/v1/messages
 PUT  /api/v1/messages
 ```
 
-Interactive API documentation is available through
-[Swagger UI](https://services.momentumchurch.dev/swagger/index.html).
+The CMS routes are:
+
+```text
+/dashboard
+/messages
+/notifications
+/payments
+/users
+```
 
 ## Production build
 
-The multi-stage [Dockerfile](./Dockerfile) performs the complete production
-build:
-
-1. Installs CMS dependencies with the locked Yarn version.
-2. Builds the React CMS.
-3. Copies `cms/dist` into the Go image.
-4. Compiles the Go server.
-5. Runs the single production binary.
-
-Build it locally with:
+The multi-stage [Dockerfile](./Dockerfile) installs the CMS dependencies,
+builds the React assets, copies `cms/dist` into the Go image, and compiles the
+single production binary.
 
 ```bash
 make docker-build
 ```
 
-## Project status
-
-The project is actively maintained as a portfolio and learning project. The
-current focus is keeping the architecture explicit while improving the
-reliability and polish of the CMS workflows.
+The generated CMS `dist` directory is intentionally ignored by Git and created
+during the Docker build.
