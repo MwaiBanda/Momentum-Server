@@ -1,6 +1,15 @@
 import { Transaction, User } from "@/models/transaction"
 import {
     ColumnDef,
+    columnFilteringFeature,
+    columnVisibilityFeature,
+    createFilteredRowModel,
+    createPaginatedRowModel,
+    createSortedRowModel,
+    rowPaginationFeature,
+    rowSelectionFeature,
+    rowSortingFeature,
+    tableFeatures,
 } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { auth } from "@/util/firebase";
@@ -16,7 +25,18 @@ import {
 } from "@/components/ui/dropdown-menu"  
 
 "use client"
-export const columns: ColumnDef<Transaction>[] = [
+export const features = tableFeatures({
+  columnFilteringFeature,
+  columnVisibilityFeature,
+  rowPaginationFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
+  filteredRowModel: createFilteredRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  sortedRowModel: createSortedRowModel(),
+})
+
+export const columns: ColumnDef<typeof features, Transaction>[] = [
     {
       id: "select",
       header: ({ table }) => (

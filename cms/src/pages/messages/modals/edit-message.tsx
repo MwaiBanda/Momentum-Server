@@ -51,7 +51,7 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
             <div className="space-y-6">
                     <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit Message</h3>
                     <div>
-                    <ToggleSwitch checked={published} label="Published" onChange={setPublished} />
+                    <ToggleSwitch color="green" checked={published} label="Published" onChange={setPublished} />
 
                     </div>
                     <TextField

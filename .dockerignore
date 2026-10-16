@@ -6,4 +6,5 @@
 build
 coverage
 out
+**/dist
 *.log

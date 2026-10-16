@@ -1,14 +1,11 @@
 import * as React from "react"
 import {
   ColumnFiltersState,
+  ColumnVisibilityState,
+  RowSelectionState,
   SortingState,
-  VisibilityState,
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+  useTable,
 } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
 
@@ -31,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Transaction } from "@/models/transaction"
-import { columns } from "./columns"
+import { columns, features } from "./columns"
 
 export function TransactionTable({ data }: { data: Transaction[] }) {
     const [sorting, setSorting] = React.useState<SortingState>([])
@@ -39,18 +36,15 @@ export function TransactionTable({ data }: { data: Transaction[] }) {
       []
     )
     const [columnVisibility, setColumnVisibility] =
-      React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
+      React.useState<ColumnVisibilityState>({})
+    const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
   
-    const table = useReactTable({
+    const table = useTable({
+      features,
       data,
       columns,
       onSortingChange: setSorting,
       onColumnFiltersChange: setColumnFilters,
-      getCoreRowModel: getCoreRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
       onColumnVisibilityChange: setColumnVisibility,
       onRowSelectionChange: setRowSelection,
       state: {
