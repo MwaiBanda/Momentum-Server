@@ -5,7 +5,9 @@ import (
 	eventService "Momentum/application/service/event"
 	messageService "Momentum/application/service/message"
 	notificationService "Momentum/application/service/notification"
+	paymentService "Momentum/application/service/payment"
 	sermonService "Momentum/application/service/sermon"
+	transactionService "Momentum/application/service/transaction"
 	userService "Momentum/application/service/user"
 	volunteerService "Momentum/application/service/volunteer_service"
 	handlers "Momentum/controller"
@@ -14,17 +16,22 @@ import (
 	eventHTTP "Momentum/infrastructure/http/event"
 	messageHTTP "Momentum/infrastructure/http/message"
 	notificationHTTP "Momentum/infrastructure/http/notification"
+	paymentHTTP "Momentum/infrastructure/http/payment"
 	sermonHTTP "Momentum/infrastructure/http/sermon"
+	transactionHTTP "Momentum/infrastructure/http/transaction"
 	userHTTP "Momentum/infrastructure/http/user"
 	volunteerServiceHTTP "Momentum/infrastructure/http/volunteer_service"
 	httpIntegration "Momentum/infrastructure/integration/httpclient"
 	planningcenter "Momentum/infrastructure/integration/planningcenter"
 	sermoncloud "Momentum/infrastructure/integration/sermoncloud"
+	stripeIntegration "Momentum/infrastructure/integration/stripe"
+	emailMessaging "Momentum/infrastructure/messaging/email"
 	firebaseClient "Momentum/infrastructure/messaging/firebase"
 	database "Momentum/infrastructure/persistence/db"
 	prismaClientFactory "Momentum/infrastructure/persistence/prisma"
 	redisCache "Momentum/infrastructure/persistence/redis"
 	messageRepository "Momentum/infrastructure/persistence/repository/message"
+	transactionRepository "Momentum/infrastructure/persistence/repository/transaction"
 	userRepository "Momentum/infrastructure/persistence/repository/user"
 	volunteerServiceRepository "Momentum/infrastructure/persistence/repository/volunteer_service"
 	"Momentum/middleware"
@@ -121,6 +128,17 @@ func main() {
 		cacheStore,
 	)
 	notifications := notificationService.GetInstance(firebaseClient.NewSender(messagingClient))
+	transactions := transactionService.GetInstance(
+		transactionRepository.GetInstance(sqlDatabase),
+		emailMessaging.NewTransactionMailer(configuration.Email.AppPassword),
+	)
+	payments := paymentService.GetInstance(
+		stripeIntegration.NewClient(
+			configuration.Stripe.SecretKey,
+			configuration.Stripe.Version,
+		),
+		configuration.Stripe.PublishableKey,
+	)
 	events := eventService.GetInstance(
 		planningcenter.NewClient(
 			outboundHTTP,
@@ -147,6 +165,8 @@ func main() {
 		notificationHTTP.GetInstance(notifications),
 		eventHTTP.GetInstance(events),
 		sermonHTTP.GetInstance(sermons),
+		paymentHTTP.GetInstance(payments),
+		transactionHTTP.GetInstance(transactions),
 	)
 	app := fiber.New()
 	middleware.ConfigureAppMiddleWare(app)
@@ -170,12 +190,12 @@ func main() {
 	v1.Put("/users", httpHandlers.User.Update)
 	v1.Delete("/users/:userId", httpHandlers.User.Delete)
 
-	v1.Post("/payments", controller.PostPayment)
+	v1.Post("/payments", httpHandlers.Payment.Create)
 
-	v1.Get("/transactions", controller.GetAllTransactions)
-	v1.Get("/transactions/:userId", controller.GetTransactionsByUserId)
-	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
-	v1.Post("/transactions", controller.PostTransaction)
+	v1.Get("/transactions", httpHandlers.Transaction.List)
+	v1.Get("/transactions/:userId", httpHandlers.Transaction.ListByUser)
+	v1.Delete("/transactions/:transactionId", httpHandlers.Transaction.Delete)
+	v1.Post("/transactions", httpHandlers.Transaction.Create)
 
 	v1.Get("/sermons", httpHandlers.Sermon.List)
 

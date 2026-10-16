@@ -241,62 +241,6 @@ definitions:
       user:
         $ref: '#/definitions/model.UserResponse'
     type: object
-  model.PaymentRequest:
-    properties:
-      amount:
-        type: integer
-      email:
-        type: string
-      fullname:
-        type: string
-      phone:
-        type: string
-    type: object
-  model.PaymentResponse:
-    properties:
-      customer:
-        type: string
-      ephemeralKey:
-        type: string
-      paymentIntent:
-        type: string
-      publishableKey:
-        type: string
-    type: object
-  model.TransactionRequest:
-    properties:
-      amount:
-        type: integer
-      date:
-        type: string
-      description:
-        type: string
-      email:
-        type: string
-      fullname:
-        type: string
-      id:
-        type: string
-      phone:
-        type: string
-      userId:
-        type: string
-    type: object
-  model.TransactionResponse:
-    properties:
-      amount:
-        type: integer
-      createdOn:
-        type: string
-      date:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      user:
-        $ref: '#/definitions/model.UserResponse'
-    type: object
   model.UserResponse:
     properties:
       createdOn:
@@ -347,6 +291,28 @@ definitions:
       title:
         type: string
       topic:
+        type: string
+    type: object
+  payment.Input:
+    properties:
+      amount:
+        type: integer
+      email:
+        type: string
+      fullname:
+        type: string
+      phone:
+        type: string
+    type: object
+  payment.Response:
+    properties:
+      customer:
+        type: string
+      ephemeralKey:
+        type: string
+      paymentIntent:
+        type: string
+      publishableKey:
         type: string
     type: object
   sermon.Response:
@@ -440,6 +406,53 @@ definitions:
       summary: {}
       text: {}
       title:
+        type: string
+    type: object
+  transaction.Input:
+    properties:
+      amount:
+        type: integer
+      date:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
+      userId:
+        type: string
+    type: object
+  transaction.Response:
+    properties:
+      amount:
+        type: integer
+      createdOn:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      user:
+        $ref: '#/definitions/transaction.UserResponse'
+    type: object
+  transaction.UserResponse:
+    properties:
+      createdOn:
+        type: string
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      phone:
         type: string
     type: object
   user.CreateInput:
@@ -1199,40 +1212,35 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to initiate stripe transactions
+      description: Create a Stripe payment intent for a contribution
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: Post a transaction
+      - description: Create a payment
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.PaymentRequest'
+          $ref: '#/definitions/payment.Input'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.PaymentResponse'
+            $ref: '#/definitions/payment.Response'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Post a payment
+      summary: Create a payment
       tags:
       - Payments
   /api/v1/sermons:
@@ -1411,10 +1419,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: get a list of all transactions
+      description: Get all transactions
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1426,16 +1433,8 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.TransactionResponse'
+              $ref: '#/definitions/transaction.Response'
             type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
@@ -1449,24 +1448,25 @@ paths:
       description: Used to post a transaction
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
+      - description: Post a transaction
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/transaction.Input'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.TransactionRequest'
+            $ref: '#/definitions/transaction.Response'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
@@ -1480,10 +1480,9 @@ paths:
     delete:
       consumes:
       - application/json
-      description: delete a transaction by providing an Id
+      description: Delete a transaction by ID
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1499,7 +1498,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.TransactionResponse'
+            $ref: '#/definitions/transaction.Response'
         "400":
           description: Bad Request
           schema:
@@ -1519,10 +1518,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: get a list of transactions belonging to a user
+      description: Get transactions belonging to a user
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1539,21 +1537,17 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.TransactionResponse'
+              $ref: '#/definitions/transaction.Response'
             type: array
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Show a list of transactions belonging to a user
+      summary: Show a user's transactions
       tags:
       - Transactions
   /api/v1/users:

@@ -4,7 +4,9 @@ import (
 	eventHandler "Momentum/infrastructure/http/event"
 	messageHandler "Momentum/infrastructure/http/message"
 	notificationHandler "Momentum/infrastructure/http/notification"
+	paymentHandler "Momentum/infrastructure/http/payment"
 	sermonHandler "Momentum/infrastructure/http/sermon"
+	transactionHandler "Momentum/infrastructure/http/transaction"
 	userHandler "Momentum/infrastructure/http/user"
 	volunteerServiceHandler "Momentum/infrastructure/http/volunteer_service"
 )
@@ -16,6 +18,8 @@ type Handler struct {
 	Notification     *notificationHandler.Handler
 	Event            *eventHandler.Handler
 	Sermon           *sermonHandler.Handler
+	Payment          *paymentHandler.Handler
+	Transaction      *transactionHandler.Handler
 }
 
 func GetInstance(
@@ -25,6 +29,8 @@ func GetInstance(
 	notification *notificationHandler.Handler,
 	event *eventHandler.Handler,
 	sermon *sermonHandler.Handler,
+	payment *paymentHandler.Handler,
+	transaction *transactionHandler.Handler,
 ) *Handler {
 	return &Handler{
 		User:             user,
@@ -33,5 +39,7 @@ func GetInstance(
 		Notification:     notification,
 		Event:            event,
 		Sermon:           sermon,
+		Payment:          payment,
+		Transaction:      transaction,
 	}
 }

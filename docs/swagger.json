@@ -861,7 +861,7 @@
         },
         "/api/v1/payments": {
             "post": {
-                "description": "Used to initiate stripe transactions",
+                "description": "Create a Stripe payment intent for a contribution",
                 "consumes": [
                     "application/json"
                 ],
@@ -871,23 +871,22 @@
                 "tags": [
                     "Payments"
                 ],
-                "summary": "Post a payment",
+                "summary": "Create a payment",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "description": "Post a transaction",
+                        "description": "Create a payment",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.PaymentRequest"
+                            "$ref": "#/definitions/payment.Input"
                         }
                     }
                 ],
@@ -895,17 +894,11 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.PaymentResponse"
+                            "$ref": "#/definitions/payment.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -1180,7 +1173,7 @@
         },
         "/api/v1/transactions": {
             "get": {
-                "description": "get a list of all transactions",
+                "description": "Get all transactions",
                 "consumes": [
                     "application/json"
                 ],
@@ -1194,7 +1187,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1207,20 +1199,8 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.TransactionResponse"
+                                "$ref": "#/definitions/transaction.Response"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
@@ -1246,28 +1226,30 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "Post a transaction",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/transaction.Input"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.TransactionRequest"
+                            "$ref": "#/definitions/transaction.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -1283,7 +1265,7 @@
         },
         "/api/v1/transactions/{transactionId}": {
             "delete": {
-                "description": "delete a transaction by providing an Id",
+                "description": "Delete a transaction by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -1297,7 +1279,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1315,7 +1296,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.TransactionResponse"
+                            "$ref": "#/definitions/transaction.Response"
                         }
                     },
                     "400": {
@@ -1341,7 +1322,7 @@
         },
         "/api/v1/transactions/{userId}": {
             "get": {
-                "description": "get a list of transactions belonging to a user",
+                "description": "Get transactions belonging to a user",
                 "consumes": [
                     "application/json"
                 ],
@@ -1351,11 +1332,10 @@
                 "tags": [
                     "Transactions"
                 ],
-                "summary": "Show a list of transactions belonging to a user",
+                "summary": "Show a user's transactions",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1375,18 +1355,12 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.TransactionResponse"
+                                "$ref": "#/definitions/transaction.Response"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -1986,92 +1960,6 @@
                 }
             }
         },
-        "model.PaymentRequest": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "fullname": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.PaymentResponse": {
-            "type": "object",
-            "properties": {
-                "customer": {
-                    "type": "string"
-                },
-                "ephemeralKey": {
-                    "type": "string"
-                },
-                "paymentIntent": {
-                    "type": "string"
-                },
-                "publishableKey": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.TransactionRequest": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "fullname": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.TransactionResponse": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "createdOn": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.UserResponse"
-                }
-            }
-        },
         "model.UserResponse": {
             "type": "object",
             "properties": {
@@ -2148,6 +2036,40 @@
                     "type": "string"
                 },
                 "topic": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.Input": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.Response": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "type": "string"
+                },
+                "ephemeralKey": {
+                    "type": "string"
+                },
+                "paymentIntent": {
+                    "type": "string"
+                },
+                "publishableKey": {
                     "type": "string"
                 }
             }
@@ -2284,6 +2206,78 @@
                 "summary": {},
                 "text": {},
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "transaction.Input": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "transaction.Response": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "createdOn": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/transaction.UserResponse"
+                }
+            }
+        },
+        "transaction.UserResponse": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 }
             }

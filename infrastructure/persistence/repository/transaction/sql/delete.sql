@@ -1,0 +1,15 @@
+DELETE FROM "Transaction" t
+USING "User" u
+WHERE t.id = $1
+  AND t."userId" = u.id
+RETURNING
+    t.id,
+    t.amount,
+    t.date,
+    t."createdOn" AS created_on,
+    t."Description" AS description,
+    u.id AS user_id,
+    u.email AS user_email,
+    u.fullname AS user_fullname,
+    u.phone AS user_phone,
+    u."createdOn" AS user_created_on;
