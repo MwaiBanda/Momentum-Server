@@ -2,6 +2,13 @@
 @config "../tailwind.config.ts";
 @source "../node_modules/flowbite-react/dist";
  
+#root {
+  margin: 0 auto;
+  padding: 1rem;
+  width: 100%;
+  height: 100vh;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
