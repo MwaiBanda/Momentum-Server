@@ -1055,7 +1055,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1068,20 +1067,8 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Service"
+                                "$ref": "#/definitions/volunteer_service.ServiceResponse"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
@@ -1093,7 +1080,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Used to post a voluteer service",
+                "description": "Used to post a volunteer service",
                 "consumes": [
                     "application/json"
                 ],
@@ -1103,23 +1090,22 @@ const docTemplate = `{
                 "tags": [
                     "Services"
                 ],
-                "summary": "Post a voluteer service",
+                "summary": "Post a volunteer service",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "description": "Post a meal",
+                        "description": "Post a volunteer service",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteerServiceRequest"
+                            "$ref": "#/definitions/volunteer_service.CreateInput"
                         }
                     }
                 ],
@@ -1127,17 +1113,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealResponse"
+                            "$ref": "#/definitions/volunteer_service.CreateResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -1167,19 +1147,18 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "description": "Post a day",
+                        "description": "Update a day",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteerServiceDay"
+                            "$ref": "#/definitions/volunteer_service.UpdateDayInput"
                         }
                     }
                 ],
@@ -1187,7 +1166,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteerServiceDay"
+                            "$ref": "#/definitions/volunteer_service.UpdateDayResponse"
                         }
                     },
                     "400": {
@@ -1213,7 +1192,7 @@ const docTemplate = `{
         },
         "/api/v1/services/{type}": {
             "get": {
-                "description": "delete a Service by providing an Type",
+                "description": "get a service by its type",
                 "consumes": [
                     "application/json"
                 ],
@@ -1227,7 +1206,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -1245,7 +1223,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ServiceResponse"
+                            "$ref": "#/definitions/volunteer_service.ServiceDetailResponse"
                         }
                     },
                     "400": {
@@ -2223,46 +2201,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Service": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.ServiceResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "services": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.VolunteerService"
-                    }
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
         "model.TransactionRequest": {
             "type": "object",
             "properties": {
@@ -2337,95 +2275,6 @@ const docTemplate = `{
                     }
                 },
                 "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.VolunteerService": {
-            "type": "object",
-            "properties": {
-                "days": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.VolunteerServiceDay"
-                    }
-                },
-                "description": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organizer": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "service_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.VolunteerServiceDay": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.UserResponse"
-                }
-            }
-        },
-        "model.VolunteerServiceDayRequest": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.VolunteerServiceRequest": {
-            "type": "object",
-            "properties": {
-                "days": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.VolunteerServiceDayRequest"
-                    }
-                },
-                "description": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "organizer": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "service_id": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 }
             }
@@ -2520,6 +2369,225 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "volunteer_service.CreateDayInput": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "volunteer_service.CreateInput": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/volunteer_service.CreateDayInput"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizer": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "volunteer_service.CreateResponse": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/volunteer_service.CreateDayInput"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizer": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "volunteer_service.ServiceDetailResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/volunteer_service.VolunteerServiceResponse"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "volunteer_service.ServiceResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "volunteer_service.UpdateDayInput": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/volunteer_service.UserResponse"
+                }
+            }
+        },
+        "volunteer_service.UpdateDayResponse": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/volunteer_service.UserResponse"
+                }
+            }
+        },
+        "volunteer_service.UserResponse": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {}
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "volunteer_service.VolunteerServiceDayResponse": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/volunteer_service.UserResponse"
+                }
+            }
+        },
+        "volunteer_service.VolunteerServiceResponse": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/volunteer_service.VolunteerServiceDayResponse"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "organizer": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "service_id": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

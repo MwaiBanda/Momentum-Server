@@ -340,32 +340,6 @@ definitions:
       total:
         type: string
     type: object
-  model.Service:
-    properties:
-      id:
-        type: string
-      image:
-        type: string
-      name:
-        type: string
-      type:
-        type: string
-    type: object
-  model.ServiceResponse:
-    properties:
-      id:
-        type: string
-      image:
-        type: string
-      name:
-        type: string
-      services:
-        items:
-          $ref: '#/definitions/model.VolunteerService'
-        type: array
-      type:
-        type: string
-    type: object
   model.TransactionRequest:
     properties:
       amount:
@@ -415,64 +389,6 @@ definitions:
           $ref: '#/definitions/model.MealResponse'
         type: array
       phone:
-        type: string
-    type: object
-  model.VolunteerService:
-    properties:
-      days:
-        items:
-          $ref: '#/definitions/model.VolunteerServiceDay'
-        type: array
-      description:
-        type: string
-      email:
-        type: string
-      id:
-        type: string
-      organizer:
-        type: string
-      phone:
-        type: string
-      service_id:
-        type: string
-      user_id:
-        type: string
-    type: object
-  model.VolunteerServiceDay:
-    properties:
-      date:
-        type: string
-      id:
-        type: string
-      notes:
-        type: string
-      user:
-        $ref: '#/definitions/model.UserResponse'
-    type: object
-  model.VolunteerServiceDayRequest:
-    properties:
-      date:
-        type: string
-    type: object
-  model.VolunteerServiceRequest:
-    properties:
-      days:
-        items:
-          $ref: '#/definitions/model.VolunteerServiceDayRequest'
-        type: array
-      description:
-        type: string
-      email:
-        type: string
-      id:
-        type: string
-      organizer:
-        type: string
-      phone:
-        type: string
-      service_id:
-        type: string
-      user_id:
         type: string
     type: object
   model.VolunteeredMeal:
@@ -534,6 +450,149 @@ definitions:
       id:
         type: string
       phone:
+        type: string
+    type: object
+  volunteer_service.CreateDayInput:
+    properties:
+      date:
+        type: string
+    type: object
+  volunteer_service.CreateInput:
+    properties:
+      days:
+        items:
+          $ref: '#/definitions/volunteer_service.CreateDayInput'
+        type: array
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      organizer:
+        type: string
+      phone:
+        type: string
+      service_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  volunteer_service.CreateResponse:
+    properties:
+      days:
+        items:
+          $ref: '#/definitions/volunteer_service.CreateDayInput'
+        type: array
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      organizer:
+        type: string
+      phone:
+        type: string
+      service_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  volunteer_service.ServiceDetailResponse:
+    properties:
+      id:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      services:
+        items:
+          $ref: '#/definitions/volunteer_service.VolunteerServiceResponse'
+        type: array
+      type:
+        type: string
+    type: object
+  volunteer_service.ServiceResponse:
+    properties:
+      id:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  volunteer_service.UpdateDayInput:
+    properties:
+      date:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      user:
+        $ref: '#/definitions/volunteer_service.UserResponse'
+    type: object
+  volunteer_service.UpdateDayResponse:
+    properties:
+      date:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      user:
+        $ref: '#/definitions/volunteer_service.UserResponse'
+    type: object
+  volunteer_service.UserResponse:
+    properties:
+      createdOn:
+        type: string
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      meals:
+        items: {}
+        type: array
+      phone:
+        type: string
+    type: object
+  volunteer_service.VolunteerServiceDayResponse:
+    properties:
+      date:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      user:
+        $ref: '#/definitions/volunteer_service.UserResponse'
+    type: object
+  volunteer_service.VolunteerServiceResponse:
+    properties:
+      days:
+        items:
+          $ref: '#/definitions/volunteer_service.VolunteerServiceDayResponse'
+        type: array
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      organizer:
+        type: string
+      phone:
+        type: string
+      service_id:
+        type: string
+      user_id:
         type: string
     type: object
 host: services.momentumchurch.dev
@@ -1237,7 +1296,6 @@ paths:
       description: get a list of volunteer services available
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1249,16 +1307,8 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.Service'
+              $ref: '#/definitions/volunteer_service.ServiceResponse'
             type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
@@ -1269,50 +1319,44 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to post a voluteer service
+      description: Used to post a volunteer service
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: Post a meal
+      - description: Post a volunteer service
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.VolunteerServiceRequest'
+          $ref: '#/definitions/volunteer_service.CreateInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.MealResponse'
+            $ref: '#/definitions/volunteer_service.CreateResponse'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Post a voluteer service
+      summary: Post a volunteer service
       tags:
       - Services
   /api/v1/services/{type}:
     get:
       consumes:
       - application/json
-      description: delete a Service by providing an Type
+      description: get a service by its type
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1328,7 +1372,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ServiceResponse'
+            $ref: '#/definitions/volunteer_service.ServiceDetailResponse'
         "400":
           description: Bad Request
           schema:
@@ -1351,24 +1395,23 @@ paths:
       description: Update a volunteered service day
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: Post a day
+      - description: Update a day
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.VolunteerServiceDay'
+          $ref: '#/definitions/volunteer_service.UpdateDayInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.VolunteerServiceDay'
+            $ref: '#/definitions/volunteer_service.UpdateDayResponse'
         "400":
           description: Bad Request
           schema:

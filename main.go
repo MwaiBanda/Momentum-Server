@@ -1,30 +1,29 @@
 package main
 
 import (
+	appconfig "Momentum/application/config"
 	userService "Momentum/application/service/user"
-	"Momentum/constants"
+	volunteerService "Momentum/application/service/volunteer_service"
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	httpHandler "Momentum/infrastructure/http"
 	userHTTP "Momentum/infrastructure/http/user"
+	volunteerServiceHTTP "Momentum/infrastructure/http/volunteer_service"
+	firebaseClient "Momentum/infrastructure/messaging/firebase"
 	database "Momentum/infrastructure/persistence/db"
+	prismaClientFactory "Momentum/infrastructure/persistence/prisma"
 	redisCache "Momentum/infrastructure/persistence/redis"
 	userRepository "Momentum/infrastructure/persistence/repository/user"
+	volunteerServiceRepository "Momentum/infrastructure/persistence/repository/volunteer_service"
 	"Momentum/middleware"
-	prisma "Momentum/prisma/db"
 	"context"
-	"fmt"
 	"log"
-	"os"
 	"time"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
-	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
-	"google.golang.org/api/option"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -41,70 +40,17 @@ import (
 // @host			services.momentumchurch.dev
 // @BasePath		/
 
-func openPrismaClient() (*prisma.PrismaClient, error) {
-	prismaClient := prisma.NewClient()
-
-	var err error
-	for attempt := 1; attempt <= 5; attempt++ {
-		err = prismaClient.Prisma.Connect()
-		if err == nil {
-			log.Println("Connected to Prisma")
-			return prismaClient, nil
-		}
-		log.Printf("Prisma connect attempt %d/5 failed: %v", attempt, err)
-		time.Sleep(time.Duration(attempt) * time.Second)
-	}
-
-	_ = prismaClient.Prisma.Disconnect()
-	return nil, fmt.Errorf("connect to Prisma after retries: %w", err)
-}
-
-func openRedisClient() (*redis.Client, error) {
-	options, err := redis.ParseURL(os.Getenv("REDIS_URL"))
-	if err != nil {
-		return nil, fmt.Errorf("parse Redis URL: %w", err)
-	}
-
-	client := redis.NewClient(options)
-	log.Println("Connected to Redis")
-	return client, nil
-}
-
-func initializeFirebase(
-	ctx context.Context,
-	redisClient *redis.Client,
-) (*firebase.App, *messaging.Client, error) {
-	firebaseToken, err := redisClient.Get(ctx, constants.FirebaseServiceTokenKey).Result()
-	if err != nil {
-		return nil, nil, fmt.Errorf("read Firebase service token from Redis: %w", err)
-	}
-
-	credentials := option.WithCredentialsJSON([]byte(firebaseToken))
-	config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
-	firebaseApp, err := firebase.NewApp(ctx, config, credentials)
-	if err != nil {
-		return nil, nil, fmt.Errorf("initialize Firebase: %w", err)
-	}
-
-	messagingClient, err := firebaseApp.Messaging(ctx)
-	if err != nil {
-		return nil, nil, fmt.Errorf("initialize Firebase messaging: %w", err)
-	}
-
-	log.Println("Connected to Firebase")
-	return firebaseApp, messagingClient, nil
-}
-
 func main() {
 	log.Println("Starting Momentum API")
-	if err := godotenv.Load(); err != nil && os.Getenv("ENVIRONMENT") == constants.Development {
-		log.Fatalf("load environment: %v", err)
+	configuration, err := appconfig.LoadConfig()
+	if err != nil {
+		log.Fatalf("load configuration: %v", err)
 	}
 
 	startupContext, cancelStartup := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancelStartup()
 
-	sqlDatabase, err := database.Open(startupContext, os.Getenv("DATABASE_URL"))
+	sqlDatabase, err := database.Open(startupContext, configuration.Database.URL)
 	if err != nil {
 		log.Fatalf("open SQL database: %v", err)
 	}
@@ -118,7 +64,7 @@ func main() {
 		log.Fatalf("migrate SQL database: %v", err)
 	}
 
-	prismaClient, err := openPrismaClient()
+	prismaClient, err := prismaClientFactory.Open()
 	if err != nil {
 		log.Fatalf("open Prisma client: %v", err)
 	}
@@ -128,7 +74,7 @@ func main() {
 		}
 	}()
 
-	redisClient, err := openRedisClient()
+	redisClient, err := redisCache.Open(configuration.Redis.URL)
 	if err != nil {
 		log.Fatalf("open Redis client: %v", err)
 	}
@@ -138,32 +84,40 @@ func main() {
 		}
 	}()
 
-	firebaseApp, messagingClient, err := initializeFirebase(startupContext, redisClient)
-	if err != nil {
-		log.Printf("initialize Firebase: %v", err)
+	var firebaseApp *firebase.App
+	var messagingClient *messaging.Client
+	if configuration.Firebase.ProjectID != "" {
+		firebaseApp, messagingClient, err = firebaseClient.Open(
+			startupContext,
+			redisClient,
+			configuration.Firebase.ProjectID,
+		)
+		if err != nil {
+			log.Printf("initialize Firebase: %v", err)
+		}
+	} else {
+		log.Println("Firebase disabled: FIREBASE_PROJECT_ID is not configured")
 	}
 
-	users := userService.GetInstance(
-		userRepository.GetInstance(sqlDatabase),
-		redisCache.NewCache(redisClient),
+	cacheStore := redisCache.NewCache(redisClient)
+	users := userService.GetInstance(userRepository.GetInstance(sqlDatabase), cacheStore)
+	volunteerServices := volunteerService.GetInstance(
+		volunteerServiceRepository.GetInstance(sqlDatabase),
+		cacheStore,
 	)
 	controller := handlers.NewController(handlers.Dependencies{
-		PrismaClient: prismaClient,
-		Context:      context.Background(),
-		Redis:        redisClient,
-		Firebase:     firebaseApp,
-		Messaging:    messagingClient,
+		Configuration: *configuration,
+		PrismaClient:  prismaClient,
+		Context:       context.Background(),
+		Redis:         redisClient,
+		Firebase:      firebaseApp,
+		Messaging:     messagingClient,
 	})
-	httpHandlers := httpHandler.GetInstance(userHTTP.GetInstance(users))
+	httpHandlers := httpHandler.GetInstance(
+		userHTTP.GetInstance(users),
+		volunteerServiceHTTP.GetInstance(volunteerServices),
+	)
 	app := fiber.New()
-	port := func() string {
-		if len(os.Getenv("PORT")) > 0 {
-			return os.Getenv("PORT")
-		} else {
-			return "8080"
-		}
-	}()
-
 	middleware.ConfigureAppMiddleWare(app)
 
 	api := app.Group("/api", func(c fiber.Ctx) error {
@@ -172,7 +126,7 @@ func main() {
 	})
 
 	api.Get("/metrics", middleware.Monitor())
-	v1 := api.Group("/v1", middleware.BearerTokenAuthentication())
+	v1 := api.Group("/v1", middleware.BearerTokenAuthentication(configuration.Security.APIKey))
 
 	v1.Post("/meals", controller.PostMeal)
 	v1.Get("/meals", controller.GetAllMeals)
@@ -194,10 +148,10 @@ func main() {
 
 	v1.Get("/sermons", controller.GetAllSermons)
 
-	v1.Get("/services", controller.GetAllServices)
-	v1.Post("/services", controller.PostVolunteerService)
-	v1.Get("/services/:type", controller.GetServiceByType)
-	v1.Put("/services/day", controller.UpdateVolunteeredDay)
+	v1.Get("/services", httpHandlers.VolunteerService.ListServices)
+	v1.Post("/services", httpHandlers.VolunteerService.Create)
+	v1.Get("/services/:type", httpHandlers.VolunteerService.GetByType)
+	v1.Put("/services/day", httpHandlers.VolunteerService.UpdateDay)
 
 	v1.Post("/messages", controller.PostMessage)
 	v1.Put("/messages", controller.UpdateMessage)
@@ -219,5 +173,5 @@ func main() {
 		DocExpansion: "none",
 	}))
 
-	log.Fatal(app.Listen(":" + port))
+	log.Fatal(app.Listen(":" + configuration.Port))
 }

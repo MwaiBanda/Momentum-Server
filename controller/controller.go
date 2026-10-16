@@ -1,6 +1,7 @@
 package controller
 
 import (
+	appconfig "Momentum/application/config"
 	"Momentum/constants"
 	"Momentum/model"
 	"Momentum/prisma/db"
@@ -12,7 +13,6 @@ import (
 	"log"
 	"net/http"
 	"net/smtp"
-	"os"
 	"strings"
 	"sync"
 	"text/template"
@@ -25,6 +25,7 @@ import (
 )
 
 type Controller struct {
+	Configuration              appconfig.Config
 	HttpClient                 *http.Client
 	PrismaClient               *db.PrismaClient
 	Context                    context.Context
@@ -35,6 +36,7 @@ type Controller struct {
 }
 
 type Dependencies struct {
+	Configuration              appconfig.Config
 	HttpClient                 *http.Client
 	PrismaClient               *db.PrismaClient
 	Context                    context.Context
@@ -61,6 +63,7 @@ func NewController(dependencies Dependencies) *Controller {
 	}
 
 	return &Controller{
+		Configuration:              dependencies.Configuration,
 		HttpClient:                 httpClient,
 		PrismaClient:               dependencies.PrismaClient,
 		Context:                    controllerContext,
@@ -80,7 +83,7 @@ func (controller *Controller) GetPlanningCenterToken() Token {
 	var tokenResponse TokenResponse
 	var cachedToken, err = controller.Redis.Get(controller.Context, constants.TokenKey).Result()
 	if err == redis.Nil {
-		req, reqErr := http.NewRequest(http.MethodPost, os.Getenv("PLANNING_CENTER_TOKEN_URL"), nil)
+		req, reqErr := http.NewRequest(http.MethodPost, controller.Configuration.PlanningCenter.TokenURL, nil)
 		if reqErr != nil {
 			log.Panic("GetPlanningCenterToken", reqErr)
 		}
@@ -131,11 +134,11 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 		log.Fatalln("StripeRequest", err)
 	}
 
-	req.Header.Add("Authorization", "Basic "+b64.URLEncoding.EncodeToString([]byte(os.Getenv("STRIPE_SECRET_KEY"))))
+	req.Header.Add("Authorization", "Basic "+b64.URLEncoding.EncodeToString([]byte(controller.Configuration.Stripe.SecretKey)))
 
 	switch getBasePath(endpoint) {
 	case constants.StripeEphemeralKeyRoute:
-		req.Header.Add("Stripe-Version", os.Getenv("STRIPE_VERSION"))
+		req.Header.Add("Stripe-Version", controller.Configuration.Stripe.Version)
 	default:
 		break
 	}
@@ -159,7 +162,7 @@ func getBasePath(s string) string {
 }
 
 func (controller *Controller) EventRequest() EventReponse {
-	url := os.Getenv("PLANNING_CENTER_URL") + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-4*time.Hour).Format(time.RFC3339)
+	url := controller.Configuration.PlanningCenter.URL + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-4*time.Hour).Format(time.RFC3339)
 	token := controller.GetPlanningCenterToken()
 	req, reqErr := http.NewRequest(http.MethodGet, url, nil)
 	if reqErr != nil {
@@ -195,7 +198,7 @@ type EventReponse struct {
 
 func (controller *Controller) PostTransactionMail(mail model.TransactionMailRequest) {
 	from := "bandamwai@gmail.com"
-	password := os.Getenv("EMAIL_APP_PASSWORD")
+	password := controller.Configuration.Email.AppPassword
 
 	to := []string{
 		"bandamwai@gmail.com",

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
-	"os"
 	"strconv"
 	"sync"
 
@@ -110,7 +109,7 @@ func (controller *Controller) PostPayment(context fiber.Ctx) error {
 	}
 
 	return context.JSON(model.PaymentResponse{
-		PublishableKey: os.Getenv("STRIPE_PUBLISHABLE_KEY"),
+		PublishableKey: controller.Configuration.Stripe.PublishableKey,
 		Customer:       customer.ID,
 		EphemeralKey:   ephemeralKey.Secret,
 		PaymentIntent:  paymentIntent.ClientSecret,

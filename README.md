@@ -5,16 +5,6 @@ https://services.momentumchurch.dev/
 <b>`CMS(Typescript + React)`</b>
 https://services.momentumchurch.dev/dashboard
 
-### PostgreSQL integration tests
-
-The repository integration test can run against an ephemeral PostgreSQL container:
-
-```bash
-bash scripts/test-postgres.sh
-```
-
-The script starts PostgreSQL on `127.0.0.1:55432`, runs the Goose migrations and User repository integration test, then removes the container and its temporary volume.
-
 ----
 Backend built with Fiber for Android &amp; iOS apps providing User, Meals, Semons, Payments & Transactions CRUD functionality, 
 interacts with Stripe API to facilitate payments, Prisma as ORM to connect to a Postgres instance, and provides CRUD functionality.
@@ -50,6 +40,39 @@ To push schema changes to Neon:
 
 - `npm run db:push-neon`
 - or `npm run prisma:push`
+
+### Application configuration
+
+Configuration is loaded once at startup through `application/config`.
+
+Required:
+
+- `DATABASE_URL`
+- `REDIS_URL`
+- `API_KEY`
+
+Optional:
+
+- `DIRECT_URL`
+- `FIREBASE_PROJECT_ID`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PUBLISHABLE_KEY`
+- `STRIPE_VERSION`
+- `PLANNING_CENTER_URL`
+- `PLANNING_CENTER_TOKEN_URL`
+- `EMAIL_APP_PASSWORD`
+
+`PORT` defaults to `8080`. Development environments may load values from `.env`; production environments should provide configuration through the process environment.
+
+### PostgreSQL integration tests
+
+The repository integration test can run against an ephemeral PostgreSQL container:
+
+```bash
+bash scripts/test-postgres.sh
+```
+
+The script starts PostgreSQL on `127.0.0.1:55432`, runs the Goose migrations and User repository integration test, then removes the container and its temporary volume.
 
 ----
 ### [API Documentation](https://services.momentumchurch.dev/)

@@ -3,16 +3,15 @@ package middleware
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"os"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/keyauth"
 )
 
-func BearerTokenAuthentication() fiber.Handler {
+func BearerTokenAuthentication(apiKey string) fiber.Handler {
 	return keyauth.New(keyauth.Config{
 		Validator: func(c fiber.Ctx, key string) (bool, error) {
-			hashedAPIKey := sha256.Sum256([]byte(os.Getenv("API_KEY")))
+			hashedAPIKey := sha256.Sum256([]byte(apiKey))
 			hashedKey := sha256.Sum256([]byte(key))
 
 			if subtle.ConstantTimeCompare(hashedAPIKey[:], hashedKey[:]) == 1 {
