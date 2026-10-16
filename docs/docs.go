@@ -25,7 +25,7 @@ const docTemplate = `{
     "paths": {
         "/api/v1/events": {
             "get": {
-                "description": "Used to get all events scheduled on the church calender",
+                "description": "Get all events scheduled on the church calendar",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,11 +35,10 @@ const docTemplate = `{
                 "tags": [
                     "Events"
                 ],
-                "summary": "Get all Calender Events",
+                "summary": "Get all calendar events",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -50,22 +49,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.EventReponse"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
+                            "$ref": "#/definitions/event.Response"
                         }
                     },
                     "500": {
@@ -1640,6 +1624,57 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "event.Attributes": {
+            "type": "object",
+            "properties": {
+                "all_day_event": {
+                    "type": "boolean"
+                },
+                "ends_at": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "open_graph_description": {
+                    "type": "string"
+                },
+                "recurrence_description": {
+                    "type": "string"
+                },
+                "recurring": {
+                    "type": "boolean"
+                },
+                "starts_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "event.Event": {
+            "type": "object",
+            "properties": {
+                "attributes": {
+                    "$ref": "#/definitions/event.Attributes"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "event.Response": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/event.Event"
+                    }
+                }
+            }
+        },
         "message.CreateNoteInput": {
             "type": "object",
             "properties": {
@@ -1781,57 +1816,6 @@ const docTemplate = `{
                 },
                 "verse": {
                     "type": "string"
-                }
-            }
-        },
-        "model.Attribute": {
-            "type": "object",
-            "properties": {
-                "all_day_event": {
-                    "type": "boolean"
-                },
-                "ends_at": {
-                    "type": "string"
-                },
-                "image_url": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "open_graph_description": {
-                    "type": "string"
-                },
-                "recurrence_description": {
-                    "type": "string"
-                },
-                "recurring": {
-                    "type": "boolean"
-                },
-                "starts_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Event": {
-            "type": "object",
-            "properties": {
-                "attributes": {
-                    "$ref": "#/definitions/model.Attribute"
-                },
-                "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.EventReponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Event"
-                    }
                 }
             }
         },

@@ -7,7 +7,6 @@ import (
 	"Momentum/prisma/db"
 	"bytes"
 	b64 "encoding/base64"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -63,54 +62,6 @@ type StripeResponse struct {
 	ReadData func() ([]byte, error)
 }
 
-func (controller *Controller) GetPlanningCenterToken() Token {
-	var tokenResponse TokenResponse
-	var cachedToken, err = controller.Redis.Get(controller.Context, constants.TokenKey).Result()
-	if err == redis.Nil {
-		req, reqErr := http.NewRequest(http.MethodPost, controller.Configuration.PlanningCenter.TokenURL, nil)
-		if reqErr != nil {
-			log.Panic("GetPlanningCenterToken", reqErr)
-		}
-		req.Header.Set("Content-Type", "application/json")
-		resp, reqErr := controller.HttpClient.Do(req)
-		if reqErr != nil {
-			log.Panic("GetPlanningCenterToken", reqErr)
-		}
-		defer resp.Body.Close()
-		body, reqErr := io.ReadAll(resp.Body)
-		log.Println("GetPlanningCenterToken[REQUEST]", resp.StatusCode, string(body), reqErr)
-		if reqErr != nil {
-			log.Panic("GetPlanningCenterToken", reqErr)
-		}
-		if err := json.Unmarshal(body, &tokenResponse); err != nil {
-			log.Println("GetPlanningCenterToken", err)
-		}
-		if err := controller.Redis.Set(controller.Context, constants.TokenKey, string(body), 1*time.Hour+30*time.Minute).Err(); err != nil {
-			log.Println("GetPlanningCenterToken[Redis]", err)
-		}
-	} else if err != nil {
-		log.Println("GetPlanningCenterToken", err)
-	} else {
-		err := json.Unmarshal([]byte(cachedToken), &tokenResponse)
-		if err != nil {
-			log.Println("GetPlanningCenterToken", err)
-		}
-	}
-
-	return tokenResponse.Data
-}
-
-type TokenResponse struct {
-	Data Token `json:"data"`
-}
-type Token struct {
-	Type       string          `json:"type"`
-	Attributes TokenAttributes `json:"attributes"`
-}
-type TokenAttributes struct {
-	Token string `json:"token"`
-}
-
 func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel chan<- StripeResponse, endpoint string) {
 	defer waitGroup.Done()
 	req, err := http.NewRequest("POST", "https://api.stripe.com/v1"+endpoint, nil)
@@ -143,41 +94,6 @@ func (controller *Controller) StripeRequest(waitGroup *sync.WaitGroup, channel c
 
 func getBasePath(s string) string {
 	return strings.SplitAfter(s, "?")[0]
-}
-
-func (controller *Controller) EventRequest() EventReponse {
-	url := controller.Configuration.PlanningCenter.URL + "?per_page=100&where[ends_at][gte]=" + time.Now().Add(-4*time.Hour).Format(time.RFC3339)
-	token := controller.GetPlanningCenterToken()
-	req, reqErr := http.NewRequest(http.MethodGet, url, nil)
-	if reqErr != nil {
-		return EventReponse{ReadData: func() ([]byte, []error) { return nil, []error{reqErr} }}
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", token.Type+" "+token.Attributes.Token)
-	resp, reqErr := controller.HttpClient.Do(req)
-	var body []byte
-	if reqErr == nil {
-		defer resp.Body.Close()
-		body, reqErr = io.ReadAll(resp.Body)
-	}
-	statusCode := 0
-	if resp != nil {
-		statusCode = resp.StatusCode
-	}
-
-	return EventReponse{
-		ReadData: func() ([]byte, []error) {
-			log.Println("EventRequest[REQUEST]", statusCode, string(body), reqErr)
-			if reqErr != nil {
-				return body, []error{reqErr}
-			}
-			return body, nil
-		},
-	}
-}
-
-type EventReponse struct {
-	ReadData func() ([]byte, []error)
 }
 
 func (controller *Controller) PostTransactionMail(mail model.TransactionMailRequest) {

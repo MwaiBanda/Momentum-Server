@@ -1,5 +1,38 @@
 basePath: /
 definitions:
+  event.Attributes:
+    properties:
+      all_day_event:
+        type: boolean
+      ends_at:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      open_graph_description:
+        type: string
+      recurrence_description:
+        type: string
+      recurring:
+        type: boolean
+      starts_at:
+        type: string
+    type: object
+  event.Event:
+    properties:
+      attributes:
+        $ref: '#/definitions/event.Attributes'
+      id:
+        type: string
+    type: object
+  event.Response:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/event.Event'
+        type: array
+    type: object
   message.CreateNoteInput:
     properties:
       content:
@@ -93,39 +126,6 @@ definitions:
         type: string
       verse:
         type: string
-    type: object
-  model.Attribute:
-    properties:
-      all_day_event:
-        type: boolean
-      ends_at:
-        type: string
-      image_url:
-        type: string
-      name:
-        type: string
-      open_graph_description:
-        type: string
-      recurrence_description:
-        type: string
-      recurring:
-        type: boolean
-      starts_at:
-        type: string
-    type: object
-  model.Event:
-    properties:
-      attributes:
-        $ref: '#/definitions/model.Attribute'
-      id:
-        type: string
-    type: object
-  model.EventReponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/model.Event'
-        type: array
     type: object
   model.HTTPError:
     properties:
@@ -638,10 +638,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Used to get all events scheduled on the church calender
+      description: Get all events scheduled on the church calendar
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -652,22 +651,12 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.EventReponse'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/event.Response'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Get all Calender Events
+      summary: Get all calendar events
       tags:
       - Events
   /api/v1/meals:

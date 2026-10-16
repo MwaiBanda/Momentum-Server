@@ -2,6 +2,7 @@ package main
 
 import (
 	appconfig "Momentum/application/config"
+	eventService "Momentum/application/service/event"
 	messageService "Momentum/application/service/message"
 	notificationService "Momentum/application/service/notification"
 	sermonService "Momentum/application/service/sermon"
@@ -10,11 +11,14 @@ import (
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	httpHandler "Momentum/infrastructure/http"
+	eventHTTP "Momentum/infrastructure/http/event"
 	messageHTTP "Momentum/infrastructure/http/message"
 	notificationHTTP "Momentum/infrastructure/http/notification"
 	sermonHTTP "Momentum/infrastructure/http/sermon"
 	userHTTP "Momentum/infrastructure/http/user"
 	volunteerServiceHTTP "Momentum/infrastructure/http/volunteer_service"
+	httpIntegration "Momentum/infrastructure/integration/httpclient"
+	planningcenter "Momentum/infrastructure/integration/planningcenter"
 	sermoncloud "Momentum/infrastructure/integration/sermoncloud"
 	firebaseClient "Momentum/infrastructure/messaging/firebase"
 	database "Momentum/infrastructure/persistence/db"
@@ -106,6 +110,7 @@ func main() {
 	}
 
 	cacheStore := redisCache.NewCache(redisClient)
+	outboundHTTP := httpIntegration.New(nil)
 	users := userService.GetInstance(userRepository.GetInstance(sqlDatabase), cacheStore)
 	volunteerServices := volunteerService.GetInstance(
 		volunteerServiceRepository.GetInstance(sqlDatabase),
@@ -116,8 +121,17 @@ func main() {
 		cacheStore,
 	)
 	notifications := notificationService.GetInstance(firebaseClient.NewSender(messagingClient))
+	events := eventService.GetInstance(
+		planningcenter.NewClient(
+			outboundHTTP,
+			cacheStore,
+			configuration.PlanningCenter.URL,
+			configuration.PlanningCenter.TokenURL,
+		),
+		cacheStore,
+	)
 	sermons := sermonService.GetInstance(
-		sermoncloud.NewClient(nil, configuration.SermonCloud.URL),
+		sermoncloud.NewWithTransport(outboundHTTP, configuration.SermonCloud.URL),
 		cacheStore,
 	)
 	controller := handlers.NewController(handlers.Dependencies{
@@ -131,6 +145,7 @@ func main() {
 		volunteerServiceHTTP.GetInstance(volunteerServices),
 		messageHTTP.GetInstance(messages),
 		notificationHTTP.GetInstance(notifications),
+		eventHTTP.GetInstance(events),
 		sermonHTTP.GetInstance(sermons),
 	)
 	app := fiber.New()
@@ -180,7 +195,7 @@ func main() {
 
 	v1.Post("/notifications", httpHandlers.Notification.Send)
 
-	v1.Get("/events", controller.GetAllEvents)
+	v1.Get("/events", httpHandlers.Event.List)
 
 	app.Get("/swagger/*", swaggo.HandlerDefault)
 	app.Get("/swagger/*", swaggo.New(swaggo.Config{
