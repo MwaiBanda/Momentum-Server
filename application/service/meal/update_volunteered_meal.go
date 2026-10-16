@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 
-	"Momentum/constants"
 	domainmeal "Momentum/domain/meal"
 )
 
@@ -33,8 +32,8 @@ func (service *Service) invalidateCache(ctx context.Context) error {
 	if service.cacheStore == nil {
 		return nil
 	}
-	if err := service.cacheStore.Delete(ctx, constants.MealsKey); err != nil {
-		log.Printf("[meal-cache] delete %q: %v", constants.MealsKey, err)
+	if err := service.cacheStore.Delete(ctx, mealsCacheKey); err != nil {
+		log.Printf("[meal-cache] delete %q: %v", mealsCacheKey, err)
 	}
 	return nil
 }

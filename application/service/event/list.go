@@ -8,10 +8,12 @@ import (
 	"time"
 
 	"Momentum/application/cache"
-	"Momentum/constants"
 )
 
-const cacheTTL = 2 * time.Hour
+const (
+	cacheTTL       = 2 * time.Hour
+	eventsCacheKey = "events"
+)
 
 func (service *Service) List(ctx context.Context) (Response, error) {
 	if service == nil {
@@ -19,9 +21,9 @@ func (service *Service) List(ctx context.Context) (Response, error) {
 	}
 
 	if service.cacheStore != nil {
-		cached, found, err := cache.Get[Response](ctx, service.cacheStore, constants.EventsKey)
+		cached, found, err := cache.Get[Response](ctx, service.cacheStore, eventsCacheKey)
 		if err != nil {
-			log.Printf("[event-cache] get %q: %v", constants.EventsKey, err)
+			log.Printf("[event-cache] get %q: %v", eventsCacheKey, err)
 		} else if found {
 			return *cached, nil
 		}
@@ -42,8 +44,8 @@ func (service *Service) List(ctx context.Context) (Response, error) {
 	}
 
 	if service.cacheStore != nil {
-		if err := cache.Set(ctx, service.cacheStore, constants.EventsKey, response, cacheTTL); err != nil {
-			log.Printf("[event-cache] set %q: %v", constants.EventsKey, err)
+		if err := cache.Set(ctx, service.cacheStore, eventsCacheKey, response, cacheTTL); err != nil {
+			log.Printf("[event-cache] set %q: %v", eventsCacheKey, err)
 		}
 	}
 

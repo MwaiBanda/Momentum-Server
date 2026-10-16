@@ -16,6 +16,7 @@ import (
 	eventHTTP "Momentum/infrastructure/http/event"
 	mealHTTP "Momentum/infrastructure/http/meal"
 	messageHTTP "Momentum/infrastructure/http/message"
+	httpMiddleware "Momentum/infrastructure/http/middleware"
 	notificationHTTP "Momentum/infrastructure/http/notification"
 	paymentHTTP "Momentum/infrastructure/http/payment"
 	sermonHTTP "Momentum/infrastructure/http/sermon"
@@ -35,7 +36,6 @@ import (
 	transactionRepository "Momentum/infrastructure/persistence/repository/transaction"
 	userRepository "Momentum/infrastructure/persistence/repository/user"
 	volunteerServiceRepository "Momentum/infrastructure/persistence/repository/volunteer_service"
-	"Momentum/middleware"
 	"context"
 	"log"
 	"time"
@@ -159,15 +159,15 @@ func main() {
 		transactionHTTP.GetInstance(transactions),
 	)
 	app := fiber.New(fiber.Config{ErrorHandler: httpHandler.ErrorHandler})
-	middleware.ConfigureAppMiddleWare(app)
+	httpMiddleware.ConfigureAppMiddleware(app)
 
 	api := app.Group("/api", func(c fiber.Ctx) error {
 		c.Response().Header.Set("Cache-Control", "no-cache")
 		return c.Next()
 	})
 
-	api.Get("/metrics", middleware.Monitor())
-	v1 := api.Group("/v1", middleware.BearerTokenAuthentication(configuration.Security.APIKey))
+	api.Get("/metrics", httpMiddleware.Monitor())
+	v1 := api.Group("/v1", httpMiddleware.BearerTokenAuthentication(configuration.Security.APIKey))
 
 	v1.Post("/meals", httpHandlers.Meal.Create)
 	v1.Get("/meals", httpHandlers.Meal.List)
@@ -208,9 +208,11 @@ func main() {
 
 	v1.Get("/events", httpHandlers.Event.List)
 
-	app.Get("/swagger/*", swaggo.HandlerDefault)
+	app.Get("/", func(ctx fiber.Ctx) error {
+		return ctx.Redirect().To("/swagger/index.html")
+	})
 	app.Get("/swagger/*", swaggo.New(swaggo.Config{
-		URL:          "https://services.momentumchurch.dev/doc.json",
+		URL:          "/swagger/doc.json",
 		DeepLinking:  false,
 		DocExpansion: "none",
 	}))

@@ -10,10 +10,12 @@ import (
 	"time"
 
 	"Momentum/application/cache"
-	"Momentum/constants"
 )
 
-const cacheTTL = 6 * time.Hour
+const (
+	cacheTTL             = 6 * time.Hour
+	sermonCacheKeyPrefix = "sermon-page-"
+)
 
 func (service *Service) List(ctx context.Context, page string) (Response, error) {
 	if service == nil {
@@ -25,7 +27,7 @@ func (service *Service) List(ctx context.Context, page string) (Response, error)
 		return Response{}, err
 	}
 
-	cacheKey := constants.SermonKeyPrefix + page
+	cacheKey := sermonCacheKeyPrefix + page
 	if service.cacheStore != nil {
 		cached, found, err := cache.Get[Response](ctx, service.cacheStore, cacheKey)
 		if err != nil {

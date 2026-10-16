@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"Momentum/constants"
-
 	"github.com/joho/godotenv"
 )
+
+const developmentEnvironment = "development"
 
 type Config struct {
 	Environment    string
@@ -61,7 +61,7 @@ type EmailConfig struct {
 type Lookup func(string) (string, bool)
 
 func LoadConfig() (*Config, error) {
-	if err := godotenv.Load(); err != nil && os.Getenv("ENVIRONMENT") == constants.Development {
+	if err := godotenv.Load(); err != nil && os.Getenv("ENVIRONMENT") == developmentEnvironment {
 		return nil, fmt.Errorf("load .env file: %w", err)
 	}
 
@@ -102,7 +102,7 @@ func LoadConfigFrom(lookup Lookup) (*Config, error) {
 	}
 
 	if configuration.Environment == "" {
-		configuration.Environment = constants.Development
+		configuration.Environment = developmentEnvironment
 	}
 	if configuration.Port == "" {
 		configuration.Port = "8080"

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"Momentum/application/cache"
-	"Momentum/constants"
 )
 
 const (
@@ -22,7 +21,7 @@ func (service *Service) ListPublishedByUser(ctx context.Context, userID string) 
 	}
 
 	cacheKey, cacheEnabled := service.versionedMessageCacheKey(ctx, userID)
-	if userID != constants.Admin && cacheEnabled {
+	if userID != adminUserID && cacheEnabled {
 		cached, found, err := cache.Get[[]MessageResponse](ctx, service.cacheStore, cacheKey)
 		if err != nil {
 			log.Printf("[message-cache] get %q: %v", cacheKey, err)
@@ -37,7 +36,7 @@ func (service *Service) ListPublishedByUser(ctx context.Context, userID string) 
 	}
 
 	response := toMessageListResponse(messages)
-	if userID != constants.Admin && cacheEnabled {
+	if userID != adminUserID && cacheEnabled {
 		if err := cache.Set(ctx, service.cacheStore, cacheKey, response.Data, messageCacheTTL); err != nil {
 			log.Printf("[message-cache] set %q: %v", cacheKey, err)
 		}
@@ -55,7 +54,7 @@ func (service *Service) ListUnpublished(ctx context.Context) (MessageListRespons
 }
 
 func (service *Service) versionedMessageCacheKey(ctx context.Context, userID string) (string, bool) {
-	if service.cacheStore == nil || userID == constants.Admin {
+	if service.cacheStore == nil || userID == adminUserID {
 		return "", false
 	}
 
@@ -65,7 +64,7 @@ func (service *Service) versionedMessageCacheKey(ctx context.Context, userID str
 		return "", false
 	}
 
-	return fmt.Sprintf("%s-v%d-%s", constants.MessageKey, version, userID), true
+	return fmt.Sprintf("%s-v%d-%s", messageCacheKey, version, userID), true
 }
 
 func (service *Service) messageCacheVersion(ctx context.Context) (int64, error) {

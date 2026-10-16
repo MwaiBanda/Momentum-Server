@@ -10,11 +10,13 @@ import (
 	"time"
 
 	"Momentum/application/cache"
-	"Momentum/constants"
 	"Momentum/infrastructure/integration/httpclient"
 )
 
-const tokenTTL = 90 * time.Minute
+const (
+	planningCenterTokenKey = "planning-token"
+	tokenTTL               = 90 * time.Minute
+)
 
 type Client struct {
 	transport  *httpclient.Client
@@ -81,9 +83,9 @@ func (client *Client) Fetch(ctx context.Context) ([]byte, error) {
 
 func (client *Client) accessToken(ctx context.Context) (string, string, error) {
 	if client.tokenStore != nil {
-		cached, found, err := cache.Get[tokenResponse](ctx, client.tokenStore, constants.TokenKey)
+		cached, found, err := cache.Get[tokenResponse](ctx, client.tokenStore, planningCenterTokenKey)
 		if err != nil {
-			log.Printf("[planning-center-cache] get %q: %v", constants.TokenKey, err)
+			log.Printf("[planning-center-cache] get %q: %v", planningCenterTokenKey, err)
 		} else if found && cached.Data.Attributes.Token != "" {
 			return cached.Data.Attributes.Token, cached.Data.Type, nil
 		}
@@ -109,8 +111,8 @@ func (client *Client) accessToken(ctx context.Context) (string, string, error) {
 	}
 
 	if client.tokenStore != nil {
-		if err := cache.Set(ctx, client.tokenStore, constants.TokenKey, response, tokenTTL); err != nil {
-			log.Printf("[planning-center-cache] set %q: %v", constants.TokenKey, err)
+		if err := cache.Set(ctx, client.tokenStore, planningCenterTokenKey, response, tokenTTL); err != nil {
+			log.Printf("[planning-center-cache] set %q: %v", planningCenterTokenKey, err)
 		}
 	}
 

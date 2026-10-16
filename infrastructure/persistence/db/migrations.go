@@ -5,12 +5,16 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
+	"log"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pressly/goose/v3"
 )
 
 const baselineVersion int64 = 1
+const migrationLockQuery = `SELECT pg_advisory_lock(hashtext('momentum-server-goose-migrations'))`
+const migrationUnlockQuery = `SELECT pg_advisory_unlock(hashtext('momentum-server-goose-migrations'))`
 
 //go:embed migrations/*.sql
 var migrationFiles embed.FS
@@ -36,12 +40,17 @@ func Migrate(ctx context.Context, database *sqlx.DB) error {
 	}
 	defer migrationConnection.Close()
 
-	if _, err := migrationConnection.ExecContext(
-		ctx,
-		`SELECT pg_advisory_lock(hashtext('momentum-server-goose-migrations'))`,
-	); err != nil {
+	if _, err := migrationConnection.ExecContext(ctx, migrationLockQuery); err != nil {
 		return fmt.Errorf("lock database migrations: %w", err)
 	}
+	defer func() {
+		unlockContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if _, err := migrationConnection.ExecContext(unlockContext, migrationUnlockQuery); err != nil {
+			log.Printf("unlock database migrations: %v", err)
+		}
+	}()
 
 	if err := ensureGooseVersionTable(ctx, database); err != nil {
 		return fmt.Errorf("initialize Goose version table: %w", err)

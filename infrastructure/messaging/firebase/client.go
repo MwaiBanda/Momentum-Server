@@ -1,7 +1,6 @@
 package firebase
 
 import (
-	"Momentum/constants"
 	"context"
 	"fmt"
 	"log"
@@ -12,12 +11,14 @@ import (
 	"google.golang.org/api/option"
 )
 
+const firebaseServiceTokenKey = "firebase"
+
 func Open(
 	ctx context.Context,
 	tokenStore redis.Cmdable,
 	projectID string,
 ) (*firebase.App, *messaging.Client, error) {
-	token, err := tokenStore.Get(ctx, constants.FirebaseServiceTokenKey).Result()
+	token, err := tokenStore.Get(ctx, firebaseServiceTokenKey).Result()
 	if err != nil {
 		return nil, nil, fmt.Errorf("read Firebase service token from Redis: %w", err)
 	}

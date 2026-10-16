@@ -3,7 +3,6 @@ package message
 import (
 	"context"
 
-	"Momentum/constants"
 	domainmessage "Momentum/domain/message"
 	"github.com/lucsky/cuid"
 )
@@ -12,14 +11,14 @@ func (service *Service) Create(ctx context.Context, input MessageInput) (Message
 	passages := make([]domainmessage.CreatePassageParams, 0, len(input.Passages))
 	for _, passage := range input.Passages {
 		switch passage.Type {
-		case constants.Header:
+		case headerPassageType:
 			header := passage.Header
 			passages = append(passages, domainmessage.CreatePassageParams{
 				ID:     cuid.New(),
 				Header: &header,
 				Order:  passage.Order,
 			})
-		case constants.Message:
+		case messagePassageType:
 			verse := passage.Verse
 			messageText := passage.Message
 			passages = append(passages, domainmessage.CreatePassageParams{
