@@ -18,32 +18,24 @@ import (
 	"text/template"
 	"time"
 
-	firebase "firebase.google.com/go/v4"
-	"firebase.google.com/go/v4/messaging"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
 )
 
 type Controller struct {
-	Configuration              appconfig.Config
-	HttpClient                 *http.Client
-	PrismaClient               *db.PrismaClient
-	Context                    context.Context
-	Redis                      *redis.Client
-	Firebase                   *firebase.App
-	Messaging                  *messaging.Client
-	CanSendNotificationChannel chan bool
+	Configuration appconfig.Config
+	HttpClient    *http.Client
+	PrismaClient  *db.PrismaClient
+	Context       context.Context
+	Redis         *redis.Client
 }
 
 type Dependencies struct {
-	Configuration              appconfig.Config
-	HttpClient                 *http.Client
-	PrismaClient               *db.PrismaClient
-	Context                    context.Context
-	Redis                      *redis.Client
-	Firebase                   *firebase.App
-	Messaging                  *messaging.Client
-	CanSendNotificationChannel chan bool
+	Configuration appconfig.Config
+	HttpClient    *http.Client
+	PrismaClient  *db.PrismaClient
+	Context       context.Context
+	Redis         *redis.Client
 }
 
 func NewController(dependencies Dependencies) *Controller {
@@ -57,20 +49,12 @@ func NewController(dependencies Dependencies) *Controller {
 		controllerContext = context.Background()
 	}
 
-	notificationChannel := dependencies.CanSendNotificationChannel
-	if notificationChannel == nil {
-		notificationChannel = make(chan bool)
-	}
-
 	return &Controller{
-		Configuration:              dependencies.Configuration,
-		HttpClient:                 httpClient,
-		PrismaClient:               dependencies.PrismaClient,
-		Context:                    controllerContext,
-		Redis:                      dependencies.Redis,
-		Firebase:                   dependencies.Firebase,
-		Messaging:                  dependencies.Messaging,
-		CanSendNotificationChannel: notificationChannel,
+		Configuration: dependencies.Configuration,
+		HttpClient:    httpClient,
+		PrismaClient:  dependencies.PrismaClient,
+		Context:       controllerContext,
+		Redis:         dependencies.Redis,
 	}
 }
 

@@ -3,12 +3,14 @@ package main
 import (
 	appconfig "Momentum/application/config"
 	messageService "Momentum/application/service/message"
+	notificationService "Momentum/application/service/notification"
 	userService "Momentum/application/service/user"
 	volunteerService "Momentum/application/service/volunteer_service"
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	httpHandler "Momentum/infrastructure/http"
 	messageHTTP "Momentum/infrastructure/http/message"
+	notificationHTTP "Momentum/infrastructure/http/notification"
 	userHTTP "Momentum/infrastructure/http/user"
 	volunteerServiceHTTP "Momentum/infrastructure/http/volunteer_service"
 	firebaseClient "Momentum/infrastructure/messaging/firebase"
@@ -23,7 +25,6 @@ import (
 	"log"
 	"time"
 
-	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
@@ -87,10 +88,9 @@ func main() {
 		}
 	}()
 
-	var firebaseApp *firebase.App
 	var messagingClient *messaging.Client
 	if configuration.Firebase.ProjectID != "" {
-		firebaseApp, messagingClient, err = firebaseClient.Open(
+		_, messagingClient, err = firebaseClient.Open(
 			startupContext,
 			redisClient,
 			configuration.Firebase.ProjectID,
@@ -112,18 +112,18 @@ func main() {
 		messageRepository.GetInstance(sqlDatabase),
 		cacheStore,
 	)
+	notifications := notificationService.GetInstance(firebaseClient.NewSender(messagingClient))
 	controller := handlers.NewController(handlers.Dependencies{
 		Configuration: *configuration,
 		PrismaClient:  prismaClient,
 		Context:       context.Background(),
 		Redis:         redisClient,
-		Firebase:      firebaseApp,
-		Messaging:     messagingClient,
 	})
 	httpHandlers := httpHandler.GetInstance(
 		userHTTP.GetInstance(users),
 		volunteerServiceHTTP.GetInstance(volunteerServices),
 		messageHTTP.GetInstance(messages),
+		notificationHTTP.GetInstance(notifications),
 	)
 	app := fiber.New()
 	middleware.ConfigureAppMiddleWare(app)
@@ -170,7 +170,7 @@ func main() {
 	v1.Delete("/messages/notes/:noteId", httpHandlers.Message.DeleteNote)
 	v1.Delete("/messages/:messageId", httpHandlers.Message.Delete)
 
-	v1.Post("/notifications", controller.PostNotification)
+	v1.Post("/notifications", httpHandlers.Notification.Send)
 
 	v1.Get("/events", controller.GetAllEvents)
 

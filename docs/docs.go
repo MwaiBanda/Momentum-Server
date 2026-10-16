@@ -830,7 +830,7 @@ const docTemplate = `{
         },
         "/api/v1/notifications": {
             "post": {
-                "description": "Used by clients to request a notification to be sent to a topiv",
+                "description": "Used by clients to request a notification to be sent to a topic",
                 "consumes": [
                     "application/json"
                 ],
@@ -844,7 +844,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -856,7 +855,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Notification"
+                            "$ref": "#/definitions/notification.Input"
                         }
                     }
                 ],
@@ -864,17 +863,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Notification"
+                            "$ref": "#/definitions/notification.Input"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -2013,20 +2006,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Notification": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "topic": {
-                    "type": "string"
-                }
-            }
-        },
         "model.Participant": {
             "type": "object",
             "properties": {
@@ -2323,6 +2302,20 @@ const docTemplate = `{
                 },
                 "volunteered_meal": {
                     "$ref": "#/definitions/model.VolunteeredMeal"
+                }
+            }
+        },
+        "notification.Input": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "topic": {
+                    "type": "string"
                 }
             }
         },

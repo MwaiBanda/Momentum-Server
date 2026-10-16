@@ -234,15 +234,6 @@ definitions:
       user_id:
         type: string
     type: object
-  model.Notification:
-    properties:
-      body:
-        type: string
-      title:
-        type: string
-      topic:
-        type: string
-    type: object
   model.Participant:
     properties:
       id:
@@ -441,6 +432,15 @@ definitions:
         type: string
       volunteered_meal:
         $ref: '#/definitions/model.VolunteeredMeal'
+    type: object
+  notification.Input:
+    properties:
+      body:
+        type: string
+      title:
+        type: string
+      topic:
+        type: string
     type: object
   user.CreateInput:
     properties:
@@ -1175,10 +1175,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used by clients to request a notification to be sent to a topiv
+      description: Used by clients to request a notification to be sent to a topic
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -1188,20 +1187,16 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.Notification'
+          $ref: '#/definitions/notification.Input'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Notification'
+            $ref: '#/definitions/notification.Input'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
