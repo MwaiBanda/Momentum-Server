@@ -1,14 +1,19 @@
 package main
 
 import (
+	"Momentum/constants"
 	handlers "Momentum/controller"
 	_ "Momentum/docs"
+	database "Momentum/infrastructure/persistence/db"
 	"Momentum/middleware"
+	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
+	"github.com/joho/godotenv"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -26,6 +31,27 @@ import (
 // @BasePath		/
 func main() {
 	log.Println("Starting Momentum API")
+	if err := godotenv.Load(); err != nil && os.Getenv("ENVIRONMENT") == constants.Development {
+		log.Fatalf("load environment: %v", err)
+	}
+
+	startupContext, cancelStartup := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancelStartup()
+
+	sqlDatabase, err := database.Open(startupContext, os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatalf("open SQL database: %v", err)
+	}
+	defer func() {
+		if err := database.Close(sqlDatabase); err != nil {
+			log.Printf("close SQL database: %v", err)
+		}
+	}()
+
+	if err := database.Migrate(startupContext, sqlDatabase); err != nil {
+		log.Fatalf("migrate SQL database: %v", err)
+	}
+
 	controller := handlers.GetControllerInstance()
 	app := fiber.New()
 	port := func() string {
