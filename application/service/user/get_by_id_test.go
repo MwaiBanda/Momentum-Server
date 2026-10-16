@@ -12,13 +12,21 @@ import (
 )
 
 type fakeRepository struct {
-	user  domainuser.User
-	err   error
-	calls int
+	user         domainuser.User
+	err          error
+	calls        int
+	createCalls  int
+	createParams domainuser.CreateParams
 }
 
 func (repository *fakeRepository) GetByID(context.Context, string) (domainuser.User, error) {
 	repository.calls++
+	return repository.user, repository.err
+}
+
+func (repository *fakeRepository) Create(_ context.Context, params domainuser.CreateParams) (domainuser.User, error) {
+	repository.createCalls++
+	repository.createParams = params
 	return repository.user, repository.err
 }
 

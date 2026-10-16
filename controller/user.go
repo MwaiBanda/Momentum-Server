@@ -13,39 +13,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// PostUser godoc
-//
-//	@Summary		Post a user
-//	@Description	Used to post a user
-//	@tags			Users
-//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(******
-//	@Param			data			body	model.UserRequest	true	"Post a user"
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	model.UserRequest
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		404	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
-//	@Router			/api/v1/users [post]
-func (controller *Controller) PostUser(context fiber.Ctx) error {
-	userRequest := new(model.UserRequest)
-	if err := context.Bind().Body(userRequest); err != nil {
-		log.Panic(err.Error())
-	}
-	res, err := controller.PrismaClient.User.CreateOne(
-		db.User.ID.Set(userRequest.Id),
-		db.User.Email.Set(userRequest.Email),
-		db.User.Fullname.Set(userRequest.Email),
-		db.User.Phone.Set(userRequest.Phone),
-	).Exec(controller.Context)
-	if err != nil {
-		log.Panic(err.Error())
-	}
-	result, _ := json.MarshalIndent(res, "", "  ")
-	controller.Redis.Set(controller.Context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
-	return context.JSON(userRequest)
-}
-
 // UpdateUser godoc
 //
 //	@Summary		Update a user

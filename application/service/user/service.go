@@ -1,15 +1,9 @@
 package user
 
 import (
-	"context"
-
 	"Momentum/application/cache"
 	domainuser "Momentum/domain/user"
 )
-
-type UseCase interface {
-	GetByID(ctx context.Context, id string) (Response, error)
-}
 
 type Service struct {
 	repository domainuser.Repository

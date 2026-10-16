@@ -88,7 +88,7 @@ func main() {
 	v1.Post("/meals/meal", controller.PostVolunteeredMealForMeal)
 	v1.Put("/meals/meal", controller.UpdateVolunteeredMeal)
 
-	v1.Post("/users", controller.PostUser)
+	v1.Post("/users", httpHandlers.User.Create)
 	v1.Get("/users/:userId", httpHandlers.User.GetByID)
 	v1.Put("/users", controller.UpdateUser)
 	v1.Delete("/users/:userId", controller.DeleteUserById)
