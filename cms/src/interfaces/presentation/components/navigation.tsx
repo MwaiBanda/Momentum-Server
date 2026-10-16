@@ -23,7 +23,7 @@ function AuthNavlink({ onSigninClick }: { onSigninClick: () => void}){
     return auth.subscribe((user) => setSignedIn(user !== null))
   }, [auth])
   if (isSignedIn) {
-    return <NavbarLink className="cursor-pointer" onClick={() => {
+    return <NavbarLink className="block w-full cursor-pointer rounded-md px-3 py-2 text-center text-gray-700 hover:bg-orange-50 hover:text-momentum-orange md:w-auto md:px-3 md:py-2 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" onClick={() => {
       auth.signOut().then(() => {
         console.log("Signed out")
       }).catch((error) => {
@@ -31,7 +31,7 @@ function AuthNavlink({ onSigninClick }: { onSigninClick: () => void}){
       })
     }}>Sign Out</NavbarLink>
   } else {
-    return <NavbarLink onClick={onSigninClick}>Sign In</NavbarLink>
+    return <NavbarLink className="block w-full rounded-md px-3 py-2 text-center text-gray-700 hover:bg-orange-50 hover:text-momentum-orange md:w-auto md:px-3 md:py-2 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" onClick={onSigninClick}>Sign In</NavbarLink>
   }
 }
 
