@@ -41,6 +41,12 @@ type MomentumNavigationProps = {
   onShowAuthChange?: (open: boolean) => void;
 };
 
+function getNavLinkClassName(active: boolean) {
+  return active
+    ? 'rounded-md !bg-momentum-orange px-3 py-2 font-semibold !text-white shadow-sm md:px-3 md:py-2'
+    : 'rounded-md px-3 py-2 text-gray-700 hover:bg-orange-50 hover:text-momentum-orange md:px-3 md:py-2 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+}
+
 export function MomentumNavigation({ content, showAuth, onShowAuthChange }: MomentumNavigationProps) {
     const location = useLocation();
     const [internalAuthModalOpen, setInternalAuthModalOpen] = useState(false);
@@ -65,9 +71,30 @@ export function MomentumNavigation({ content, showAuth, onShowAuthChange }: Mome
           <NavbarToggle />
           <NavbarCollapse>
             {/* <Navbar.Link  href={HOME} active={HOME === location.pathname}> Home</Navbar.Link> */}
-            <NavbarLink href={MESSAGES} active={MESSAGES === location.pathname}>Messages</NavbarLink>
-            <NavbarLink href={NOFICATIONS} active={NOFICATIONS === location.pathname}>Notifications</NavbarLink>
-            <NavbarLink href={PAYMENTS} active={PAYMENTS === location.pathname}>Transactions</NavbarLink>
+            <NavbarLink
+              href={MESSAGES}
+              active={MESSAGES === location.pathname}
+              aria-current={MESSAGES === location.pathname ? "page" : undefined}
+              className={getNavLinkClassName(MESSAGES === location.pathname)}
+            >
+              Messages
+            </NavbarLink>
+            <NavbarLink
+              href={NOFICATIONS}
+              active={NOFICATIONS === location.pathname}
+              aria-current={NOFICATIONS === location.pathname ? "page" : undefined}
+              className={getNavLinkClassName(NOFICATIONS === location.pathname)}
+            >
+              Notifications
+            </NavbarLink>
+            <NavbarLink
+              href={PAYMENTS}
+              active={PAYMENTS === location.pathname}
+              aria-current={PAYMENTS === location.pathname ? "page" : undefined}
+              className={getNavLinkClassName(PAYMENTS === location.pathname)}
+            >
+              Transactions
+            </NavbarLink>
             {/* <Navbar.Link href={USERS} active={USERS === location.pathname}>Users</Navbar.Link> */}
             <AuthNavlink onSigninClick={() => setOpenAuthModal(true)}/>
           </NavbarCollapse>
