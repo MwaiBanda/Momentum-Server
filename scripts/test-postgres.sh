@@ -18,4 +18,5 @@ MOMENTUM_TEST_DATABASE_URL="$database_url" \
   ./infrastructure/persistence/repository/user \
   ./infrastructure/persistence/repository/volunteer_service \
   ./infrastructure/persistence/repository/message \
-  ./infrastructure/persistence/repository/transaction
+  ./infrastructure/persistence/repository/transaction \
+  ./infrastructure/persistence/repository/meal

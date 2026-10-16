@@ -3,6 +3,7 @@ package main
 import (
 	appconfig "Momentum/application/config"
 	eventService "Momentum/application/service/event"
+	mealService "Momentum/application/service/meal"
 	messageService "Momentum/application/service/message"
 	notificationService "Momentum/application/service/notification"
 	paymentService "Momentum/application/service/payment"
@@ -10,10 +11,10 @@ import (
 	transactionService "Momentum/application/service/transaction"
 	userService "Momentum/application/service/user"
 	volunteerService "Momentum/application/service/volunteer_service"
-	handlers "Momentum/controller"
 	_ "Momentum/docs"
 	httpHandler "Momentum/infrastructure/http"
 	eventHTTP "Momentum/infrastructure/http/event"
+	mealHTTP "Momentum/infrastructure/http/meal"
 	messageHTTP "Momentum/infrastructure/http/message"
 	notificationHTTP "Momentum/infrastructure/http/notification"
 	paymentHTTP "Momentum/infrastructure/http/payment"
@@ -28,8 +29,8 @@ import (
 	emailMessaging "Momentum/infrastructure/messaging/email"
 	firebaseClient "Momentum/infrastructure/messaging/firebase"
 	database "Momentum/infrastructure/persistence/db"
-	prismaClientFactory "Momentum/infrastructure/persistence/prisma"
 	redisCache "Momentum/infrastructure/persistence/redis"
+	mealRepository "Momentum/infrastructure/persistence/repository/meal"
 	messageRepository "Momentum/infrastructure/persistence/repository/message"
 	transactionRepository "Momentum/infrastructure/persistence/repository/transaction"
 	userRepository "Momentum/infrastructure/persistence/repository/user"
@@ -82,16 +83,6 @@ func main() {
 		log.Fatalf("migrate SQL database: %v", err)
 	}
 
-	prismaClient, err := prismaClientFactory.Open()
-	if err != nil {
-		log.Fatalf("open Prisma client: %v", err)
-	}
-	defer func() {
-		if err := prismaClient.Prisma.Disconnect(); err != nil {
-			log.Printf("close Prisma client: %v", err)
-		}
-	}()
-
 	redisClient, err := redisCache.Open(configuration.Redis.URL)
 	if err != nil {
 		log.Fatalf("open Redis client: %v", err)
@@ -127,6 +118,10 @@ func main() {
 		messageRepository.GetInstance(sqlDatabase),
 		cacheStore,
 	)
+	meals := mealService.GetInstance(
+		mealRepository.GetInstance(sqlDatabase),
+		cacheStore,
+	)
 	notifications := notificationService.GetInstance(firebaseClient.NewSender(messagingClient))
 	transactions := transactionService.GetInstance(
 		transactionRepository.GetInstance(sqlDatabase),
@@ -152,15 +147,10 @@ func main() {
 		sermoncloud.NewWithTransport(outboundHTTP, configuration.SermonCloud.URL),
 		cacheStore,
 	)
-	controller := handlers.NewController(handlers.Dependencies{
-		Configuration: *configuration,
-		PrismaClient:  prismaClient,
-		Context:       context.Background(),
-		Redis:         redisClient,
-	})
 	httpHandlers := httpHandler.GetInstance(
 		userHTTP.GetInstance(users),
 		volunteerServiceHTTP.GetInstance(volunteerServices),
+		mealHTTP.GetInstance(meals),
 		messageHTTP.GetInstance(messages),
 		notificationHTTP.GetInstance(notifications),
 		eventHTTP.GetInstance(events),
@@ -179,11 +169,12 @@ func main() {
 	api.Get("/metrics", middleware.Monitor())
 	v1 := api.Group("/v1", middleware.BearerTokenAuthentication(configuration.Security.APIKey))
 
-	v1.Post("/meals", controller.PostMeal)
-	v1.Get("/meals", controller.GetAllMeals)
-	v1.Delete("/meals/:mealId", controller.DeleteMealById)
-	v1.Post("/meals/meal", controller.PostVolunteeredMealForMeal)
-	v1.Put("/meals/meal", controller.UpdateVolunteeredMeal)
+	v1.Post("/meals", httpHandlers.Meal.Create)
+	v1.Get("/meals", httpHandlers.Meal.List)
+	v1.Put("/meals", httpHandlers.Meal.Update)
+	v1.Delete("/meals/:mealId", httpHandlers.Meal.Delete)
+	v1.Post("/meals/meal", httpHandlers.Meal.AssignVolunteer)
+	v1.Put("/meals/meal", httpHandlers.Meal.UpdateVolunteeredMeal)
 
 	v1.Post("/users", httpHandlers.User.Create)
 	v1.Get("/users/:userId", httpHandlers.User.GetByID)

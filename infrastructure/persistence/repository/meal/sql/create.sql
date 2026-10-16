@@ -1,0 +1,33 @@
+INSERT INTO "Meal" (
+    id,
+    reason,
+    email,
+    phone,
+    city,
+    "numOfAdults",
+    "numberOfKids",
+    street,
+    "preferredTime",
+    favourites,
+    "leastFavourites",
+    allergies,
+    instructions,
+    "userId",
+    recipient
+) VALUES (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    $7,
+    $8,
+    $9,
+    $10,
+    $11,
+    $12,
+    $13,
+    NULLIF($14, ''),
+    $15
+);

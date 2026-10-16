@@ -9,11 +9,9 @@ require (
 	github.com/lucsky/cuid v1.2.1
 	github.com/pressly/goose/v3 v3.29.0
 	github.com/redis/go-redis/v9 v9.18.0
-	github.com/shopspring/decimal v1.5.0
-	github.com/steebchen/prisma-client-go v0.47.0
 	github.com/stripe/stripe-go/v74 v74.30.0
 	github.com/swaggo/swag v1.16.6
-	golang.org/x/net v0.61.0
+	golang.org/x/net v0.61.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 )
 
@@ -67,7 +65,6 @@ require (
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/yuin/gopher-lua v1.1.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	go.mongodb.org/mongo-driver/v2 v2.0.1 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.67.0 // indirect

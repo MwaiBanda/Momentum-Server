@@ -33,6 +33,178 @@ definitions:
           $ref: '#/definitions/event.Event'
         type: array
     type: object
+  meal.Input:
+    properties:
+      allergies:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      favourites:
+        type: string
+      id:
+        type: string
+      instructions:
+        type: string
+      least_favourites:
+        type: string
+      meals:
+        items:
+          $ref: '#/definitions/meal.MealVolunteeredRequest'
+        type: array
+      num_of_adults:
+        type: integer
+      number_of_kids:
+        type: integer
+      phone:
+        type: string
+      preferred_time:
+        type: string
+      reason:
+        type: string
+      recipient:
+        type: string
+      street:
+        type: string
+      user_id:
+        type: string
+    type: object
+  meal.MealVolunteeredRequest:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      meal_id:
+        type: string
+      notes:
+        type: string
+      user_id:
+        type: string
+    type: object
+  meal.ParticipantResponse:
+    properties:
+      id:
+        type: string
+      user:
+        $ref: '#/definitions/meal.UserResponse'
+    type: object
+  meal.Response:
+    properties:
+      allergies:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      favourites:
+        type: string
+      id:
+        type: string
+      instructions:
+        type: string
+      least_favourites:
+        type: string
+      meals:
+        items:
+          $ref: '#/definitions/meal.VolunteeredMealResponse'
+        type: array
+      num_of_adults:
+        type: integer
+      number_of_kids:
+        type: integer
+      participants:
+        items:
+          $ref: '#/definitions/meal.ParticipantResponse'
+        type: array
+      phone:
+        type: string
+      preferred_time:
+        type: string
+      reason:
+        type: string
+      recipient:
+        type: string
+      street:
+        type: string
+      user:
+        $ref: '#/definitions/meal.UserResponse'
+    type: object
+  meal.UpdateResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  meal.UpdateVolunteeredMealInput:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+    type: object
+  meal.UserResponse:
+    properties:
+      createdOn:
+        type: string
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
+    type: object
+  meal.VolunteerAssignmentInput:
+    properties:
+      meal_id:
+        type: string
+      volunteered_meal:
+        $ref: '#/definitions/meal.VolunteeredMealInput'
+    type: object
+  meal.VolunteeredMealInput:
+    properties:
+      created_on:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      updates:
+        items:
+          $ref: '#/definitions/meal.UpdateResponse'
+        type: array
+      user:
+        $ref: '#/definitions/meal.UserResponse'
+    type: object
+  meal.VolunteeredMealResponse:
+    properties:
+      created_on:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      updates:
+        items:
+          $ref: '#/definitions/meal.UpdateResponse'
+        type: array
+      user:
+        $ref: '#/definitions/meal.UserResponse'
+    type: object
   message.CreateNoteInput:
     properties:
       content:
@@ -135,154 +307,6 @@ definitions:
       message:
         example: status bad request
         type: string
-    type: object
-  model.MealRequest:
-    properties:
-      allergies:
-        type: string
-      city:
-        type: string
-      email:
-        type: string
-      favourites:
-        type: string
-      id:
-        type: string
-      instructions:
-        type: string
-      least_favourites:
-        type: string
-      meals:
-        items:
-          $ref: '#/definitions/model.MealVolunteeredRequest'
-        type: array
-      num_of_adults:
-        type: integer
-      number_of_kids:
-        type: integer
-      phone:
-        type: string
-      preferred_time:
-        type: string
-      reason:
-        type: string
-      recipient:
-        type: string
-      street:
-        type: string
-      user_id:
-        type: string
-    type: object
-  model.MealResponse:
-    properties:
-      allergies:
-        type: string
-      city:
-        type: string
-      email:
-        type: string
-      favourites:
-        type: string
-      id:
-        type: string
-      instructions:
-        type: string
-      least_favourites:
-        type: string
-      meals:
-        items:
-          $ref: '#/definitions/model.VolunteeredMeal'
-        type: array
-      num_of_adults:
-        type: integer
-      number_of_kids:
-        type: integer
-      participants:
-        items:
-          $ref: '#/definitions/model.Participant'
-        type: array
-      phone:
-        type: string
-      preferred_time:
-        type: string
-      reason:
-        type: string
-      recipient:
-        type: string
-      street:
-        type: string
-      user:
-        $ref: '#/definitions/model.UserResponse'
-    type: object
-  model.MealUpdates:
-    properties:
-      id:
-        type: string
-      message:
-        type: string
-    type: object
-  model.MealVolunteeredRequest:
-    properties:
-      date:
-        type: string
-      description:
-        type: string
-      meal_id:
-        type: string
-      notes:
-        type: string
-      user_id:
-        type: string
-    type: object
-  model.Participant:
-    properties:
-      id:
-        type: string
-      user:
-        $ref: '#/definitions/model.UserResponse'
-    type: object
-  model.UserResponse:
-    properties:
-      createdOn:
-        type: string
-      email:
-        type: string
-      fullname:
-        type: string
-      id:
-        type: string
-      meals:
-        items:
-          $ref: '#/definitions/model.MealResponse'
-        type: array
-      phone:
-        type: string
-    type: object
-  model.VolunteeredMeal:
-    properties:
-      created_on:
-        type: string
-      date:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      notes:
-        type: string
-      updates:
-        items:
-          $ref: '#/definitions/model.MealUpdates'
-        type: array
-      user:
-        $ref: '#/definitions/model.UserResponse'
-    type: object
-  model.VolunteeredMealRequest:
-    properties:
-      meal_id:
-        type: string
-      volunteered_meal:
-        $ref: '#/definitions/model.VolunteeredMeal'
     type: object
   notification.Input:
     properties:
@@ -676,10 +700,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Used to get all meals
+      description: Get all meals and their volunteer assignments
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -691,30 +714,21 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.MealResponse'
+              $ref: '#/definitions/meal.Response'
             type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Get all Meals
+      summary: Get all meals
       tags:
       - Meals
     post:
       consumes:
       - application/json
-      description: Used to post a meal
+      description: Create a meal and its requested volunteer dates
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
@@ -724,27 +738,23 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.MealRequest'
+          $ref: '#/definitions/meal.Input'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.MealResponse'
+            $ref: '#/definitions/meal.Input'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Post a Meal
+      summary: Post a meal
       tags:
       - Meals
     put:
@@ -753,18 +763,23 @@ paths:
       description: Update a meal
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
+      - description: Update a meal
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/meal.Input'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.MealRequest'
+            $ref: '#/definitions/meal.Input'
         "400":
           description: Bad Request
           schema:
@@ -784,15 +799,14 @@ paths:
     delete:
       consumes:
       - application/json
-      description: delete a meal by providing an Id
+      description: Delete a meal by ID
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: provide meal Id
+      - description: provide meal ID
         in: path
         name: mealId
         required: true
@@ -803,11 +817,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.MealResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
+            $ref: '#/definitions/meal.Response'
         "404":
           description: Not Found
           schema:
@@ -823,27 +833,26 @@ paths:
     post:
       consumes:
       - application/json
-      description: Used to post a meal participant
+      description: Update a volunteered meal and assign its volunteer
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: Post participant information
+      - description: Assign a volunteer
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.VolunteeredMealRequest'
+          $ref: '#/definitions/meal.VolunteerAssignmentInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.VolunteeredMealRequest'
+            $ref: '#/definitions/meal.VolunteerAssignmentInput'
         "400":
           description: Bad Request
           schema:
@@ -856,27 +865,32 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.HTTPError'
-      summary: Post a meal participant
+      summary: Assign a volunteer to a meal
       tags:
       - Meals
     put:
       consumes:
       - application/json
-      description: Update a volunteered meal
+      description: Update a volunteered meal's description and notes
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
+      - description: Update a volunteered meal
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/meal.UpdateVolunteeredMealInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.VolunteeredMeal'
+            $ref: '#/definitions/meal.UpdateVolunteeredMealInput'
         "400":
           description: Bad Request
           schema:

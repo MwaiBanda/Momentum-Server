@@ -6,13 +6,14 @@ https://services.momentumchurch.dev/
 https://services.momentumchurch.dev/dashboard
 
 ----
-Backend built with Fiber for Android &amp; iOS apps providing User, Meals, Semons, Payments & Transactions CRUD functionality, 
-interacts with Stripe API to facilitate payments, Prisma as ORM to connect to a Postgres instance, and provides CRUD functionality.
-With, Redis for caching. Each v1 API route is protected with token authentication for each request sent a bearer token is required.
+Backend built with Fiber for Android &amp; iOS apps providing User, Meals, Sermons, Payments & Transactions CRUD functionality.
+It uses PostgreSQL with `pgx`/`sqlx` and Goose migrations, Stripe for payments, and Redis for caching.
+Each v1 API route is protected with token authentication; each request requires a bearer token.
 
 -----
 - #### `Go` Dependencies
-  - Prisma ORM connects to Postgres DB
+  - PostgreSQL via `pgx`/`sqlx`
+  - Goose for database migrations
   - Redis for Caching
   - Fiber
 - #### `Typescript` Dependencies
@@ -27,19 +28,12 @@ and react-router handles mapping the route to its corresponding page
 ----
 ### Database (Neon Postgres)
 
-Prisma uses Postgres connection settings from `DATABASE_URL` and `DIRECT_URL`.
+The application uses PostgreSQL connection settings from `DATABASE_URL`.
 
-- Set `DATABASE_URL` to your Neon pooled connection URL.
-- Set `DIRECT_URL` to your Neon direct connection URL.
+- Set `DATABASE_URL` to your PostgreSQL connection URL.
 
-Then regenerate Prisma Go client after schema changes:
-
-`go run github.com/steebchen/prisma-client-go generate`
-
-To push schema changes to Neon:
-
-- `npm run db:push-neon`
-- or `npm run prisma:push`
+Goose migrations run automatically during application startup. Migration files live in
+`infrastructure/persistence/db/migrations`.
 
 ### Application configuration
 
@@ -53,7 +47,6 @@ Required:
 
 Optional:
 
-- `DIRECT_URL`
 - `FIREBASE_PROJECT_ID`
 - `SERMONCLOUD_URL`
 - `STRIPE_SECRET_KEY`
@@ -73,7 +66,7 @@ The repository integration test can run against an ephemeral PostgreSQL containe
 bash scripts/test-postgres.sh
 ```
 
-The script starts PostgreSQL on `127.0.0.1:55432`, runs the Goose migrations and User repository integration test, then removes the container and its temporary volume.
+The script starts PostgreSQL on `127.0.0.1:55432`, runs the Goose migrations and repository integration tests, then removes the container and its temporary volume.
 
 ----
 ### [API Documentation](https://services.momentumchurch.dev/)

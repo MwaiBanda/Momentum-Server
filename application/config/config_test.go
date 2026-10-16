@@ -47,7 +47,6 @@ func TestLoadConfigFromLoadsConfiguredValues(t *testing.T) {
 		"ENVIRONMENT":               "production",
 		"PORT":                      "9090",
 		"DATABASE_URL":              "postgres://database",
-		"DIRECT_URL":                "postgres://direct",
 		"REDIS_URL":                 "redis://cache",
 		"API_KEY":                   "secret",
 		"FIREBASE_PROJECT_ID":       "firebase-project",
@@ -64,9 +63,6 @@ func TestLoadConfigFromLoadsConfiguredValues(t *testing.T) {
 		t.Fatalf("LoadConfigFrom() error = %v", err)
 	}
 
-	if configuration.Database.DirectURL != "postgres://direct" {
-		t.Fatalf("Database.DirectURL = %q, want configured value", configuration.Database.DirectURL)
-	}
 	if configuration.Stripe.PublishableKey != "stripe-publishable" {
 		t.Fatalf("Stripe.PublishableKey = %q, want configured value", configuration.Stripe.PublishableKey)
 	}

@@ -24,8 +24,7 @@ type Config struct {
 }
 
 type DatabaseConfig struct {
-	URL       string
-	DirectURL string
+	URL string
 }
 
 type RedisConfig struct {
@@ -74,8 +73,7 @@ func LoadConfigFrom(lookup Lookup) (*Config, error) {
 		Environment: lookupValue(lookup, "ENVIRONMENT"),
 		Port:        lookupValue(lookup, "PORT"),
 		Database: DatabaseConfig{
-			URL:       lookupValue(lookup, "DATABASE_URL"),
-			DirectURL: lookupValue(lookup, "DIRECT_URL"),
+			URL: lookupValue(lookup, "DATABASE_URL"),
 		},
 		Redis: RedisConfig{
 			URL: lookupValue(lookup, "REDIS_URL"),

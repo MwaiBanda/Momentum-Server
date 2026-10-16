@@ -57,7 +57,7 @@
         },
         "/api/v1/meals": {
             "get": {
-                "description": "Used to get all meals",
+                "description": "Get all meals and their volunteer assignments",
                 "consumes": [
                     "application/json"
                 ],
@@ -67,11 +67,10 @@
                 "tags": [
                     "Meals"
                 ],
-                "summary": "Get all Meals",
+                "summary": "Get all meals",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -84,20 +83,8 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.MealResponse"
+                                "$ref": "#/definitions/meal.Response"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
                         }
                     },
                     "500": {
@@ -123,18 +110,26 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "Update a meal",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/meal.Input"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealRequest"
+                            "$ref": "#/definitions/meal.Input"
                         }
                     },
                     "400": {
@@ -158,7 +153,7 @@
                 }
             },
             "post": {
-                "description": "Used to post a meal",
+                "description": "Create a meal and its requested volunteer dates",
                 "consumes": [
                     "application/json"
                 ],
@@ -168,11 +163,10 @@
                 "tags": [
                     "Meals"
                 ],
-                "summary": "Post a Meal",
+                "summary": "Post a meal",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -184,7 +178,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.MealRequest"
+                            "$ref": "#/definitions/meal.Input"
                         }
                     }
                 ],
@@ -192,17 +186,11 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealResponse"
+                            "$ref": "#/definitions/meal.Input"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -218,7 +206,7 @@
         },
         "/api/v1/meals/meal": {
             "put": {
-                "description": "Update a volunteered meal",
+                "description": "Update a volunteered meal's description and notes",
                 "consumes": [
                     "application/json"
                 ],
@@ -232,18 +220,26 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "Update a volunteered meal",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/meal.UpdateVolunteeredMealInput"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteeredMeal"
+                            "$ref": "#/definitions/meal.UpdateVolunteeredMealInput"
                         }
                     },
                     "400": {
@@ -267,7 +263,7 @@
                 }
             },
             "post": {
-                "description": "Used to post a meal participant",
+                "description": "Update a volunteered meal and assign its volunteer",
                 "consumes": [
                     "application/json"
                 ],
@@ -277,23 +273,22 @@
                 "tags": [
                     "Meals"
                 ],
-                "summary": "Post a meal participant",
+                "summary": "Assign a volunteer to a meal",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "description": "Post participant information",
+                        "description": "Assign a volunteer",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteeredMealRequest"
+                            "$ref": "#/definitions/meal.VolunteerAssignmentInput"
                         }
                     }
                 ],
@@ -301,7 +296,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.VolunteeredMealRequest"
+                            "$ref": "#/definitions/meal.VolunteerAssignmentInput"
                         }
                     },
                     "400": {
@@ -327,7 +322,7 @@
         },
         "/api/v1/meals/{mealId}": {
             "delete": {
-                "description": "delete a meal by providing an Id",
+                "description": "Delete a meal by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -341,7 +336,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "Bearer XXX-xxx-XXX-xxx-XX",
                         "description": "Provide a bearer token",
                         "name": "Authorization",
                         "in": "header",
@@ -349,7 +343,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "provide meal Id",
+                        "description": "provide meal ID",
                         "name": "mealId",
                         "in": "path",
                         "required": true
@@ -359,13 +353,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.MealResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
+                            "$ref": "#/definitions/meal.Response"
                         }
                     },
                     "404": {
@@ -1643,6 +1631,269 @@
                 }
             }
         },
+        "meal.Input": {
+            "type": "object",
+            "properties": {
+                "allergies": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "favourites": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "instructions": {
+                    "type": "string"
+                },
+                "least_favourites": {
+                    "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/meal.MealVolunteeredRequest"
+                    }
+                },
+                "num_of_adults": {
+                    "type": "integer"
+                },
+                "number_of_kids": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "preferred_time": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "meal.MealVolunteeredRequest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "meal_id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "meal.ParticipantResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/meal.UserResponse"
+                }
+            }
+        },
+        "meal.Response": {
+            "type": "object",
+            "properties": {
+                "allergies": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "favourites": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "instructions": {
+                    "type": "string"
+                },
+                "least_favourites": {
+                    "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/meal.VolunteeredMealResponse"
+                    }
+                },
+                "num_of_adults": {
+                    "type": "integer"
+                },
+                "number_of_kids": {
+                    "type": "integer"
+                },
+                "participants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/meal.ParticipantResponse"
+                    }
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "preferred_time": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/meal.UserResponse"
+                }
+            }
+        },
+        "meal.UpdateResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "meal.UpdateVolunteeredMealInput": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                }
+            }
+        },
+        "meal.UserResponse": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "meal.VolunteerAssignmentInput": {
+            "type": "object",
+            "properties": {
+                "meal_id": {
+                    "type": "string"
+                },
+                "volunteered_meal": {
+                    "$ref": "#/definitions/meal.VolunteeredMealInput"
+                }
+            }
+        },
+        "meal.VolunteeredMealInput": {
+            "type": "object",
+            "properties": {
+                "created_on": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "updates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/meal.UpdateResponse"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/meal.UserResponse"
+                }
+            }
+        },
+        "meal.VolunteeredMealResponse": {
+            "type": "object",
+            "properties": {
+                "created_on": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "updates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/meal.UpdateResponse"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/meal.UserResponse"
+                }
+            }
+        },
         "message.CreateNoteInput": {
             "type": "object",
             "properties": {
@@ -1797,232 +2048,6 @@
                 "message": {
                     "type": "string",
                     "example": "status bad request"
-                }
-            }
-        },
-        "model.MealRequest": {
-            "type": "object",
-            "properties": {
-                "allergies": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "favourites": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "instructions": {
-                    "type": "string"
-                },
-                "least_favourites": {
-                    "type": "string"
-                },
-                "meals": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.MealVolunteeredRequest"
-                    }
-                },
-                "num_of_adults": {
-                    "type": "integer"
-                },
-                "number_of_kids": {
-                    "type": "integer"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "preferred_time": {
-                    "type": "string"
-                },
-                "reason": {
-                    "type": "string"
-                },
-                "recipient": {
-                    "type": "string"
-                },
-                "street": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.MealResponse": {
-            "type": "object",
-            "properties": {
-                "allergies": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "favourites": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "instructions": {
-                    "type": "string"
-                },
-                "least_favourites": {
-                    "type": "string"
-                },
-                "meals": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.VolunteeredMeal"
-                    }
-                },
-                "num_of_adults": {
-                    "type": "integer"
-                },
-                "number_of_kids": {
-                    "type": "integer"
-                },
-                "participants": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Participant"
-                    }
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "preferred_time": {
-                    "type": "string"
-                },
-                "reason": {
-                    "type": "string"
-                },
-                "recipient": {
-                    "type": "string"
-                },
-                "street": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.UserResponse"
-                }
-            }
-        },
-        "model.MealUpdates": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.MealVolunteeredRequest": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "meal_id": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Participant": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/model.UserResponse"
-                }
-            }
-        },
-        "model.UserResponse": {
-            "type": "object",
-            "properties": {
-                "createdOn": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "fullname": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "meals": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.MealResponse"
-                    }
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.VolunteeredMeal": {
-            "type": "object",
-            "properties": {
-                "created_on": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "updates": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.MealUpdates"
-                    }
-                },
-                "user": {
-                    "$ref": "#/definitions/model.UserResponse"
-                }
-            }
-        },
-        "model.VolunteeredMealRequest": {
-            "type": "object",
-            "properties": {
-                "meal_id": {
-                    "type": "string"
-                },
-                "volunteered_meal": {
-                    "$ref": "#/definitions/model.VolunteeredMeal"
                 }
             }
         },
