@@ -29,8 +29,9 @@ func (controller *Controller) PostNotification(context fiber.Ctx) error {
 		log.Panic(err.Error())
 	}
 
-	if controller.Firebase == nil {
-		controller.InitFirebaseApp()
+	if controller.Messaging == nil {
+		log.Printf("[PostNotification] Firebase messaging is not initialized")
+		return fiber.ErrInternalServerError
 	}
 
 	message := &messaging.Message{

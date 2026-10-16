@@ -11,14 +11,20 @@ import (
 	redisCache "Momentum/infrastructure/persistence/redis"
 	userRepository "Momentum/infrastructure/persistence/repository/user"
 	"Momentum/middleware"
+	prisma "Momentum/prisma/db"
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
 
+	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/messaging"
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
+	"google.golang.org/api/option"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -34,6 +40,61 @@ import (
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 // @host			services.momentumchurch.dev
 // @BasePath		/
+
+func openPrismaClient() (*prisma.PrismaClient, error) {
+	prismaClient := prisma.NewClient()
+
+	var err error
+	for attempt := 1; attempt <= 5; attempt++ {
+		err = prismaClient.Prisma.Connect()
+		if err == nil {
+			log.Println("Connected to Prisma")
+			return prismaClient, nil
+		}
+		log.Printf("Prisma connect attempt %d/5 failed: %v", attempt, err)
+		time.Sleep(time.Duration(attempt) * time.Second)
+	}
+
+	_ = prismaClient.Prisma.Disconnect()
+	return nil, fmt.Errorf("connect to Prisma after retries: %w", err)
+}
+
+func openRedisClient() (*redis.Client, error) {
+	options, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	if err != nil {
+		return nil, fmt.Errorf("parse Redis URL: %w", err)
+	}
+
+	client := redis.NewClient(options)
+	log.Println("Connected to Redis")
+	return client, nil
+}
+
+func initializeFirebase(
+	ctx context.Context,
+	redisClient *redis.Client,
+) (*firebase.App, *messaging.Client, error) {
+	firebaseToken, err := redisClient.Get(ctx, constants.FirebaseServiceTokenKey).Result()
+	if err != nil {
+		return nil, nil, fmt.Errorf("read Firebase service token from Redis: %w", err)
+	}
+
+	credentials := option.WithCredentialsJSON([]byte(firebaseToken))
+	config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
+	firebaseApp, err := firebase.NewApp(ctx, config, credentials)
+	if err != nil {
+		return nil, nil, fmt.Errorf("initialize Firebase: %w", err)
+	}
+
+	messagingClient, err := firebaseApp.Messaging(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("initialize Firebase messaging: %w", err)
+	}
+
+	log.Println("Connected to Firebase")
+	return firebaseApp, messagingClient, nil
+}
+
 func main() {
 	log.Println("Starting Momentum API")
 	if err := godotenv.Load(); err != nil && os.Getenv("ENVIRONMENT") == constants.Development {
@@ -57,11 +118,42 @@ func main() {
 		log.Fatalf("migrate SQL database: %v", err)
 	}
 
-	controller := handlers.GetControllerInstance()
+	prismaClient, err := openPrismaClient()
+	if err != nil {
+		log.Fatalf("open Prisma client: %v", err)
+	}
+	defer func() {
+		if err := prismaClient.Prisma.Disconnect(); err != nil {
+			log.Printf("close Prisma client: %v", err)
+		}
+	}()
+
+	redisClient, err := openRedisClient()
+	if err != nil {
+		log.Fatalf("open Redis client: %v", err)
+	}
+	defer func() {
+		if err := redisClient.Close(); err != nil {
+			log.Printf("close Redis client: %v", err)
+		}
+	}()
+
+	firebaseApp, messagingClient, err := initializeFirebase(startupContext, redisClient)
+	if err != nil {
+		log.Printf("initialize Firebase: %v", err)
+	}
+
 	users := userService.GetInstance(
 		userRepository.GetInstance(sqlDatabase),
-		redisCache.NewCache(controller.Redis),
+		redisCache.NewCache(redisClient),
 	)
+	controller := handlers.NewController(handlers.Dependencies{
+		PrismaClient: prismaClient,
+		Context:      context.Background(),
+		Redis:        redisClient,
+		Firebase:     firebaseApp,
+		Messaging:    messagingClient,
+	})
 	httpHandlers := httpHandler.GetInstance(userHTTP.GetInstance(users))
 	app := fiber.New()
 	port := func() string {
@@ -126,8 +218,6 @@ func main() {
 		DeepLinking:  false,
 		DocExpansion: "none",
 	}))
-
-	defer controller.DisconectPrismaClient()
 
 	log.Fatal(app.Listen(":" + port))
 }

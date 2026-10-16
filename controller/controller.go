@@ -20,10 +20,8 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
-	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
-	"google.golang.org/api/option"
 )
 
 type Controller struct {
@@ -36,118 +34,41 @@ type Controller struct {
 	CanSendNotificationChannel chan bool
 }
 
-func GetControllerInstance() *Controller {
-	controller := &Controller{
-		HttpClient:                 &http.Client{Timeout: time.Second * 10},
-		CanSendNotificationChannel: make(chan bool),
-	}
-	err := godotenv.Load()
-	if os.Getenv("ENVIRONMENT") == constants.Development {
-		if err != nil {
-			log.Fatalln("Error loading .env file")
-		}
-	}
-
-	controller.InitDependencies()
-	return controller
+type Dependencies struct {
+	HttpClient                 *http.Client
+	PrismaClient               *db.PrismaClient
+	Context                    context.Context
+	Redis                      *redis.Client
+	Firebase                   *firebase.App
+	Messaging                  *messaging.Client
+	CanSendNotificationChannel chan bool
 }
 
-func (controller *Controller) InitDependencies() {
-	waitGroup := new(sync.WaitGroup)
-	waitGroup.Add(1)
-	go controller.SetContext(context.Background(), waitGroup)
-	waitGroup.Add(1)
-	go controller.InitRedisClient(waitGroup)
-	waitGroup.Wait()
-	waitGroup.Add(1)
-	go controller.InitPrismaClient(waitGroup)
-	waitGroup.Add(1)
-	go controller.InitFirebaseApp(waitGroup)
-	waitGroup.Wait()
-}
-
-func (controller *Controller) SetPrismaClient(client *db.PrismaClient) {
-	controller.PrismaClient = client
-}
-
-func (controller *Controller) SetRedisClient(client *redis.Client) {
-	controller.Redis = client
-}
-
-func (controller *Controller) InitPrismaClient(wg ...*sync.WaitGroup) {
-	if len(wg) > 0 {
-		defer wg[0].Done()
+func NewController(dependencies Dependencies) *Controller {
+	httpClient := dependencies.HttpClient
+	if httpClient == nil {
+		httpClient = &http.Client{Timeout: time.Second * 10}
 	}
 
-	prismaClient := db.NewClient()
-
-	var err error
-	for attempt := 1; attempt <= 5; attempt++ {
-		err = prismaClient.Prisma.Connect()
-		if err == nil {
-			break
-		}
-		log.Printf("Prisma connect attempt %d/5 failed: %v", attempt, err)
-		time.Sleep(time.Duration(attempt) * time.Second)
+	controllerContext := dependencies.Context
+	if controllerContext == nil {
+		controllerContext = context.Background()
 	}
 
-	if err != nil {
-		log.Fatalf("Could not connect to Prisma after retries: %v", err)
+	notificationChannel := dependencies.CanSendNotificationChannel
+	if notificationChannel == nil {
+		notificationChannel = make(chan bool)
 	}
 
-	controller.SetPrismaClient(prismaClient)
-	log.Println("Connected to Prisma")
-}
-
-func (controller *Controller) DisconectPrismaClient() {
-	if err := controller.PrismaClient.Prisma.Disconnect(); err != nil {
-		panic(err)
+	return &Controller{
+		HttpClient:                 httpClient,
+		PrismaClient:               dependencies.PrismaClient,
+		Context:                    controllerContext,
+		Redis:                      dependencies.Redis,
+		Firebase:                   dependencies.Firebase,
+		Messaging:                  dependencies.Messaging,
+		CanSendNotificationChannel: notificationChannel,
 	}
-}
-
-func (controller *Controller) InitRedisClient(wg ...*sync.WaitGroup) {
-	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
-	if err != nil {
-		log.Fatalln(err)
-	}
-	redisClient := redis.NewClient(opt)
-	if len(wg) > 0 {
-		defer wg[0].Done()
-	}
-	controller.SetRedisClient(redisClient)
-	log.Println("Connected to Redis")
-}
-
-func (controller *Controller) InitFirebaseApp(wg ...*sync.WaitGroup) {
-	firebaseToken, err := controller.Redis.Get(controller.Context, constants.FirebaseServiceTokenKey).Result()
-	if err != nil {
-		fmt.Println(err)
-	}
-	creds := option.WithCredentialsJSON([]byte(firebaseToken))
-	config := &firebase.Config{ProjectID: os.Getenv("FIREBASE_PROJECT_ID")}
-	firebaseApp, err := firebase.NewApp(controller.Context, config, creds)
-	if err != nil {
-		fmt.Println("[Firebase]", err)
-	}
-	if len(wg) > 0 {
-		defer wg[0].Done()
-	}
-	controller.setFirebaseApp(firebaseApp)
-}
-
-func (controller *Controller) setFirebaseApp(app *firebase.App) {
-	controller.Firebase = app
-	messagingClient, err := app.Messaging(controller.Context)
-	if err != nil {
-		fmt.Println(err)
-	}
-	controller.Messaging = messagingClient
-	log.Println("Connected to Firebase")
-}
-
-func (controller *Controller) SetContext(context context.Context, wg *sync.WaitGroup) {
-	controller.Context = context
-	wg.Done()
 }
 
 type StripeResponse struct {
