@@ -1513,12 +1513,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Post a user",
+                        "description": "Update a user",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRequest"
+                            "$ref": "#/definitions/user.UpdateInput"
                         }
                     }
                 ],
@@ -1526,17 +1526,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.UserRequest"
+                            "$ref": "#/definitions/user.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/model.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.HTTPError"
                         }
@@ -2324,23 +2318,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "fullname": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
         "model.UserResponse": {
             "type": "object",
             "properties": {
@@ -2519,6 +2496,23 @@ const docTemplate = `{
                 "createdOn": {
                     "type": "string"
                 },
+                "email": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.UpdateInput": {
+            "type": "object",
+            "properties": {
                 "email": {
                     "type": "string"
                 },

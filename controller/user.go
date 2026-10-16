@@ -1,82 +1,13 @@
 package controller
 
 import (
-	"Momentum/constants"
 	"Momentum/model"
 	"Momentum/prisma/db"
 	"encoding/json"
 	"fmt"
-	"log"
-	"time"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/redis/go-redis/v9"
 )
-
-// UpdateUser godoc
-//
-//	@Summary		Update a user
-//	@Description	Used to update a user
-//	@tags			Users
-//	@Param			Authorization	header	string				true	"Provide a bearer token"	example(******
-//	@Param			data			body	model.UserRequest	true	"Post a user"
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	model.UserRequest
-//	@Failure		400	{object}	model.HTTPError
-//	@Failure		404	{object}	model.HTTPError
-//	@Failure		500	{object}	model.HTTPError
-//	@Router			/api/v1/users [put]
-func (controller *Controller) UpdateUser(context fiber.Ctx) error {
-	userRequest := new(model.UserRequest)
-	userResponse := new(model.UserResponse)
-
-	if err := context.Bind().Body(userRequest); err != nil {
-		log.Panic(err.Error())
-	}
-	onUpdateUser := func() {
-		res, err := controller.PrismaClient.User.UpsertOne(
-			db.User.ID.Equals(userRequest.Id),
-		).Update(
-			db.User.Email.Set(userRequest.Email),
-			db.User.Fullname.Set(userRequest.Fullname),
-			db.User.Phone.Set(userRequest.Phone),
-		).Create(
-			db.User.ID.Set(userRequest.Id),
-			db.User.Email.Set(userRequest.Email),
-			db.User.Fullname.Set(userRequest.Fullname),
-			db.User.Phone.Set(userRequest.Phone),
-		).Exec(controller.Context)
-		if err != nil {
-			log.Panic(err.Error())
-		}
-		result, _ := json.MarshalIndent(res, "", "  ")
-		controller.Redis.Set(controller.Context, constants.UserKeyPrefix+userRequest.Id, string(result), time.Hour*24)
-		if err := json.Unmarshal(result, &userResponse); err != nil {
-			fmt.Println(err)
-		}
-	}
-
-	cachedUser, err := controller.Redis.Get(controller.Context, constants.UserKeyPrefix+userRequest.Id).Result()
-	if err := json.Unmarshal([]byte(cachedUser), userResponse); err != nil {
-		log.Println("[GetAllSermons]", err.Error())
-	}
-	if err == redis.Nil {
-		onUpdateUser()
-	} else if err != nil {
-		log.Panic("[UpdateUser]", err.Error())
-	} else if func() bool {
-		return userResponse.Phone != userRequest.Phone ||
-			userResponse.Email != userRequest.Email ||
-			userResponse.Fullname != userRequest.Fullname
-	}() {
-		log.Println("[Cache[Miss]]")
-		onUpdateUser()
-	}
-
-	return context.JSON(userResponse)
-
-}
 
 // DeleteUserById godoc
 //

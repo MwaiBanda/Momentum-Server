@@ -17,6 +17,8 @@ type fakeRepository struct {
 	calls        int
 	createCalls  int
 	createParams domainuser.CreateParams
+	updateCalls  int
+	updateParams domainuser.UpdateParams
 }
 
 func (repository *fakeRepository) GetByID(context.Context, string) (domainuser.User, error) {
@@ -27,6 +29,12 @@ func (repository *fakeRepository) GetByID(context.Context, string) (domainuser.U
 func (repository *fakeRepository) Create(_ context.Context, params domainuser.CreateParams) (domainuser.User, error) {
 	repository.createCalls++
 	repository.createParams = params
+	return repository.user, repository.err
+}
+
+func (repository *fakeRepository) Update(_ context.Context, params domainuser.UpdateParams) (domainuser.User, error) {
+	repository.updateCalls++
+	repository.updateParams = params
 	return repository.user, repository.err
 }
 

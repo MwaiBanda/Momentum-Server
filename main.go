@@ -90,7 +90,7 @@ func main() {
 
 	v1.Post("/users", httpHandlers.User.Create)
 	v1.Get("/users/:userId", httpHandlers.User.GetByID)
-	v1.Put("/users", controller.UpdateUser)
+	v1.Put("/users", httpHandlers.User.Update)
 	v1.Delete("/users/:userId", controller.DeleteUserById)
 
 	v1.Post("/payments", controller.PostPayment)

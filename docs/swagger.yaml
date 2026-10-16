@@ -400,17 +400,6 @@ definitions:
       user:
         $ref: '#/definitions/model.UserResponse'
     type: object
-  model.UserRequest:
-    properties:
-      email:
-        type: string
-      fullname:
-        type: string
-      id:
-        type: string
-      phone:
-        type: string
-    type: object
   model.UserResponse:
     properties:
       createdOn:
@@ -527,6 +516,17 @@ definitions:
     properties:
       createdOn:
         type: string
+      email:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
+    type: object
+  user.UpdateInput:
+    properties:
       email:
         type: string
       fullname:
@@ -1578,25 +1578,21 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Post a user
+      - description: Update a user
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.UserRequest'
+          $ref: '#/definitions/user.UpdateInput'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.UserRequest'
+            $ref: '#/definitions/user.Response'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":

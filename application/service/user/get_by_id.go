@@ -5,15 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"log"
-	"time"
 
 	"Momentum/application/cache"
 	domainuser "Momentum/domain/user"
-)
-
-const (
-	userCacheKeyPrefix = "user-"
-	userCacheTTL       = 24 * time.Hour
 )
 
 func (service *Service) GetByID(ctx context.Context, id string) (Response, error) {
@@ -21,11 +15,16 @@ func (service *Service) GetByID(ctx context.Context, id string) (Response, error
 		cachedUser, found, err := cache.Get[domainuser.User](ctx, service.cacheStore, userCacheKeyPrefix+id)
 		if err != nil {
 			log.Printf("[user-cache] get %q: %v", id, err)
+			return service.loadByID(ctx, id)
 		} else if found {
 			return toResponse(*cachedUser), nil
 		}
 	}
 
+	return service.loadByID(ctx, id)
+}
+
+func (service *Service) loadByID(ctx context.Context, id string) (Response, error) {
 	userEntity, err := service.repository.GetByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -34,11 +33,7 @@ func (service *Service) GetByID(ctx context.Context, id string) (Response, error
 		return Response{}, err
 	}
 
-	if service.cacheStore != nil {
-		if err := cache.Set(ctx, service.cacheStore, userCacheKeyPrefix+id, userEntity, userCacheTTL); err != nil {
-			log.Printf("[user-cache] set %q: %v", id, err)
-		}
-	}
+	service.cacheUser(ctx, userEntity)
 
 	return toResponse(userEntity), nil
 }

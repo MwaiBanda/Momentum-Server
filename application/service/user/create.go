@@ -2,9 +2,7 @@ package user
 
 import (
 	"context"
-	"log"
 
-	"Momentum/application/cache"
 	domainuser "Momentum/domain/user"
 )
 
@@ -26,11 +24,7 @@ func (service *Service) Create(ctx context.Context, input CreateInput) (Response
 		return Response{}, err
 	}
 
-	if service.cacheStore != nil {
-		if err := cache.Set(ctx, service.cacheStore, userCacheKeyPrefix+userEntity.ID, userEntity, userCacheTTL); err != nil {
-			log.Printf("[user-cache] set %q: %v", userEntity.ID, err)
-		}
-	}
+	service.cacheUser(ctx, userEntity)
 
 	return toResponse(userEntity), nil
 }
