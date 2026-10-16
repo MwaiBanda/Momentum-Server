@@ -3,6 +3,7 @@ package http
 import (
 	messageHandler "Momentum/infrastructure/http/message"
 	notificationHandler "Momentum/infrastructure/http/notification"
+	sermonHandler "Momentum/infrastructure/http/sermon"
 	userHandler "Momentum/infrastructure/http/user"
 	volunteerServiceHandler "Momentum/infrastructure/http/volunteer_service"
 )
@@ -12,6 +13,7 @@ type Handler struct {
 	VolunteerService *volunteerServiceHandler.Handler
 	Message          *messageHandler.Handler
 	Notification     *notificationHandler.Handler
+	Sermon           *sermonHandler.Handler
 }
 
 func GetInstance(
@@ -19,11 +21,13 @@ func GetInstance(
 	volunteerService *volunteerServiceHandler.Handler,
 	message *messageHandler.Handler,
 	notification *notificationHandler.Handler,
+	sermon *sermonHandler.Handler,
 ) *Handler {
 	return &Handler{
 		User:             user,
 		VolunteerService: volunteerService,
 		Message:          message,
 		Notification:     notification,
+		Sermon:           sermon,
 	}
 }

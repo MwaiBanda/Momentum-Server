@@ -17,6 +17,7 @@ type Config struct {
 	Redis          RedisConfig
 	Security       SecurityConfig
 	Firebase       FirebaseConfig
+	SermonCloud    SermonCloudConfig
 	Stripe         StripeConfig
 	PlanningCenter PlanningCenterConfig
 	Email          EmailConfig
@@ -37,6 +38,10 @@ type SecurityConfig struct {
 
 type FirebaseConfig struct {
 	ProjectID string
+}
+
+type SermonCloudConfig struct {
+	URL string
 }
 
 type StripeConfig struct {
@@ -81,6 +86,9 @@ func LoadConfigFrom(lookup Lookup) (*Config, error) {
 		Firebase: FirebaseConfig{
 			ProjectID: lookupValue(lookup, "FIREBASE_PROJECT_ID"),
 		},
+		SermonCloud: SermonCloudConfig{
+			URL: lookupValue(lookup, "SERMONCLOUD_URL"),
+		},
 		Stripe: StripeConfig{
 			SecretKey:      lookupValue(lookup, "STRIPE_SECRET_KEY"),
 			PublishableKey: lookupValue(lookup, "STRIPE_PUBLISHABLE_KEY"),
@@ -100,6 +108,9 @@ func LoadConfigFrom(lookup Lookup) (*Config, error) {
 	}
 	if configuration.Port == "" {
 		configuration.Port = "8080"
+	}
+	if configuration.SermonCloud.URL == "" {
+		configuration.SermonCloud.URL = "https://api.sermoncloud.com/momentum-church-1/sermons"
 	}
 
 	var missing []string

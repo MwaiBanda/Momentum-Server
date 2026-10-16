@@ -1,8 +1,8 @@
-package model
+package sermon
 
 import "time"
 
-type SermonResponse struct {
+type Response struct {
 	CurrentPage  int      `json:"current_page"`
 	Data         []Sermon `json:"data"`
 	FirstPageURL string   `json:"first_page_url"`

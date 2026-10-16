@@ -24,6 +24,9 @@ func TestLoadConfigFromAppliesDefaultsAndOptionalValues(t *testing.T) {
 	if configuration.Firebase.ProjectID != "" {
 		t.Fatalf("Firebase.ProjectID = %q, want empty", configuration.Firebase.ProjectID)
 	}
+	if configuration.SermonCloud.URL == "" {
+		t.Fatal("SermonCloud.URL = empty, want default URL")
+	}
 }
 
 func TestLoadConfigFromRequiresCoreValues(t *testing.T) {
@@ -48,6 +51,7 @@ func TestLoadConfigFromLoadsConfiguredValues(t *testing.T) {
 		"REDIS_URL":                 "redis://cache",
 		"API_KEY":                   "secret",
 		"FIREBASE_PROJECT_ID":       "firebase-project",
+		"SERMONCLOUD_URL":           "https://sermons.example.com/sermons",
 		"STRIPE_SECRET_KEY":         "stripe-secret",
 		"STRIPE_PUBLISHABLE_KEY":    "stripe-publishable",
 		"STRIPE_VERSION":            "2024-01-01",
@@ -68,6 +72,9 @@ func TestLoadConfigFromLoadsConfiguredValues(t *testing.T) {
 	}
 	if configuration.PlanningCenter.TokenURL != "https://planning.example.com/token" {
 		t.Fatalf("PlanningCenter.TokenURL = %q, want configured value", configuration.PlanningCenter.TokenURL)
+	}
+	if configuration.SermonCloud.URL != "https://sermons.example.com/sermons" {
+		t.Fatalf("SermonCloud.URL = %q, want configured value", configuration.SermonCloud.URL)
 	}
 	if configuration.Email.AppPassword != "email-password" {
 		t.Fatalf("Email.AppPassword = %q, want configured value", configuration.Email.AppPassword)

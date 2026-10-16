@@ -4,6 +4,7 @@ import (
 	appconfig "Momentum/application/config"
 	messageService "Momentum/application/service/message"
 	notificationService "Momentum/application/service/notification"
+	sermonService "Momentum/application/service/sermon"
 	userService "Momentum/application/service/user"
 	volunteerService "Momentum/application/service/volunteer_service"
 	handlers "Momentum/controller"
@@ -11,8 +12,10 @@ import (
 	httpHandler "Momentum/infrastructure/http"
 	messageHTTP "Momentum/infrastructure/http/message"
 	notificationHTTP "Momentum/infrastructure/http/notification"
+	sermonHTTP "Momentum/infrastructure/http/sermon"
 	userHTTP "Momentum/infrastructure/http/user"
 	volunteerServiceHTTP "Momentum/infrastructure/http/volunteer_service"
+	sermoncloud "Momentum/infrastructure/integration/sermoncloud"
 	firebaseClient "Momentum/infrastructure/messaging/firebase"
 	database "Momentum/infrastructure/persistence/db"
 	prismaClientFactory "Momentum/infrastructure/persistence/prisma"
@@ -113,6 +116,10 @@ func main() {
 		cacheStore,
 	)
 	notifications := notificationService.GetInstance(firebaseClient.NewSender(messagingClient))
+	sermons := sermonService.GetInstance(
+		sermoncloud.NewClient(nil, configuration.SermonCloud.URL),
+		cacheStore,
+	)
 	controller := handlers.NewController(handlers.Dependencies{
 		Configuration: *configuration,
 		PrismaClient:  prismaClient,
@@ -124,6 +131,7 @@ func main() {
 		volunteerServiceHTTP.GetInstance(volunteerServices),
 		messageHTTP.GetInstance(messages),
 		notificationHTTP.GetInstance(notifications),
+		sermonHTTP.GetInstance(sermons),
 	)
 	app := fiber.New()
 	middleware.ConfigureAppMiddleWare(app)
@@ -154,7 +162,7 @@ func main() {
 	v1.Delete("/transactions/:transactionId", controller.DeleteTransactionsById)
 	v1.Post("/transactions", controller.PostTransaction)
 
-	v1.Get("/sermons", controller.GetAllSermons)
+	v1.Get("/sermons", httpHandlers.Sermon.List)
 
 	v1.Get("/services", httpHandlers.VolunteerService.ListServices)
 	v1.Post("/services", httpHandlers.VolunteerService.Create)

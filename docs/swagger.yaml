@@ -263,99 +263,6 @@ definitions:
       publishableKey:
         type: string
     type: object
-  model.Sermon:
-    properties:
-      categories: {}
-      date:
-        properties:
-          carbon:
-            type: string
-          date:
-            type: string
-        type: object
-      detail_url:
-        type: string
-      id:
-        type: string
-      interactions:
-        properties:
-          likes:
-            type: integer
-          shares:
-            type: integer
-        type: object
-      interactive_note: {}
-      keywords: {}
-      media:
-        properties:
-          audio: {}
-          embed: {}
-          image: {}
-          notes: {}
-          video:
-            type: string
-          video_thumbnail:
-            type: string
-        type: object
-      passages:
-        items: {}
-        type: array
-      preacher:
-        type: string
-      series:
-        properties:
-          description: {}
-          image: {}
-          slug:
-            type: string
-          title:
-            type: string
-        type: object
-      slug:
-        type: string
-      summary: {}
-      text: {}
-      title:
-        type: string
-    type: object
-  model.SermonResponse:
-    properties:
-      current_page:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/model.Sermon'
-        type: array
-      first_page_url:
-        type: string
-      from:
-        type: integer
-      last_page:
-        type: integer
-      last_page_url:
-        type: string
-      links:
-        items:
-          properties:
-            active:
-              type: boolean
-            label:
-              type: string
-            url: {}
-          type: object
-        type: array
-      next_page_url:
-        type: string
-      path:
-        type: string
-      per_page:
-        type: integer
-      prev_page_url: {}
-      to:
-        type: integer
-      total:
-        type: string
-    type: object
   model.TransactionRequest:
     properties:
       amount:
@@ -440,6 +347,99 @@ definitions:
       title:
         type: string
       topic:
+        type: string
+    type: object
+  sermon.Response:
+    properties:
+      current_page:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/sermon.Sermon'
+        type: array
+      first_page_url:
+        type: string
+      from:
+        type: integer
+      last_page:
+        type: integer
+      last_page_url:
+        type: string
+      links:
+        items:
+          properties:
+            active:
+              type: boolean
+            label:
+              type: string
+            url: {}
+          type: object
+        type: array
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page:
+        type: integer
+      prev_page_url: {}
+      to:
+        type: integer
+      total:
+        type: string
+    type: object
+  sermon.Sermon:
+    properties:
+      categories: {}
+      date:
+        properties:
+          carbon:
+            type: string
+          date:
+            type: string
+        type: object
+      detail_url:
+        type: string
+      id:
+        type: string
+      interactions:
+        properties:
+          likes:
+            type: integer
+          shares:
+            type: integer
+        type: object
+      interactive_note: {}
+      keywords: {}
+      media:
+        properties:
+          audio: {}
+          embed: {}
+          image: {}
+          notes: {}
+          video:
+            type: string
+          video_thumbnail:
+            type: string
+        type: object
+      passages:
+        items: {}
+        type: array
+      preacher:
+        type: string
+      series:
+        properties:
+          description: {}
+          image: {}
+          slug:
+            type: string
+          title:
+            type: string
+        type: object
+      slug:
+        type: string
+      summary: {}
+      text: {}
+      title:
         type: string
     type: object
   user.CreateInput:
@@ -1250,33 +1250,27 @@ paths:
     get:
       consumes:
       - application/json
-      description: get a list of sermons
+      description: Get a paginated list of sermons
       parameters:
       - description: Provide a bearer token
-        example: Bearer XXX-xxx-XXX-xxx-XX
         in: header
         name: Authorization
         required: true
         type: string
-      - description: Provide a page number
+      - default: 1
+        description: Provide a page number
         in: query
         name: page
-        type: number
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.SermonResponse'
-            type: array
+            $ref: '#/definitions/sermon.Response'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/model.HTTPError'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/model.HTTPError'
         "500":
