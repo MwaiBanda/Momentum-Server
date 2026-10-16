@@ -1,13 +1,14 @@
 import { TextArea } from "@/interfaces/presentation/components/textarea";
 import { TextField } from "@/interfaces/presentation/components/textfield";
-import { Message, Passage } from "@/domain/message/entity";
+import type { Message, Passage } from "@/domain/message/entity";
 import { useApplication } from "@/interfaces/presentation/application-context";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader, ToggleSwitch } from "flowbite-react";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { Alert, Button, Modal, ModalBody, ModalFooter, ModalHeader, ToggleSwitch } from "flowbite-react";
+import { Fragment, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function EditMessageModal({ message, openModal, setOpenModal }: { message: Message | null, openModal: boolean, setOpenModal: (open: boolean) => void }) {
     const application = useApplication();
+    const queryClient = useQueryClient();
     const [title, setTitle] = useState(() => message?.title ?? "");
     const [series, setSeries] = useState(() => message?.series ?? "");
     const [preacher, setPreacher] = useState(() => message?.preacher ?? "");
@@ -16,13 +17,65 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
     const [published, setPublished] = useState(() => message?.published ?? false);
     const [passages, setPassages] = useState<Passage[]>(() => [...message?.passages ?? []]);
     const [passagesToUpdate, setPassagesToUpdate] = useState<Passage[]>([]);
+    const [submitMessage, setSubmitMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     const mutation = useMutation({
         mutationFn: (data: Message) => application.message.update(data),
-        onSuccess: () => {
-            alert("Message posted successfully")
+        onSuccess: async () => {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["message-admin"] }),
+                queryClient.invalidateQueries({ queryKey: ["message-unpublished"] }),
+            ]);
+            setSubmitMessage({ type: "success", text: "Message updated successfully." });
+        },
+        onError: () => {
+            setSubmitMessage({ type: "error", text: "Message could not be updated. Please try again." });
+        },
+    });
+
+    const resetForm = () => {
+        setTitle(message?.title ?? "");
+        setSeries(message?.series ?? "");
+        setPreacher(message?.preacher ?? "");
+        setImage(message?.thumbnail ?? "");
+        setDate(message?.date ?? "");
+        setPublished(message?.published ?? false);
+        setPassages([...message?.passages ?? []]);
+        setPassagesToUpdate([]);
+        setSubmitMessage(null);
+    };
+
+    const closeModal = () => {
+        if (mutation.isPending) {
+            return;
         }
-    })
+        resetForm();
+        setOpenModal(false);
+    };
+
+    const submitUpdate = () => {
+        if (!message?.id) {
+            setSubmitMessage({ type: "error", text: "This message cannot be updated because it has no ID." });
+            return;
+        }
+
+        if (!title.trim() || !series.trim() || !preacher.trim() || !date.trim()) {
+            setSubmitMessage({ type: "error", text: "Title, series, preacher, and date are required." });
+            return;
+        }
+
+        setSubmitMessage(null);
+        mutation.mutate({
+            id: message.id,
+            title: title.trim(),
+            series: series.trim(),
+            preacher: preacher.trim(),
+            thumbnail: image.trim(),
+            date: date.trim(),
+            passages: passagesToUpdate,
+            published,
+        });
+    };
 
     const updatePassage = (index: number, updatedPassage: Passage) => {
         setPassages((currentPassages) => currentPassages.map((passage, currentIndex) => (
@@ -40,14 +93,16 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
     };
 
     return (
-        <Modal show={openModal} size="md" popup onClose={() =>{ 
-            setPassages([...message?.passages ?? []])
-            setOpenModal(false)
-        }}>
+        <Modal show={openModal} size="md" popup onClose={closeModal}>
             <ModalHeader />
             <ModalBody>
             <div className="space-y-6">
                     <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit Message</h3>
+                    {submitMessage && (
+                        <Alert color={submitMessage.type === "success" ? "success" : "failure"} role={submitMessage.type === "error" ? "alert" : "status"}>
+                            {submitMessage.text}
+                        </Alert>
+                    )}
                     <div>
                     <ToggleSwitch color="green" checked={published} label="Published" onChange={setPublished} />
 
@@ -99,7 +154,7 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                     />
                     {passages.map((passage, index) => {
                         if ((passage?.header ?? "").length > 0){
-                            return <>
+                            return <Fragment key={passage.id ?? `passage-${index}`}>
                                 <TextArea
                                     value={passage.header}
                                     title={`Header`}
@@ -115,9 +170,9 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                                         updatePassage(index, temp)
                                     }}
                                 />
-                            </>
+                            </Fragment>
                         } else {
-                            return <>
+                            return <Fragment key={passage.id ?? `passage-${index}`}>
                                 <TextField
                                     value={passage.verse}
                                     title={`Verse`}
@@ -150,25 +205,20 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
                                         updatePassage(index, temp)
                                     }}
                                 />
-                            </>
+                            </Fragment>
                         }
                     })}
                 </div>
             </ModalBody>
             <ModalFooter>
-                <Button className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
-                    mutation.mutate({
-                        id: message?.id ?? "",
-                        title: title,
-                        series: series,
-                        preacher: preacher,
-                        thumbnail: image,
-                        date: date,
-                        passages: passagesToUpdate,
-                        published: published
-                    })
-                    setOpenModal(false)
-                }}>Update</Button>
+                <Button color="gray" disabled={mutation.isPending} onClick={closeModal}>Cancel</Button>
+                <Button
+                    className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange"
+                    disabled={mutation.isPending}
+                    onClick={submitUpdate}
+                >
+                    {mutation.isPending ? "Saving..." : "Update"}
+                </Button>
             </ModalFooter>
         </Modal>
     )
