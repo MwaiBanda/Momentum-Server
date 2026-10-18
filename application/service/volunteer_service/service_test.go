@@ -68,7 +68,7 @@ func (cacheStore *fakeCache) Delete(context.Context, string) error {
 	return nil
 }
 
-func TestCreatePreservesLegacyResponse(t *testing.T) {
+func TestCreateReturnsExplicitResponse(t *testing.T) {
 	repository := &fakeRepository{}
 	service := GetInstance(repository, nil)
 	input := CreateInput{
@@ -86,8 +86,18 @@ func TestCreatePreservesLegacyResponse(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Create() error = %v", err)
 	}
-	if !reflect.DeepEqual(response, input) {
-		t.Fatalf("Create() response = %#v, want request-shaped %#v", response, input)
+	expected := CreateResponse{
+		ID:          input.ID,
+		Organizer:   input.Organizer,
+		Description: input.Description,
+		Email:       input.Email,
+		Phone:       input.Phone,
+		Days:        input.Days,
+		UserID:      input.UserID,
+		ServiceID:   input.ServiceID,
+	}
+	if !reflect.DeepEqual(response, expected) {
+		t.Fatalf("Create() response = %#v, want %#v", response, expected)
 	}
 	if repository.createParams.ID == "" {
 		t.Fatal("Create() did not generate a persisted volunteer service ID")
@@ -192,7 +202,7 @@ func TestGetByTypeMapsAggregate(t *testing.T) {
 	}
 }
 
-func TestUpdateDayPreservesLegacyResponse(t *testing.T) {
+func TestUpdateDayReturnsExplicitResponse(t *testing.T) {
 	repository := &fakeRepository{
 		updatedDay: domainservice.VolunteerServiceDay{ID: "day-1"},
 	}
@@ -208,8 +218,14 @@ func TestUpdateDayPreservesLegacyResponse(t *testing.T) {
 	if err != nil {
 		t.Fatalf("UpdateDay() error = %v", err)
 	}
-	if !reflect.DeepEqual(response, input) {
-		t.Fatalf("UpdateDay() response = %#v, want request-shaped %#v", response, input)
+	expected := UpdateDayResponse{
+		ID:    input.ID,
+		Notes: input.Notes,
+		Date:  input.Date,
+		User:  input.User,
+	}
+	if !reflect.DeepEqual(response, expected) {
+		t.Fatalf("UpdateDay() response = %#v, want %#v", response, expected)
 	}
 	if repository.updatedParams.ID != input.ID || repository.updatedParams.Notes != input.Notes || repository.updatedParams.UserID != input.User.ID {
 		t.Fatalf("UpdateDay() params = %#v, want ID/notes/user ID from input", repository.updatedParams)

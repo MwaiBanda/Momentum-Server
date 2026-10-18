@@ -16,6 +16,8 @@ import (
 //	@Produce		json
 //	@tags			Services
 //	@Param			Authorization	header	string							true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	volunteer_service.UpdateDayInput	true	"Update a day"
 //	@Success		200	{object}	volunteer_service.UpdateDayResponse
 //	@Failure		400	{object} http.ErrorResponse

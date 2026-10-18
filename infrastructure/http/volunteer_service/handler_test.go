@@ -128,7 +128,7 @@ func TestGetByTypeMapsErrors(t *testing.T) {
 	}
 }
 
-func TestCreatePreservesLegacyResponseShape(t *testing.T) {
+func TestCreateBindsRequest(t *testing.T) {
 	input := applicationservice.CreateInput{
 		ID:          "request-id",
 		Organizer:   "Organizer",
@@ -143,7 +143,16 @@ func TestCreatePreservesLegacyResponseShape(t *testing.T) {
 	services := &fakeUseCase{
 		create: func(_ context.Context, actual applicationservice.CreateInput) (applicationservice.CreateResponse, error) {
 			received = actual
-			return actual, nil
+			return applicationservice.CreateResponse{
+				ID:          actual.ID,
+				Organizer:   actual.Organizer,
+				Description: actual.Description,
+				Email:       actual.Email,
+				Phone:       actual.Phone,
+				Days:        actual.Days,
+				UserID:      actual.UserID,
+				ServiceID:   actual.ServiceID,
+			}, nil
 		},
 	}
 
@@ -165,8 +174,18 @@ func TestCreatePreservesLegacyResponseShape(t *testing.T) {
 	if err := json.NewDecoder(response.Body).Decode(&actual); err != nil {
 		t.Fatalf("decode response: %v", err)
 	}
-	if !reflect.DeepEqual(actual, input) {
-		t.Fatalf("response = %#v, want request-shaped %#v", actual, input)
+	expected := applicationservice.CreateResponse{
+		ID:          input.ID,
+		Organizer:   input.Organizer,
+		Description: input.Description,
+		Email:       input.Email,
+		Phone:       input.Phone,
+		Days:        input.Days,
+		UserID:      input.UserID,
+		ServiceID:   input.ServiceID,
+	}
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("response = %#v, want %#v", actual, expected)
 	}
 }
 

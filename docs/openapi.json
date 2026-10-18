@@ -1058,6 +1058,14 @@
         },
         "type": "object"
       }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "description": "Bearer token required for protected API routes.",
+        "in": "header",
+        "name": "Authorization",
+        "type": "apiKey"
+      }
     }
   },
   "info": {
@@ -1101,6 +1109,16 @@
             },
             "description": "OK"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -1112,6 +1130,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Get all calendar events",
         "tags": [
           "Events"
@@ -1146,6 +1169,16 @@
             },
             "description": "OK"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -1157,6 +1190,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Get all meals",
         "tags": [
           "Meals"
@@ -1208,6 +1246,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -1219,6 +1267,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Post a meal",
         "tags": [
           "Meals"
@@ -1270,6 +1323,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1291,6 +1354,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Update a meal",
         "tags": [
           "Meals"
@@ -1344,6 +1412,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1365,6 +1443,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Assign a volunteer to a meal",
         "tags": [
           "Meals"
@@ -1416,6 +1499,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1437,6 +1530,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Update a volunteered meal",
         "tags": [
           "Meals"
@@ -1477,6 +1575,16 @@
             },
             "description": "OK"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1498,6 +1606,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Delete a meal",
         "tags": [
           "Meals"
@@ -1551,6 +1664,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -1562,6 +1685,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Post a Message",
         "tags": [
           "Messages"
@@ -1613,6 +1741,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1634,6 +1772,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Update a Message",
         "tags": [
           "Messages"
@@ -1665,6 +1808,16 @@
             },
             "description": "OK"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -1676,6 +1829,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Show all published messages for the CMS",
         "tags": [
           "Messages"
@@ -1729,6 +1887,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -1740,6 +1908,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Add a Note to a Passage",
         "tags": [
           "Messages"
@@ -1791,6 +1964,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1812,6 +1995,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Update a Note in a Passage",
         "tags": [
           "Messages"
@@ -1862,6 +2050,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1883,6 +2081,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Delete note information by Id",
         "tags": [
           "Messages"
@@ -1914,6 +2117,16 @@
             },
             "description": "OK"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -1925,6 +2138,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Show unpublished messages",
         "tags": [
           "Messages"
@@ -1975,6 +2193,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1996,6 +2224,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Delete message information",
         "tags": [
           "Messages"
@@ -2046,6 +2279,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2057,6 +2300,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Show published messages available for a user",
         "tags": [
           "Messages"
@@ -2110,6 +2358,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2121,6 +2379,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Post a notification",
         "tags": [
           "Notifications"
@@ -2174,6 +2437,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2185,6 +2458,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Create a payment",
         "tags": [
           "Payments"
@@ -2235,6 +2513,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2246,6 +2534,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Show a list of sermons",
         "tags": [
           "Sermons"
@@ -2280,6 +2573,16 @@
             },
             "description": "OK"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2291,6 +2594,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Show a list of volunteer services available",
         "tags": [
           "Services"
@@ -2342,6 +2650,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2353,6 +2671,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Post a volunteer service",
         "tags": [
           "Services"
@@ -2406,6 +2729,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -2427,6 +2760,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Update a volunteered service day",
         "tags": [
           "Services"
@@ -2477,6 +2815,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -2498,6 +2846,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Get Service By Type",
         "tags": [
           "Services"
@@ -2532,6 +2885,16 @@
             },
             "description": "OK"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2543,6 +2906,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Show a list of all transactions",
         "tags": [
           "Transactions"
@@ -2594,6 +2962,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2605,6 +2983,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Post a transaction",
         "tags": [
           "Transactions"
@@ -2655,6 +3038,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -2676,6 +3069,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Delete a transaction",
         "tags": [
           "Transactions"
@@ -2729,6 +3127,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2740,6 +3148,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Show a user's transactions",
         "tags": [
           "Transactions"
@@ -2793,6 +3206,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2804,6 +3227,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Post a user",
         "tags": [
           "Users"
@@ -2855,6 +3283,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2866,6 +3304,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Update a user",
         "tags": [
           "Users"
@@ -2916,6 +3359,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -2937,6 +3390,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Delete user information by Id",
         "tags": [
           "Users"
@@ -2985,6 +3443,16 @@
             },
             "description": "Bad Request"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
           "404": {
             "content": {
               "application/json": {
@@ -3006,6 +3474,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "summary": "Get user information by Id",
         "tags": [
           "Users"

@@ -25,6 +25,8 @@ func GetInstance(sermons applicationsermon.UseCase) *Handler {
 //	@Produce		json
 //	@tags			Sermons
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			page			query	integer	false	"Provide a page number"	default(1)
 //	@Success		200	{object}	sermon.Response
 //	@Failure		400	{object} http.ErrorResponse

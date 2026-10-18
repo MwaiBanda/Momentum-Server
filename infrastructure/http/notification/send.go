@@ -14,6 +14,8 @@ import (
 //	@Description	Used by clients to request a notification to be sent to a topic
 //	@tags			Notifications
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	notification.Input	true	"Post a notification"
 //	@Accept			json
 //	@Produce		json

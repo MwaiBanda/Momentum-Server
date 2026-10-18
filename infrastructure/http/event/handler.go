@@ -22,6 +22,8 @@ func GetInstance(events applicationevent.UseCase) *Handler {
 //	@Description	Get all events scheduled on the church calendar
 //	@tags			Events
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	event.Response

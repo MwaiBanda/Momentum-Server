@@ -14,6 +14,8 @@ import (
 //	@Description	Update a volunteered meal and assign its volunteer
 //	@tags			Meals
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	meal.VolunteerAssignmentInput	true	"Assign a volunteer"
 //	@Accept			json
 //	@Produce		json

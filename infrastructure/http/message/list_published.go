@@ -16,6 +16,8 @@ const adminUserID = "admin"
 //	@Produce		json
 //	@tags			Messages
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Success		200	{object}	message.MessageListResponse
 //	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages/admin [get]
@@ -31,6 +33,8 @@ func (handler *Handler) ListAdmin(ctx fiber.Ctx) error {
 //	@Produce		json
 //	@tags			Messages
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			userId			path	string	true	"provide user Id"
 //	@Success		200	{object}	message.MessageListResponse
 //	@Failure		400	{object} http.ErrorResponse

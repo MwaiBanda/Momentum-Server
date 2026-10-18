@@ -24,5 +24,5 @@ func (service *Service) UpdateDay(ctx context.Context, input UpdateDayInput) (Up
 		return UpdateDayResponse{}, err
 	}
 
-	return input, nil
+	return toUpdateDayResponse(input), nil
 }

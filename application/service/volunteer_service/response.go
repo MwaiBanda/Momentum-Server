@@ -64,7 +64,16 @@ type CreateDayInput struct {
 	Date string `json:"date"`
 }
 
-type CreateResponse = CreateInput
+type CreateResponse struct {
+	ID          string           `json:"id"`
+	Organizer   string           `json:"organizer"`
+	Description string           `json:"description"`
+	Email       string           `json:"email"`
+	Phone       string           `json:"phone"`
+	Days        []CreateDayInput `json:"days"`
+	UserID      string           `json:"user_id"`
+	ServiceID   string           `json:"service_id"`
+}
 
 type UpdateDayInput struct {
 	ID    string       `json:"id"`
@@ -73,7 +82,34 @@ type UpdateDayInput struct {
 	User  UserResponse `json:"user"`
 }
 
-type UpdateDayResponse = UpdateDayInput
+type UpdateDayResponse struct {
+	ID    string       `json:"id"`
+	Notes string       `json:"notes"`
+	Date  string       `json:"date"`
+	User  UserResponse `json:"user"`
+}
+
+func toCreateResponse(input CreateInput) CreateResponse {
+	return CreateResponse{
+		ID:          input.ID,
+		Organizer:   input.Organizer,
+		Description: input.Description,
+		Email:       input.Email,
+		Phone:       input.Phone,
+		Days:        input.Days,
+		UserID:      input.UserID,
+		ServiceID:   input.ServiceID,
+	}
+}
+
+func toUpdateDayResponse(input UpdateDayInput) UpdateDayResponse {
+	return UpdateDayResponse{
+		ID:    input.ID,
+		Notes: input.Notes,
+		Date:  input.Date,
+		User:  input.User,
+	}
+}
 
 func toServiceResponse(service domainservice.Service) ServiceResponse {
 	return ServiceResponse{

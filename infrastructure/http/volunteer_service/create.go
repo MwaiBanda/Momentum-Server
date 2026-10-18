@@ -14,6 +14,8 @@ import (
 //	@Description	Used to post a volunteer service
 //	@tags			Services
 //	@Param			Authorization	header	string							true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	volunteer_service.CreateInput	true	"Post a volunteer service"
 //	@Accept			json
 //	@Produce		json

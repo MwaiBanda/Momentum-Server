@@ -14,6 +14,8 @@ import (
 //	@Produce		json
 //	@tags			Services
 //	@Param			Authorization	header		string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			type			path		string	true	"provide service type"
 //	@Success		200				{object}	volunteer_service.ServiceDetailResponse
 //	@Failure		400				{object} http.ErrorResponse

@@ -8,6 +8,8 @@ import "github.com/gofiber/fiber/v3"
 //	@Description	Get all meals and their volunteer assignments
 //	@tags			Meals
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{array}	meal.Response

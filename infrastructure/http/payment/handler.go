@@ -25,6 +25,8 @@ func GetInstance(payments applicationpayment.UseCase) *Handler {
 //	@Produce		json
 //	@tags			Payments
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	payment.Input	true	"Create a payment"
 //	@Success		200	{object}	payment.Response
 //	@Failure		400	{object} http.ErrorResponse

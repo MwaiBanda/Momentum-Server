@@ -29,5 +29,5 @@ func (service *Service) Create(ctx context.Context, input CreateInput) (CreateRe
 		return CreateResponse{}, err
 	}
 
-	return input, nil
+	return toCreateResponse(input), nil
 }

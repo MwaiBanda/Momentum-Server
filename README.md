@@ -181,6 +181,10 @@ converts the same generated contract into the validated OpenAPI 3 document at
 not manually edited, and is the future source for client tooling such as CMS
 transport type generation.
 
+GitHub Actions runs `go test ./...`, verifies Go modules, and runs
+`make openapi-check` so generated API documents cannot drift from the Go
+annotations and DTOs.
+
 Build the CMS before starting the Go server:
 
 ```bash

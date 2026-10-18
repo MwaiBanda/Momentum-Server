@@ -726,10 +726,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/event.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all calendar events
       tags:
       - Events
@@ -753,10 +759,16 @@ paths:
             items:
               $ref: '#/definitions/meal.Response'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all meals
       tags:
       - Meals
@@ -787,10 +799,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Post a meal
       tags:
       - Meals
@@ -821,6 +839,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -829,6 +851,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update a meal
       tags:
       - Meals
@@ -855,6 +879,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/meal.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -863,6 +891,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete a meal
       tags:
       - Meals
@@ -894,6 +924,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -902,6 +936,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Assign a volunteer to a meal
       tags:
       - Meals
@@ -932,6 +968,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -940,6 +980,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update a volunteered meal
       tags:
       - Meals
@@ -971,10 +1013,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Post a Message
       tags:
       - Messages
@@ -1005,6 +1053,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1013,6 +1065,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update a Message
       tags:
       - Messages
@@ -1043,6 +1097,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1051,6 +1109,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete message information
       tags:
       - Messages
@@ -1081,10 +1141,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Show published messages available for a user
       tags:
       - Messages
@@ -1106,10 +1172,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/message.MessageListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Show all published messages for the CMS
       tags:
       - Messages
@@ -1141,10 +1213,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Add a Note to a Passage
       tags:
       - Messages
@@ -1175,6 +1253,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1183,6 +1265,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update a Note in a Passage
       tags:
       - Messages
@@ -1213,6 +1297,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1221,6 +1309,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete note information by Id
       tags:
       - Messages
@@ -1242,10 +1332,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/message.MessageListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Show unpublished messages
       tags:
       - Messages
@@ -1277,10 +1373,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Post a notification
       tags:
       - Notifications
@@ -1312,10 +1414,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create a payment
       tags:
       - Payments
@@ -1346,10 +1454,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Show a list of sermons
       tags:
       - Sermons
@@ -1373,10 +1487,16 @@ paths:
             items:
               $ref: '#/definitions/volunteer_service.ServiceResponse'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Show a list of volunteer services available
       tags:
       - Services
@@ -1407,10 +1527,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Post a volunteer service
       tags:
       - Services
@@ -1441,6 +1567,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1449,6 +1579,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get Service By Type
       tags:
       - Services
@@ -1480,6 +1612,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1488,6 +1624,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update a volunteered service day
       tags:
       - Services
@@ -1511,10 +1649,16 @@ paths:
             items:
               $ref: '#/definitions/transaction.Response'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Show a list of all transactions
       tags:
       - Transactions
@@ -1545,10 +1689,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Post a transaction
       tags:
       - Transactions
@@ -1579,6 +1729,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1587,6 +1741,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete a transaction
       tags:
       - Transactions
@@ -1619,10 +1775,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Show a user's transactions
       tags:
       - Transactions
@@ -1654,10 +1816,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Post a user
       tags:
       - Users
@@ -1688,10 +1856,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update a user
       tags:
       - Users
@@ -1722,6 +1896,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1730,6 +1908,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete user information by Id
       tags:
       - Users
@@ -1759,6 +1939,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1767,7 +1951,15 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get user information by Id
       tags:
       - Users
+securityDefinitions:
+  BearerAuth:
+    description: Bearer token required for protected API routes.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

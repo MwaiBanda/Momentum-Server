@@ -14,6 +14,8 @@ import (
 //	@Produce		json
 //	@tags			Messages
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			messageId		path	string	true	"provide message Id"
 //	@Success		200	{object}	message.MessageResponse
 //	@Failure		400	{object} http.ErrorResponse

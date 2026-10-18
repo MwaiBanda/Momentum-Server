@@ -14,6 +14,8 @@ import (
 //	@Description	Used to update a message
 //	@tags			Messages
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	message.UpdateInput	true	"Update a message"
 //	@Accept			json
 //	@Produce		json

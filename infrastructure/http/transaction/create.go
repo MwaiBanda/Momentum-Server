@@ -16,6 +16,8 @@ import (
 //	@Produce		json
 //	@tags			Transactions
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	transaction.Input	true	"Post a transaction"
 //	@Success		200	{object}	transaction.Response
 //	@Failure		400	{object} http.ErrorResponse

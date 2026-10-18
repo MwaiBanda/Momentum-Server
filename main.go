@@ -58,6 +58,10 @@ import (
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 // @host			services.momentumchurch.dev
 // @BasePath		/
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Bearer token required for protected API routes.
 
 func main() {
 	log.Println("Starting Momentum API")

@@ -14,6 +14,8 @@ import (
 //	@Produce		json
 //	@tags			Transactions
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Success		200	{array}	transaction.Response
 //	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/transactions [get]
@@ -38,6 +40,8 @@ func (handler *Handler) List(ctx fiber.Ctx) error {
 //	@Produce		json
 //	@tags			Transactions
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			userId			path	string	true	"provide user Id"
 //	@Success		200	{array}	transaction.Response
 //	@Failure		400	{object} http.ErrorResponse

@@ -14,6 +14,8 @@ import (
 //	@Description	Used to update a user note in a passage
 //	@tags			Messages
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
+//	@Security	BearerAuth
+//	@Failure	401	{object} http.ErrorResponse
 //	@Param			data			body	message.NoteResponse	true	"Update a note"
 //	@Accept			json
 //	@Produce		json
