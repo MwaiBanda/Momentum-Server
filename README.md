@@ -80,8 +80,8 @@ cms/src/
 
 ### Architecture at a glance
 
-Solid arrows show request and runtime flow. Dashed arrows show dependency
-direction, implementation, and composition-root wiring.
+Solid arrows show request and runtime flow. Dashed arrows show dependency,
+implementation, composition-root, and observability relationships.
 
 ```mermaid
 flowchart TB
@@ -89,28 +89,98 @@ flowchart TB
     browser["CMS browser"]
 
     subgraph product["Momentum Server"]
-        presentation["Interfaces<br/>Fiber handlers + React presentation"]
-        application["Application<br/>Use cases + feature services"]
-        domain["Domain<br/>Entities + contracts"]
-        infrastructure["Infrastructure<br/>Persistence + integrations + adapters"]
-        composition["Composition roots<br/>main.go + main.tsx"]
+        subgraph backend["Go backend"]
+            api["HTTP boundary<br/>Fiber handlers + middleware"]
+            backendApplication["Application<br/>Use cases + services"]
+            backendDomain["Domain<br/>Entities + contracts"]
+            backendInfrastructure["Infrastructure<br/>Repositories + integrations + messaging"]
+            backendRoot["Composition root<br/>main.go"]
+        end
+
+        subgraph cms["React CMS"]
+            cmsInterfaces["Interfaces<br/>Router + pages + components"]
+            cmsApplication["Application<br/>Feature services + use cases"]
+            cmsDomain["Domain<br/>Entities + contracts"]
+            cmsInfrastructure["Infrastructure<br/>HTTP + Firebase + query adapters"]
+            cmsRoot["Composition root<br/>main.tsx"]
+        end
     end
 
     postgres[("PostgreSQL")]
     redis[("Redis")]
     integrations["Stripe<br/>Firebase<br/>SermonCloud<br/>Planning Center"]
+    contract["OpenAPI contract<br/>Swagger -> OpenAPI 3"]
+    generated["Generated CMS transport types<br/>Runtime Zod schemas"]
+    telemetry["Cross-cutting observability<br/>Request logs + metrics<br/>Request IDs + traces + error reporting"]
+    telemetryBackend["Logs / metrics / traces backend"]
 
-    mobile --> presentation
-    browser --> presentation
-    presentation --> application
-    application --> domain
-    infrastructure -. "implements domain contracts" .-> domain
-    composition -. "wires dependencies" .-> presentation
-    composition -.-> application
-    composition -.-> infrastructure
-    infrastructure --> postgres
-    infrastructure --> redis
-    infrastructure --> integrations
+    mobile --> api
+    browser --> cmsInterfaces
+
+    api --> backendApplication
+    backendApplication --> backendDomain
+    backendApplication --> backendInfrastructure
+    backendInfrastructure --> postgres
+    backendInfrastructure --> redis
+    backendInfrastructure --> integrations
+
+    cmsInterfaces --> cmsApplication
+    cmsApplication --> cmsDomain
+    cmsApplication --> cmsInfrastructure
+    cmsInfrastructure --> api
+
+    contract -. "generates" .-> generated
+    generated -. "used by" .-> cmsInfrastructure
+
+    backendInfrastructure -. "implements contracts" .-> backendDomain
+    cmsInfrastructure -. "implements contracts" .-> cmsDomain
+    backendRoot -. "wires" .-> api
+    backendRoot -.-> backendApplication
+    backendRoot -.-> backendInfrastructure
+    cmsRoot -. "wires" .-> cmsInterfaces
+    cmsRoot -.-> cmsApplication
+    cmsRoot -.-> cmsInfrastructure
+
+    telemetry -. "observes" .-> api
+    telemetry -. "observes" .-> backendApplication
+    telemetry -. "observes" .-> backendInfrastructure
+    telemetry -. "observes" .-> cmsInterfaces
+    telemetry -. "exports" .-> telemetryBackend
+```
+
+Observability is cross-cutting rather than a dependency layer. Request logging
+and Fiber monitoring are available today; request correlation, distributed
+tracing, and centralized error reporting are extension points for future
+instrumentation.
+
+### Architecture style
+
+Momentum Server is a **modular monolith** built with **Clean Architecture**
+and **Ports and Adapters** principles. The Go API and React CMS live in the
+same repository and are composed as one product, while their feature modules
+keep responsibilities separated.
+
+- **Interfaces** translate HTTP requests and user interactions into
+  application calls.
+- **Application services** coordinate use cases and business workflows.
+- **Domain** contains business entities and contracts without database,
+  framework, or vendor dependencies.
+- **Infrastructure** implements those contracts with PostgreSQL, Redis, and
+  external integrations such as Stripe and Firebase.
+- **Composition roots** (`main.go` and `main.tsx`) wire implementations into
+  the application.
+
+At runtime, requests flow from the clients through interfaces and application
+services to infrastructure adapters. Dependencies point inward toward the
+domain, while observability follows the entire runtime path.
+
+The API contract is generated from the Go backend and shared with the CMS:
+
+```text
+Go DTOs and handler annotations
+    -> Swagger and OpenAPI 3
+    -> Generated TypeScript transport types
+    -> Generated runtime Zod schemas
 ```
 
 ----
