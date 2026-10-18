@@ -143,7 +143,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["meal.Input"];
+                        "application/json": components["schemas"]["meal.UpdateResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -211,7 +211,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["meal.Input"];
+                        "application/json": components["schemas"]["meal.CreateResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -284,7 +284,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["meal.UpdateVolunteeredMealInput"];
+                        "application/json": components["schemas"]["meal.UpdateVolunteeredMealResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -352,7 +352,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["meal.VolunteerAssignmentInput"];
+                        "application/json": components["schemas"]["meal.VolunteerAssignmentResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -697,7 +697,7 @@ export interface paths {
             /** @description Update a note */
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["message.NoteResponse"];
+                    "application/json": components["schemas"]["message.UpdateNoteInput"];
                 };
             };
             responses: {
@@ -775,7 +775,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["message.CreateNoteInput"];
+                        "application/json": components["schemas"]["message.CreateNoteResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -1143,7 +1143,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["notification.Input"];
+                        "application/json": components["schemas"]["notification.Response"];
                     };
                 };
                 /** @description Bad Request */
@@ -2163,254 +2163,316 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         "event.Attributes": {
-            all_day_event?: boolean;
-            ends_at?: string;
-            image_url?: string;
-            name?: string;
-            open_graph_description?: string;
-            recurrence_description?: string;
-            recurring?: boolean;
-            starts_at?: string;
+            all_day_event: boolean;
+            ends_at: string;
+            image_url: string;
+            name: string;
+            open_graph_description: string;
+            recurrence_description: string;
+            recurring: boolean;
+            starts_at: string;
         };
         "event.Event": {
-            attributes?: components["schemas"]["event.Attributes"];
-            id?: string;
+            attributes: components["schemas"]["event.Attributes"];
+            id: string;
         };
         "event.Response": {
-            data?: components["schemas"]["event.Event"][];
+            data: components["schemas"]["event.Event"][];
         };
         "http.ErrorResponse": {
             /** @example 400 */
-            code?: number;
+            code: number;
             /** @example Bad Request */
-            message?: string;
+            message: string;
+        };
+        "meal.CreateResponse": {
+            allergies: string;
+            city: string;
+            email: string;
+            favourites: string;
+            id: string;
+            instructions: string;
+            least_favourites: string;
+            meals: components["schemas"]["meal.MealVolunteeredRequest"][];
+            num_of_adults: number;
+            number_of_kids: number;
+            phone: string;
+            preferred_time: string;
+            reason: string;
+            recipient: string;
+            street: string;
+            user_id: string;
         };
         "meal.Input": {
-            allergies?: string;
-            city?: string;
-            email?: string;
-            favourites?: string;
+            allergies: string;
+            city: string;
+            email: string;
+            favourites: string;
             id?: string;
-            instructions?: string;
-            least_favourites?: string;
-            meals?: components["schemas"]["meal.MealVolunteeredRequest"][];
-            num_of_adults?: number;
-            number_of_kids?: number;
-            phone?: string;
-            preferred_time?: string;
-            reason?: string;
-            recipient?: string;
-            street?: string;
-            user_id?: string;
+            instructions: string;
+            least_favourites: string;
+            meals: components["schemas"]["meal.MealVolunteeredRequest"][];
+            num_of_adults: number;
+            number_of_kids: number;
+            phone: string;
+            preferred_time: string;
+            reason: string;
+            recipient: string;
+            street: string;
+            user_id: string;
         };
         "meal.MealVolunteeredRequest": {
-            date?: string;
+            date: string;
             description?: string;
             meal_id?: string;
             notes?: string;
             user_id?: string;
         };
         "meal.ParticipantResponse": {
-            id?: string;
-            user?: components["schemas"]["meal.UserResponse"];
+            id: string;
+            user: components["schemas"]["meal.UserResponse"];
         };
         "meal.Response": {
-            allergies?: string;
-            city?: string;
-            email?: string;
-            favourites?: string;
-            id?: string;
-            instructions?: string;
-            least_favourites?: string;
-            meals?: components["schemas"]["meal.VolunteeredMealResponse"][];
-            num_of_adults?: number;
-            number_of_kids?: number;
-            participants?: components["schemas"]["meal.ParticipantResponse"][];
-            phone?: string;
-            preferred_time?: string;
-            reason?: string;
-            recipient?: string;
-            street?: string;
-            user?: components["schemas"]["meal.UserResponse"];
+            allergies: string;
+            city: string;
+            email: string;
+            favourites: string;
+            id: string;
+            instructions: string;
+            least_favourites: string;
+            meals: components["schemas"]["meal.VolunteeredMealResponse"][];
+            num_of_adults: number;
+            number_of_kids: number;
+            participants: components["schemas"]["meal.ParticipantResponse"][];
+            phone: string;
+            preferred_time: string;
+            reason: string;
+            recipient: string;
+            street: string;
+            user: components["schemas"]["meal.UserResponse"];
+        };
+        "meal.UpdateEntryResponse": {
+            id: string;
+            message: string;
         };
         "meal.UpdateResponse": {
-            id?: string;
-            message?: string;
+            allergies: string;
+            city: string;
+            email: string;
+            favourites: string;
+            id: string;
+            instructions: string;
+            least_favourites: string;
+            meals: components["schemas"]["meal.MealVolunteeredRequest"][];
+            num_of_adults: number;
+            number_of_kids: number;
+            phone: string;
+            preferred_time: string;
+            reason: string;
+            recipient: string;
+            street: string;
+            user_id: string;
         };
         "meal.UpdateVolunteeredMealInput": {
-            description?: string;
-            id?: string;
-            notes?: string;
+            description: string;
+            id: string;
+            notes: string;
+        };
+        "meal.UpdateVolunteeredMealResponse": {
+            description: string;
+            id: string;
+            notes: string;
+        };
+        "meal.UserInput": {
+            id: string;
         };
         "meal.UserResponse": {
-            createdOn?: string;
-            email?: string;
-            fullname?: string;
-            id?: string;
-            phone?: string;
+            createdOn: string;
+            email: string;
+            fullname: string;
+            id: string;
+            phone: string;
         };
         "meal.VolunteerAssignmentInput": {
-            meal_id?: string;
-            volunteered_meal?: components["schemas"]["meal.VolunteeredMealInput"];
+            meal_id: string;
+            volunteered_meal: components["schemas"]["meal.VolunteeredMealInput"];
+        };
+        "meal.VolunteerAssignmentResponse": {
+            meal_id: string;
+            volunteered_meal: components["schemas"]["meal.VolunteeredMealResponse"];
         };
         "meal.VolunteeredMealInput": {
             created_on?: string;
             date?: string;
             description?: string;
-            id?: string;
+            id: string;
             notes?: string;
-            updates?: components["schemas"]["meal.UpdateResponse"][];
-            user?: components["schemas"]["meal.UserResponse"];
+            updates?: components["schemas"]["meal.UpdateEntryResponse"][];
+            user: components["schemas"]["meal.UserInput"];
         };
         "meal.VolunteeredMealResponse": {
-            created_on?: string;
-            date?: string;
-            description?: string;
-            id?: string;
-            notes?: string;
-            updates?: components["schemas"]["meal.UpdateResponse"][];
-            user?: components["schemas"]["meal.UserResponse"];
+            created_on: string;
+            date: string;
+            description: string;
+            id: string;
+            notes: string;
+            updates: components["schemas"]["meal.UpdateEntryResponse"][];
+            user: components["schemas"]["meal.UserResponse"];
         };
         "message.CreateInput": {
-            date?: string;
-            passages?: components["schemas"]["message.CreatePassageInput"][];
-            preacher?: string;
-            series?: string;
-            thumbnail?: string;
-            title?: string;
+            date: string;
+            passages: components["schemas"]["message.CreatePassageInput"][];
+            preacher: string;
+            series: string;
+            thumbnail: string;
+            title: string;
         };
         "message.CreateNoteInput": {
-            content?: string;
-            passageId?: string;
-            userId?: string;
+            content: string;
+            passageId: string;
+            userId: string;
+        };
+        "message.CreateNoteResponse": {
+            content: string;
+            id: string;
+            userId: string;
         };
         "message.CreatePassageInput": {
             header?: string;
             message?: string;
-            order?: number;
-            type?: string;
+            order: number;
+            type: string;
             verse?: string;
         };
         "message.MessageListResponse": {
-            data?: components["schemas"]["message.MessageResponse"][];
+            data: components["schemas"]["message.MessageResponse"][];
         };
         "message.MessageResponse": {
-            createdOn?: string;
-            date?: string;
-            hasOrder?: boolean;
-            id?: string;
-            passages?: components["schemas"]["message.PassageResponse"][];
-            preacher?: string;
-            published?: boolean;
-            series?: string;
-            thumbnail?: string;
-            title?: string;
+            createdOn: string;
+            date: string;
+            hasOrder: boolean;
+            id: string;
+            passages: components["schemas"]["message.PassageResponse"][];
+            preacher: string;
+            published: boolean;
+            series: string;
+            thumbnail: string;
+            title: string;
         };
         "message.NoteResponse": {
-            content?: string;
-            id?: string;
-            userId?: string;
+            content: string;
+            id: string;
+            userId: string;
         };
         "message.PassageResponse": {
-            header?: string;
-            id?: string;
-            message?: string;
-            notes?: components["schemas"]["message.NoteResponse"][];
-            order?: number;
-            type?: string;
-            verse?: string;
+            header: string;
+            id: string;
+            message: string;
+            notes: components["schemas"]["message.NoteResponse"][];
+            order: number;
+            type: string;
+            verse: string;
         };
         "message.UpdateInput": {
-            date?: string;
-            id?: string;
-            passages?: components["schemas"]["message.UpdatePassageInput"][];
-            preacher?: string;
-            published?: boolean;
-            series?: string;
-            thumbnail?: string;
-            title?: string;
+            date: string;
+            id: string;
+            passages: components["schemas"]["message.UpdatePassageInput"][];
+            preacher: string;
+            published: boolean;
+            series: string;
+            thumbnail: string;
+            title: string;
+        };
+        "message.UpdateNoteInput": {
+            content: string;
+            id: string;
         };
         "message.UpdatePassageInput": {
             header?: string;
-            id?: string;
+            id: string;
             message?: string;
             verse?: string;
         };
         "notification.Input": {
-            body?: string;
-            title?: string;
-            topic?: string;
+            body: string;
+            title: string;
+            topic: string;
+        };
+        "notification.Response": {
+            body: string;
+            title: string;
+            topic: string;
         };
         "payment.Input": {
-            amount?: number;
-            email?: string;
-            fullname?: string;
-            phone?: string;
+            amount: number;
+            email: string;
+            fullname: string;
+            phone: string;
         };
         "payment.Response": {
-            customer?: string;
-            ephemeralKey?: string;
-            paymentIntent?: string;
-            publishableKey?: string;
+            customer: string;
+            ephemeralKey: string;
+            paymentIntent: string;
+            publishableKey: string;
         };
         "sermon.Response": {
-            current_page?: number;
-            data?: components["schemas"]["sermon.Sermon"][];
-            first_page_url?: string;
-            from?: number;
-            last_page?: number;
-            last_page_url?: string;
-            links?: {
-                active?: boolean;
-                label?: string;
-                url?: unknown;
+            current_page: number;
+            data: components["schemas"]["sermon.Sermon"][];
+            first_page_url: string;
+            from: number;
+            last_page: number;
+            last_page_url: string;
+            links: {
+                active: boolean;
+                label: string;
+                url: unknown;
             }[];
-            next_page_url?: string;
-            path?: string;
-            per_page?: number;
-            prev_page_url?: unknown;
-            to?: number;
-            total?: string;
+            next_page_url: string;
+            path: string;
+            per_page: number;
+            prev_page_url: unknown;
+            to: number;
+            total: string;
         };
         "sermon.Sermon": {
-            categories?: unknown;
-            date?: {
-                carbon?: string;
-                date?: string;
+            categories: unknown;
+            date: {
+                carbon: string;
+                date: string;
             };
-            detail_url?: string;
-            id?: string;
-            interactions?: {
-                likes?: number;
-                shares?: number;
+            detail_url: string;
+            id: string;
+            interactions: {
+                likes: number;
+                shares: number;
             };
-            interactive_note?: unknown;
-            keywords?: unknown;
-            media?: {
-                audio?: unknown;
-                embed?: unknown;
-                image?: unknown;
-                notes?: unknown;
-                video?: string;
-                video_thumbnail?: string;
+            interactive_note: unknown;
+            keywords: unknown;
+            media: {
+                audio: unknown;
+                embed: unknown;
+                image: unknown;
+                notes: unknown;
+                video: string;
+                video_thumbnail: string;
             };
-            passages?: unknown[];
-            preacher?: string;
-            series?: {
-                description?: unknown;
-                image?: unknown;
-                slug?: string;
-                title?: string;
+            passages: unknown[];
+            preacher: string;
+            series: {
+                description: unknown;
+                image: unknown;
+                slug: string;
+                title: string;
             };
-            slug?: string;
-            summary?: unknown;
-            text?: unknown;
-            title?: string;
+            slug: string;
+            summary: unknown;
+            text: unknown;
+            title: string;
         };
         "transaction.Input": {
-            amount?: number;
-            date?: string;
-            description?: string;
+            amount: number;
+            date: string;
+            description: string;
             email?: string;
             fullname?: string;
             id?: string;
@@ -2418,110 +2480,113 @@ export interface components {
             userId?: string;
         };
         "transaction.Response": {
-            amount?: number;
-            createdOn?: string;
-            date?: string;
-            description?: string;
-            id?: string;
-            user?: components["schemas"]["transaction.UserResponse"];
+            amount: number;
+            createdOn: string;
+            date: string;
+            description: string;
+            id: string;
+            user: components["schemas"]["transaction.UserResponse"];
         };
         "transaction.UserResponse": {
-            createdOn?: string;
-            email?: string;
-            fullname?: string;
-            id?: string;
-            phone?: string;
+            createdOn: string;
+            email: string;
+            fullname: string;
+            id: string;
+            phone: string;
         };
         "user.CreateInput": {
-            email?: string;
-            fullname?: string;
-            id?: string;
-            phone?: string;
+            email: string;
+            fullname: string;
+            id: string;
+            phone: string;
         };
         "user.Response": {
-            createdOn?: string;
-            email?: string;
-            fullname?: string;
-            id?: string;
-            phone?: string;
+            createdOn: string;
+            email: string;
+            fullname: string;
+            id: string;
+            phone: string;
         };
         "user.UpdateInput": {
-            email?: string;
-            fullname?: string;
-            id?: string;
-            phone?: string;
+            email: string;
+            fullname: string;
+            id: string;
+            phone: string;
         };
         "volunteer_service.CreateDayInput": {
-            date?: string;
+            date: string;
         };
         "volunteer_service.CreateInput": {
-            days?: components["schemas"]["volunteer_service.CreateDayInput"][];
-            description?: string;
-            email?: string;
+            days: components["schemas"]["volunteer_service.CreateDayInput"][];
+            description: string;
+            email: string;
             id?: string;
-            organizer?: string;
-            phone?: string;
-            service_id?: string;
-            user_id?: string;
+            organizer: string;
+            phone: string;
+            service_id: string;
+            user_id: string;
         };
         "volunteer_service.CreateResponse": {
-            days?: components["schemas"]["volunteer_service.CreateDayInput"][];
-            description?: string;
-            email?: string;
-            id?: string;
-            organizer?: string;
-            phone?: string;
-            service_id?: string;
-            user_id?: string;
+            days: components["schemas"]["volunteer_service.CreateDayInput"][];
+            description: string;
+            email: string;
+            id: string;
+            organizer: string;
+            phone: string;
+            service_id: string;
+            user_id: string;
         };
         "volunteer_service.ServiceDetailResponse": {
-            id?: string;
-            image?: string;
-            name?: string;
-            services?: components["schemas"]["volunteer_service.VolunteerServiceResponse"][];
-            type?: string;
+            id: string;
+            image: string;
+            name: string;
+            services: components["schemas"]["volunteer_service.VolunteerServiceResponse"][];
+            type: string;
         };
         "volunteer_service.ServiceResponse": {
-            id?: string;
-            image?: string;
-            name?: string;
-            type?: string;
+            id: string;
+            image: string;
+            name: string;
+            type: string;
         };
         "volunteer_service.UpdateDayInput": {
-            date?: string;
-            id?: string;
-            notes?: string;
-            user?: components["schemas"]["volunteer_service.UserResponse"];
+            date: string;
+            id: string;
+            notes: string;
+            user: components["schemas"]["volunteer_service.UserInput"];
         };
         "volunteer_service.UpdateDayResponse": {
-            date?: string;
-            id?: string;
-            notes?: string;
-            user?: components["schemas"]["volunteer_service.UserResponse"];
+            date: string;
+            id: string;
+            notes: string;
+            user: components["schemas"]["volunteer_service.UserResponse"];
+        };
+        "volunteer_service.UserInput": {
+            id: string;
         };
         "volunteer_service.UserResponse": {
-            createdOn?: string;
-            email?: string;
-            fullname?: string;
-            id?: string;
-            meals?: unknown[];
-            phone?: string;
+            createdOn: string;
+            email: string;
+            fullname: string;
+            id: string;
+            meals: unknown[];
+            phone: string;
         };
         "volunteer_service.VolunteerServiceDayResponse": {
-            date?: string;
-            id?: string;
-            notes?: string;
-            user?: components["schemas"]["volunteer_service.UserResponse"];
+            date: string;
+            id: string;
+            notes: string;
+            user: components["schemas"]["volunteer_service.UserResponse"];
         };
         "volunteer_service.VolunteerServiceResponse": {
-            days?: components["schemas"]["volunteer_service.VolunteerServiceDayResponse"][];
-            description?: string;
-            email?: string;
-            id?: string;
-            organizer?: string;
-            phone?: string;
-            service_id?: string;
-            user_id?: string;
+            days: components["schemas"]["volunteer_service.VolunteerServiceDayResponse"][];
+            description: string;
+            email: string;
+            id: string;
+            organizer: string;
+            phone: string;
+            service_id: string;
+            user_id: string;
         };
     };
     responses: never;

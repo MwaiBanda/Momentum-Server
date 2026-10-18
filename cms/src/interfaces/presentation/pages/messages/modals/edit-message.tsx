@@ -5,7 +5,7 @@ import { useApplication } from "@/interfaces/presentation/application-context";
 import { Alert, Button, Modal, ModalBody, ModalFooter, ModalHeader, ToggleSwitch } from "flowbite-react";
 import { Fragment, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateMessageSchema } from "@/interfaces/presentation/pages/messages/validation";
+import { schemas } from "@/infrastructure/http/generated/schemas";
 
 export default function EditMessageModal({ message, openModal, setOpenModal }: { message: Message | null, openModal: boolean, setOpenModal: (open: boolean) => void }) {
     const application = useApplication();
@@ -60,7 +60,7 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
             return;
         }
 
-        const result = updateMessageSchema.safeParse({
+        const result = schemas.message_UpdateInput.safeParse({
             id: message.id,
             title,
             series,
@@ -77,7 +77,7 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
         }
 
         setSubmitMessage(null);
-        mutation.mutate(result.data);
+        mutation.mutate({ ...result.data, passages: passagesToUpdate });
     };
 
     const updatePassage = (index: number, updatedPassage: Passage) => {

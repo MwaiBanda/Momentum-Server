@@ -5,7 +5,7 @@ import { useApplication } from "@/interfaces/presentation/application-context";
 import type { MessageRequest } from "@/domain/message/entity";
 import { TextField } from "@/interfaces/presentation/components/textfield";
 import { TextArea } from "@/interfaces/presentation/components/textarea";
-import { createMessageSchema } from "@/interfaces/presentation/pages/messages/validation";
+import { schemas } from "@/infrastructure/http/generated/schemas";
 
 enum PassageType {
     Header,
@@ -42,7 +42,7 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
     })
 
     const submit = () => {
-        const result = createMessageSchema.safeParse({
+        const result = schemas.message_CreateInput.safeParse({
             title: titleInputRef.current?.value ?? "",
             series: seriesInputRef.current?.value ?? "",
             preacher: preacherInputRef.current?.value ?? "",

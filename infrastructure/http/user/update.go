@@ -4,6 +4,7 @@ import (
 	"log"
 
 	userService "Momentum/application/service/user"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -24,9 +25,9 @@ import (
 //	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/users [put]
 func (handler *Handler) Update(ctx fiber.Ctx) error {
-	var input userService.UpdateInput
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[userService.UpdateInput](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.users.Update(ctx.Context(), input)

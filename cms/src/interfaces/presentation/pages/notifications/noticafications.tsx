@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Radio } from 'flowbite-react';
 
 import type { NotificationRequest } from "@/domain/notification/entity";
+import { schemas } from "@/infrastructure/http/generated/schemas";
 
 export const Notifications = () => {
     const [openAuthModal, setOpenAuthModal] = useState(false);
@@ -31,6 +32,9 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
         mutationFn: (data: NotificationRequest) => application.notification.send(data),
         onSuccess: () => {
             alert("Notification sent successfully")
+        },
+        onError: () => {
+            alert("Notification could not be sent. Please try again.")
         }
     })
 
@@ -80,15 +84,12 @@ function NotificationCard({ setOpenAuthModal }: { setOpenAuthModal: () => void})
                     (e) => {
                         e.preventDefault();
                         if (application.auth.currentUser()) {
-                            if (title === "" || body === "") {
-                                alert("Please fill in all fields")
-                                return
-                            }
-                            mutation.mutate({
-                                title: title,
-                                body: body,
-                                topic: topic
-                            })
+                             const result = schemas.notification_Input.safeParse({ title, body, topic });
+                             if (!result.success) {
+                                 alert(result.error.issues[0]?.message ?? "Please check the notification details.")
+                                 return
+                             }
+                             mutation.mutate(result.data)
                        } else {
                             setOpenAuthModal()
                        }

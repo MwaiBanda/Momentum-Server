@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationmeal "Momentum/application/service/meal"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -19,7 +20,7 @@ import (
 //	@Param			data			body	meal.Input	true	"Post a meal"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	meal.Input
+//	@Success		200	{object}	meal.CreateResponse
 //	@Failure		400	{object} http.ErrorResponse
 //	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/meals [post]
@@ -29,9 +30,9 @@ func (handler *Handler) Create(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationmeal.Input
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationmeal.Input](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.meals.Create(ctx.Context(), input)

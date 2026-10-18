@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationnotification "Momentum/application/service/notification"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -19,7 +20,7 @@ import (
 //	@Param			data			body	notification.Input	true	"Post a notification"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	notification.Input
+//	@Success		200	{object}	notification.Response
 //	@Failure		400	{object} http.ErrorResponse
 //	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/notifications [post]
@@ -29,9 +30,9 @@ func (handler *Handler) Send(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationnotification.Input
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationnotification.Input](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.notifications.Send(ctx.Context(), input)

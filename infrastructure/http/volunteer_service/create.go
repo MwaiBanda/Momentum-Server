@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationservice "Momentum/application/service/volunteer_service"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -29,9 +30,9 @@ func (handler *Handler) Create(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationservice.CreateInput
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationservice.CreateInput](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.services.Create(ctx.Context(), input)

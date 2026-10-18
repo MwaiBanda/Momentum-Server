@@ -3,9 +3,15 @@ package notification
 import "context"
 
 type Input struct {
-	Title string `json:"title"`
-	Body  string `json:"body"`
-	Topic string `json:"topic"`
+	Title string `json:"title" binding:"required"`
+	Body  string `json:"body" binding:"required"`
+	Topic string `json:"topic" binding:"required"`
+}
+
+type Response struct {
+	Title string `json:"title" binding:"required"`
+	Body  string `json:"body" binding:"required"`
+	Topic string `json:"topic" binding:"required"`
 }
 
 type Sender interface {
@@ -13,5 +19,5 @@ type Sender interface {
 }
 
 type UseCase interface {
-	Send(ctx context.Context, input Input) (Input, error)
+	Send(ctx context.Context, input Input) (Response, error)
 }

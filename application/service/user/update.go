@@ -7,10 +7,10 @@ import (
 )
 
 type UpdateInput struct {
-	ID       string `json:"id"`
-	Email    string `json:"email"`
-	Fullname string `json:"fullname"`
-	Phone    string `json:"phone"`
+	ID       string `json:"id" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Fullname string `json:"fullname" binding:"required"`
+	Phone    string `json:"phone" binding:"required"`
 }
 
 func (service *Service) Update(ctx context.Context, input UpdateInput) (Response, error) {

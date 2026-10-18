@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationmessage "Momentum/application/service/message"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -19,7 +20,7 @@ import (
 //	@Param			data			body	message.CreateNoteInput	true	"Post a note"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	message.CreateNoteInput
+//	@Success		200	{object}	message.CreateNoteResponse
 //	@Failure		400	{object} http.ErrorResponse
 //	@Failure		500	{object} http.ErrorResponse
 //	@Router			/api/v1/messages/notes [post]
@@ -29,9 +30,9 @@ func (handler *Handler) CreateNote(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationmessage.CreateNoteInput
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationmessage.CreateNoteInput](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.messages.CreateNote(ctx.Context(), input)

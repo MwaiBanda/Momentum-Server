@@ -9,6 +9,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "api:types": "openapi-typescript ../docs/openapi.json -o src/infrastructure/http/generated/openapi.ts",
     "api:types:check": "yarn api:types && git diff --exit-code -- src/infrastructure/http/generated/openapi.ts",
+    "api:schemas": "openapi-zod-client ../docs/openapi.json -o src/infrastructure/http/generated/schemas.ts -t scripts/openapi-zod-schemas.hbs --export-schemas",
+    "api:schemas:check": "yarn api:schemas && git diff --exit-code -- src/infrastructure/http/generated/schemas.ts",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -56,6 +58,8 @@
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.13.0",
     "openapi-typescript": "7.13.0",
+    "openapi-zod-client": "1.18.3",
+    "openapi-zod-client": "1.18.3",
     "postcss": "^8.5.30",
     "tailwindcss": "^4.3.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",

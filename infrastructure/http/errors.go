@@ -9,8 +9,8 @@ import (
 )
 
 type ErrorResponse struct {
-	Code    int    `json:"code" example:"400"`
-	Message string `json:"message" example:"Bad Request"`
+	Code    int    `json:"code" example:"400" binding:"required"`
+	Message string `json:"message" example:"Bad Request" binding:"required"`
 }
 
 func ErrorHandler(ctx fiber.Ctx, err error) error {

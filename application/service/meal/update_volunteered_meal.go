@@ -8,9 +8,9 @@ import (
 	domainmeal "Momentum/domain/meal"
 )
 
-func (service *Service) UpdateVolunteeredMeal(ctx context.Context, input UpdateVolunteeredMealInput) (UpdateVolunteeredMealInput, error) {
+func (service *Service) UpdateVolunteeredMeal(ctx context.Context, input UpdateVolunteeredMealInput) (UpdateVolunteeredMealResponse, error) {
 	if service == nil || service.repository == nil || input.ID == "" {
-		return UpdateVolunteeredMealInput{}, ErrInvalidInput
+		return UpdateVolunteeredMealResponse{}, ErrInvalidInput
 	}
 
 	_, err := service.repository.UpdateVolunteeredMeal(ctx, domainmeal.UpdateVolunteeredMealParams{
@@ -20,12 +20,16 @@ func (service *Service) UpdateVolunteeredMeal(ctx context.Context, input UpdateV
 	})
 	if err != nil {
 		if errors.Is(err, domainmeal.ErrVolunteeredMealNotFound) {
-			return UpdateVolunteeredMealInput{}, ErrVolunteeredMealNotFound
+			return UpdateVolunteeredMealResponse{}, ErrVolunteeredMealNotFound
 		}
-		return UpdateVolunteeredMealInput{}, err
+		return UpdateVolunteeredMealResponse{}, err
 	}
 
-	return input, service.invalidateCache(ctx)
+	return UpdateVolunteeredMealResponse{
+		ID:          input.ID,
+		Description: input.Description,
+		Notes:       input.Notes,
+	}, service.invalidateCache(ctx)
 }
 
 func (service *Service) invalidateCache(ctx context.Context) error {

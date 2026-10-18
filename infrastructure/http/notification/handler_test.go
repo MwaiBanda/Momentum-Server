@@ -14,12 +14,12 @@ import (
 )
 
 type fakeUseCase struct {
-	send func(context.Context, applicationnotification.Input) (applicationnotification.Input, error)
+	send func(context.Context, applicationnotification.Input) (applicationnotification.Response, error)
 }
 
-func (fake *fakeUseCase) Send(ctx context.Context, input applicationnotification.Input) (applicationnotification.Input, error) {
+func (fake *fakeUseCase) Send(ctx context.Context, input applicationnotification.Input) (applicationnotification.Response, error) {
 	if fake.send == nil {
-		return applicationnotification.Input{}, nil
+		return applicationnotification.Response{}, nil
 	}
 	return fake.send(ctx, input)
 }
@@ -35,9 +35,9 @@ func TestSendReturnsResponse(t *testing.T) {
 	var received applicationnotification.Input
 	expected := applicationnotification.Input{Title: "Title", Body: "Body", Topic: "all-users"}
 	app := newTestApp(&fakeUseCase{
-		send: func(_ context.Context, input applicationnotification.Input) (applicationnotification.Input, error) {
+		send: func(_ context.Context, input applicationnotification.Input) (applicationnotification.Response, error) {
 			received = input
-			return input, nil
+			return applicationnotification.Response{Title: input.Title, Body: input.Body, Topic: input.Topic}, nil
 		},
 	})
 
@@ -64,9 +64,9 @@ func TestSendReturnsResponse(t *testing.T) {
 func TestSendRejectsMalformedBody(t *testing.T) {
 	called := false
 	app := newTestApp(&fakeUseCase{
-		send: func(context.Context, applicationnotification.Input) (applicationnotification.Input, error) {
+		send: func(context.Context, applicationnotification.Input) (applicationnotification.Response, error) {
 			called = true
-			return applicationnotification.Input{}, nil
+			return applicationnotification.Response{}, nil
 		},
 	})
 
@@ -88,12 +88,12 @@ func TestSendRejectsMalformedBody(t *testing.T) {
 
 func TestSendMapsSenderFailureToInternalServerError(t *testing.T) {
 	app := newTestApp(&fakeUseCase{
-		send: func(context.Context, applicationnotification.Input) (applicationnotification.Input, error) {
-			return applicationnotification.Input{}, errors.New("firebase unavailable")
+		send: func(context.Context, applicationnotification.Input) (applicationnotification.Response, error) {
+			return applicationnotification.Response{}, errors.New("firebase unavailable")
 		},
 	})
 
-	request := httptest.NewRequest(http.MethodPost, "/notifications", strings.NewReader(`{}`))
+	request := httptest.NewRequest(http.MethodPost, "/notifications", strings.NewReader(`{"title":"Title","body":"Body","topic":"all-users"}`))
 	request.Header.Set("Content-Type", "application/json")
 	response, err := app.Test(request)
 	if err != nil {

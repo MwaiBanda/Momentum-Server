@@ -8,85 +8,89 @@ import (
 )
 
 type ServiceResponse struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Type  string `json:"type"`
-	Image string `json:"image"`
+	ID    string `json:"id" binding:"required"`
+	Name  string `json:"name" binding:"required"`
+	Type  string `json:"type" binding:"required"`
+	Image string `json:"image" binding:"required"`
 }
 
 type ServiceDetailResponse struct {
-	ID       string                     `json:"id"`
-	Name     string                     `json:"name"`
-	Type     string                     `json:"type"`
-	Image    string                     `json:"image"`
-	Services []VolunteerServiceResponse `json:"services"`
+	ID       string                     `json:"id" binding:"required"`
+	Name     string                     `json:"name" binding:"required"`
+	Type     string                     `json:"type" binding:"required"`
+	Image    string                     `json:"image" binding:"required"`
+	Services []VolunteerServiceResponse `json:"services" binding:"required"`
 }
 
 type VolunteerServiceResponse struct {
-	ID          string                        `json:"id"`
-	Organizer   string                        `json:"organizer"`
-	Description string                        `json:"description"`
-	Email       string                        `json:"email"`
-	Phone       string                        `json:"phone"`
-	Days        []VolunteerServiceDayResponse `json:"days"`
-	UserID      string                        `json:"user_id"`
-	ServiceID   string                        `json:"service_id"`
+	ID          string                        `json:"id" binding:"required"`
+	Organizer   string                        `json:"organizer" binding:"required"`
+	Description string                        `json:"description" binding:"required"`
+	Email       string                        `json:"email" binding:"required"`
+	Phone       string                        `json:"phone" binding:"required"`
+	Days        []VolunteerServiceDayResponse `json:"days" binding:"required"`
+	UserID      string                        `json:"user_id" binding:"required"`
+	ServiceID   string                        `json:"service_id" binding:"required"`
 }
 
 type VolunteerServiceDayResponse struct {
-	ID    string       `json:"id"`
-	Notes string       `json:"notes"`
-	Date  string       `json:"date"`
-	User  UserResponse `json:"user"`
+	ID    string       `json:"id" binding:"required"`
+	Notes string       `json:"notes" binding:"required"`
+	Date  string       `json:"date" binding:"required"`
+	User  UserResponse `json:"user" binding:"required"`
 }
 
 type UserResponse struct {
-	ID        string        `json:"id"`
-	Email     string        `json:"email"`
-	Fullname  string        `json:"fullname"`
-	Phone     string        `json:"phone"`
-	CreatedOn string        `json:"createdOn"`
-	Meals     []interface{} `json:"meals"`
+	ID        string        `json:"id" binding:"required"`
+	Email     string        `json:"email" binding:"required"`
+	Fullname  string        `json:"fullname" binding:"required"`
+	Phone     string        `json:"phone" binding:"required"`
+	CreatedOn string        `json:"createdOn" binding:"required"`
+	Meals     []interface{} `json:"meals" binding:"required"`
+}
+
+type UserInput struct {
+	ID string `json:"id" binding:"required"`
 }
 
 type CreateInput struct {
 	ID          string           `json:"id"`
-	Organizer   string           `json:"organizer"`
-	Description string           `json:"description"`
-	Email       string           `json:"email"`
-	Phone       string           `json:"phone"`
-	Days        []CreateDayInput `json:"days"`
-	UserID      string           `json:"user_id"`
-	ServiceID   string           `json:"service_id"`
+	Organizer   string           `json:"organizer" binding:"required"`
+	Description string           `json:"description" binding:"required"`
+	Email       string           `json:"email" binding:"required"`
+	Phone       string           `json:"phone" binding:"required"`
+	Days        []CreateDayInput `json:"days" binding:"required"`
+	UserID      string           `json:"user_id" binding:"required"`
+	ServiceID   string           `json:"service_id" binding:"required"`
 }
 
 type CreateDayInput struct {
-	Date string `json:"date"`
+	Date string `json:"date" binding:"required"`
 }
 
 type CreateResponse struct {
-	ID          string           `json:"id"`
-	Organizer   string           `json:"organizer"`
-	Description string           `json:"description"`
-	Email       string           `json:"email"`
-	Phone       string           `json:"phone"`
-	Days        []CreateDayInput `json:"days"`
-	UserID      string           `json:"user_id"`
-	ServiceID   string           `json:"service_id"`
+	ID          string           `json:"id" binding:"required"`
+	Organizer   string           `json:"organizer" binding:"required"`
+	Description string           `json:"description" binding:"required"`
+	Email       string           `json:"email" binding:"required"`
+	Phone       string           `json:"phone" binding:"required"`
+	Days        []CreateDayInput `json:"days" binding:"required"`
+	UserID      string           `json:"user_id" binding:"required"`
+	ServiceID   string           `json:"service_id" binding:"required"`
 }
 
 type UpdateDayInput struct {
-	ID    string       `json:"id"`
-	Notes string       `json:"notes"`
-	Date  string       `json:"date"`
-	User  UserResponse `json:"user"`
+	ID    string    `json:"id" binding:"required"`
+	Notes string    `json:"notes" binding:"required"`
+	Date  string    `json:"date" binding:"required"`
+	User  UserInput `json:"user" binding:"required"`
 }
 
 type UpdateDayResponse struct {
-	ID    string       `json:"id"`
-	Notes string       `json:"notes"`
-	Date  string       `json:"date"`
-	User  UserResponse `json:"user"`
+	ID    string       `json:"id" binding:"required"`
+	Notes string       `json:"notes" binding:"required"`
+	Date  string       `json:"date" binding:"required"`
+	User  UserResponse `json:"user" binding:"required"`
 }
 
 func toCreateResponse(input CreateInput) CreateResponse {
@@ -107,7 +111,7 @@ func toUpdateDayResponse(input UpdateDayInput) UpdateDayResponse {
 		ID:    input.ID,
 		Notes: input.Notes,
 		Date:  input.Date,
-		User:  input.User,
+		User:  UserResponse{ID: input.User.ID},
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationtransaction "Momentum/application/service/transaction"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -29,9 +30,9 @@ func (handler *Handler) Create(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationtransaction.Input
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationtransaction.Input](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.transactions.Create(ctx.Context(), input)

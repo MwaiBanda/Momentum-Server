@@ -4,7 +4,7 @@ GO ?= go
 GOFLAGS ?= -mod=mod
 SWAG_VERSION ?= v1.16.6
 
-.PHONY: help run build test test-postgres swagger openapi openapi-check cms-api-types cms-api-types-check fmt check docker-build
+.PHONY: help run build test test-postgres swagger openapi openapi-check cms-api-types cms-api-types-check cms-api-schemas cms-api-schemas-check fmt check docker-build
 
 help: ## Show available commands
 	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  %-16s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -35,6 +35,12 @@ cms-api-types: openapi ## Generate CMS transport types from OpenAPI
 
 cms-api-types-check: cms-api-types ## Verify CMS transport types are current
 	git diff --exit-code -- cms/src/infrastructure/http/generated/openapi.ts
+
+cms-api-schemas: openapi ## Generate CMS runtime schemas from OpenAPI
+	yarn --cwd cms api:schemas
+
+cms-api-schemas-check: cms-api-schemas ## Verify CMS runtime schemas are current
+	git diff --exit-code -- cms/src/infrastructure/http/generated/schemas.ts
 
 fmt: ## Format Go source files
 	gofmt -w $$(find . -type f -name '*.go' -not -path './cms/*' -not -path './vendor/*')

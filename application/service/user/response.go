@@ -7,11 +7,11 @@ import (
 )
 
 type Response struct {
-	ID        string `json:"id"`
-	Email     string `json:"email"`
-	Fullname  string `json:"fullname"`
-	Phone     string `json:"phone"`
-	CreatedOn string `json:"createdOn"`
+	ID        string `json:"id" binding:"required"`
+	Email     string `json:"email" binding:"required"`
+	Fullname  string `json:"fullname" binding:"required"`
+	Phone     string `json:"phone" binding:"required"`
+	CreatedOn string `json:"createdOn" binding:"required"`
 }
 
 func toResponse(userEntity domainuser.User) Response {

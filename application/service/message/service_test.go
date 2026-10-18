@@ -223,8 +223,8 @@ func TestCreateNoteInvalidatesUserCache(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateNote() error = %v", err)
 	}
-	if !reflect.DeepEqual(response, input) {
-		t.Fatalf("CreateNote() response = %#v, want %#v", response, input)
+	if response.Content != input.Content || response.UserID != input.UserID || response.ID == "" {
+		t.Fatalf("CreateNote() response = %#v, want generated note response for %#v", response, input)
 	}
 	if string(cacheStore.values["messages:version"]) != "1" {
 		t.Fatalf("message cache version = %q, want %q", cacheStore.values["messages:version"], "1")

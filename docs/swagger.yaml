@@ -18,6 +18,15 @@ definitions:
         type: boolean
       starts_at:
         type: string
+    required:
+    - all_day_event
+    - ends_at
+    - image_url
+    - name
+    - open_graph_description
+    - recurrence_description
+    - recurring
+    - starts_at
     type: object
   event.Event:
     properties:
@@ -25,6 +34,9 @@ definitions:
         $ref: '#/definitions/event.Attributes'
       id:
         type: string
+    required:
+    - attributes
+    - id
     type: object
   event.Response:
     properties:
@@ -32,6 +44,8 @@ definitions:
         items:
           $ref: '#/definitions/event.Event'
         type: array
+    required:
+    - data
     type: object
   http.ErrorResponse:
     properties:
@@ -41,6 +55,63 @@ definitions:
       message:
         example: Bad Request
         type: string
+    required:
+    - code
+    - message
+    type: object
+  meal.CreateResponse:
+    properties:
+      allergies:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      favourites:
+        type: string
+      id:
+        type: string
+      instructions:
+        type: string
+      least_favourites:
+        type: string
+      meals:
+        items:
+          $ref: '#/definitions/meal.MealVolunteeredRequest'
+        type: array
+      num_of_adults:
+        type: integer
+      number_of_kids:
+        type: integer
+      phone:
+        type: string
+      preferred_time:
+        type: string
+      reason:
+        type: string
+      recipient:
+        type: string
+      street:
+        type: string
+      user_id:
+        type: string
+    required:
+    - allergies
+    - city
+    - email
+    - favourites
+    - id
+    - instructions
+    - least_favourites
+    - meals
+    - num_of_adults
+    - number_of_kids
+    - phone
+    - preferred_time
+    - reason
+    - recipient
+    - street
+    - user_id
     type: object
   meal.Input:
     properties:
@@ -78,6 +149,22 @@ definitions:
         type: string
       user_id:
         type: string
+    required:
+    - allergies
+    - city
+    - email
+    - favourites
+    - instructions
+    - least_favourites
+    - meals
+    - num_of_adults
+    - number_of_kids
+    - phone
+    - preferred_time
+    - reason
+    - recipient
+    - street
+    - user_id
     type: object
   meal.MealVolunteeredRequest:
     properties:
@@ -91,6 +178,8 @@ definitions:
         type: string
       user_id:
         type: string
+    required:
+    - date
     type: object
   meal.ParticipantResponse:
     properties:
@@ -98,6 +187,9 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/meal.UserResponse'
+    required:
+    - id
+    - user
     type: object
   meal.Response:
     properties:
@@ -139,13 +231,88 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/meal.UserResponse'
+    required:
+    - allergies
+    - city
+    - email
+    - favourites
+    - id
+    - instructions
+    - least_favourites
+    - meals
+    - num_of_adults
+    - number_of_kids
+    - participants
+    - phone
+    - preferred_time
+    - reason
+    - recipient
+    - street
+    - user
     type: object
-  meal.UpdateResponse:
+  meal.UpdateEntryResponse:
     properties:
       id:
         type: string
       message:
         type: string
+    required:
+    - id
+    - message
+    type: object
+  meal.UpdateResponse:
+    properties:
+      allergies:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      favourites:
+        type: string
+      id:
+        type: string
+      instructions:
+        type: string
+      least_favourites:
+        type: string
+      meals:
+        items:
+          $ref: '#/definitions/meal.MealVolunteeredRequest'
+        type: array
+      num_of_adults:
+        type: integer
+      number_of_kids:
+        type: integer
+      phone:
+        type: string
+      preferred_time:
+        type: string
+      reason:
+        type: string
+      recipient:
+        type: string
+      street:
+        type: string
+      user_id:
+        type: string
+    required:
+    - allergies
+    - city
+    - email
+    - favourites
+    - id
+    - instructions
+    - least_favourites
+    - meals
+    - num_of_adults
+    - number_of_kids
+    - phone
+    - preferred_time
+    - reason
+    - recipient
+    - street
+    - user_id
     type: object
   meal.UpdateVolunteeredMealInput:
     properties:
@@ -155,6 +322,30 @@ definitions:
         type: string
       notes:
         type: string
+    required:
+    - description
+    - id
+    - notes
+    type: object
+  meal.UpdateVolunteeredMealResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+    required:
+    - description
+    - id
+    - notes
+    type: object
+  meal.UserInput:
+    properties:
+      id:
+        type: string
+    required:
+    - id
     type: object
   meal.UserResponse:
     properties:
@@ -168,6 +359,12 @@ definitions:
         type: string
       phone:
         type: string
+    required:
+    - createdOn
+    - email
+    - fullname
+    - id
+    - phone
     type: object
   meal.VolunteerAssignmentInput:
     properties:
@@ -175,6 +372,19 @@ definitions:
         type: string
       volunteered_meal:
         $ref: '#/definitions/meal.VolunteeredMealInput'
+    required:
+    - meal_id
+    - volunteered_meal
+    type: object
+  meal.VolunteerAssignmentResponse:
+    properties:
+      meal_id:
+        type: string
+      volunteered_meal:
+        $ref: '#/definitions/meal.VolunteeredMealResponse'
+    required:
+    - meal_id
+    - volunteered_meal
     type: object
   meal.VolunteeredMealInput:
     properties:
@@ -190,10 +400,13 @@ definitions:
         type: string
       updates:
         items:
-          $ref: '#/definitions/meal.UpdateResponse'
+          $ref: '#/definitions/meal.UpdateEntryResponse'
         type: array
       user:
-        $ref: '#/definitions/meal.UserResponse'
+        $ref: '#/definitions/meal.UserInput'
+    required:
+    - id
+    - user
     type: object
   meal.VolunteeredMealResponse:
     properties:
@@ -209,10 +422,18 @@ definitions:
         type: string
       updates:
         items:
-          $ref: '#/definitions/meal.UpdateResponse'
+          $ref: '#/definitions/meal.UpdateEntryResponse'
         type: array
       user:
         $ref: '#/definitions/meal.UserResponse'
+    required:
+    - created_on
+    - date
+    - description
+    - id
+    - notes
+    - updates
+    - user
     type: object
   message.CreateInput:
     properties:
@@ -230,6 +451,13 @@ definitions:
         type: string
       title:
         type: string
+    required:
+    - date
+    - passages
+    - preacher
+    - series
+    - thumbnail
+    - title
     type: object
   message.CreateNoteInput:
     properties:
@@ -239,6 +467,23 @@ definitions:
         type: string
       userId:
         type: string
+    required:
+    - content
+    - passageId
+    - userId
+    type: object
+  message.CreateNoteResponse:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      userId:
+        type: string
+    required:
+    - content
+    - id
+    - userId
     type: object
   message.CreatePassageInput:
     properties:
@@ -252,6 +497,9 @@ definitions:
         type: string
       verse:
         type: string
+    required:
+    - order
+    - type
     type: object
   message.MessageListResponse:
     properties:
@@ -259,6 +507,8 @@ definitions:
         items:
           $ref: '#/definitions/message.MessageResponse'
         type: array
+    required:
+    - data
     type: object
   message.MessageResponse:
     properties:
@@ -284,6 +534,17 @@ definitions:
         type: string
       title:
         type: string
+    required:
+    - createdOn
+    - date
+    - hasOrder
+    - id
+    - passages
+    - preacher
+    - published
+    - series
+    - thumbnail
+    - title
     type: object
   message.NoteResponse:
     properties:
@@ -293,6 +554,10 @@ definitions:
         type: string
       userId:
         type: string
+    required:
+    - content
+    - id
+    - userId
     type: object
   message.PassageResponse:
     properties:
@@ -312,6 +577,14 @@ definitions:
         type: string
       verse:
         type: string
+    required:
+    - header
+    - id
+    - message
+    - notes
+    - order
+    - type
+    - verse
     type: object
   message.UpdateInput:
     properties:
@@ -333,6 +606,25 @@ definitions:
         type: string
       title:
         type: string
+    required:
+    - date
+    - id
+    - passages
+    - preacher
+    - published
+    - series
+    - thumbnail
+    - title
+    type: object
+  message.UpdateNoteInput:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+    required:
+    - content
+    - id
     type: object
   message.UpdatePassageInput:
     properties:
@@ -344,6 +636,8 @@ definitions:
         type: string
       verse:
         type: string
+    required:
+    - id
     type: object
   notification.Input:
     properties:
@@ -353,6 +647,23 @@ definitions:
         type: string
       topic:
         type: string
+    required:
+    - body
+    - title
+    - topic
+    type: object
+  notification.Response:
+    properties:
+      body:
+        type: string
+      title:
+        type: string
+      topic:
+        type: string
+    required:
+    - body
+    - title
+    - topic
     type: object
   payment.Input:
     properties:
@@ -364,6 +675,11 @@ definitions:
         type: string
       phone:
         type: string
+    required:
+    - amount
+    - email
+    - fullname
+    - phone
     type: object
   payment.Response:
     properties:
@@ -375,6 +691,11 @@ definitions:
         type: string
       publishableKey:
         type: string
+    required:
+    - customer
+    - ephemeralKey
+    - paymentIntent
+    - publishableKey
     type: object
   sermon.Response:
     properties:
@@ -400,6 +721,10 @@ definitions:
             label:
               type: string
             url: {}
+          required:
+          - active
+          - label
+          - url
           type: object
         type: array
       next_page_url:
@@ -413,6 +738,20 @@ definitions:
         type: integer
       total:
         type: string
+    required:
+    - current_page
+    - data
+    - first_page_url
+    - from
+    - last_page
+    - last_page_url
+    - links
+    - next_page_url
+    - path
+    - per_page
+    - prev_page_url
+    - to
+    - total
     type: object
   sermon.Sermon:
     properties:
@@ -423,6 +762,9 @@ definitions:
             type: string
           date:
             type: string
+        required:
+        - carbon
+        - date
         type: object
       detail_url:
         type: string
@@ -434,6 +776,9 @@ definitions:
             type: integer
           shares:
             type: integer
+        required:
+        - likes
+        - shares
         type: object
       interactive_note: {}
       keywords: {}
@@ -447,6 +792,13 @@ definitions:
             type: string
           video_thumbnail:
             type: string
+        required:
+        - audio
+        - embed
+        - image
+        - notes
+        - video
+        - video_thumbnail
         type: object
       passages:
         items: {}
@@ -461,6 +813,11 @@ definitions:
             type: string
           title:
             type: string
+        required:
+        - description
+        - image
+        - slug
+        - title
         type: object
       slug:
         type: string
@@ -468,6 +825,22 @@ definitions:
       text: {}
       title:
         type: string
+    required:
+    - categories
+    - date
+    - detail_url
+    - id
+    - interactions
+    - interactive_note
+    - keywords
+    - media
+    - passages
+    - preacher
+    - series
+    - slug
+    - summary
+    - text
+    - title
     type: object
   transaction.Input:
     properties:
@@ -487,6 +860,10 @@ definitions:
         type: string
       userId:
         type: string
+    required:
+    - amount
+    - date
+    - description
     type: object
   transaction.Response:
     properties:
@@ -502,6 +879,13 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/transaction.UserResponse'
+    required:
+    - amount
+    - createdOn
+    - date
+    - description
+    - id
+    - user
     type: object
   transaction.UserResponse:
     properties:
@@ -515,6 +899,12 @@ definitions:
         type: string
       phone:
         type: string
+    required:
+    - createdOn
+    - email
+    - fullname
+    - id
+    - phone
     type: object
   user.CreateInput:
     properties:
@@ -526,6 +916,11 @@ definitions:
         type: string
       phone:
         type: string
+    required:
+    - email
+    - fullname
+    - id
+    - phone
     type: object
   user.Response:
     properties:
@@ -539,6 +934,12 @@ definitions:
         type: string
       phone:
         type: string
+    required:
+    - createdOn
+    - email
+    - fullname
+    - id
+    - phone
     type: object
   user.UpdateInput:
     properties:
@@ -550,11 +951,18 @@ definitions:
         type: string
       phone:
         type: string
+    required:
+    - email
+    - fullname
+    - id
+    - phone
     type: object
   volunteer_service.CreateDayInput:
     properties:
       date:
         type: string
+    required:
+    - date
     type: object
   volunteer_service.CreateInput:
     properties:
@@ -576,6 +984,14 @@ definitions:
         type: string
       user_id:
         type: string
+    required:
+    - days
+    - description
+    - email
+    - organizer
+    - phone
+    - service_id
+    - user_id
     type: object
   volunteer_service.CreateResponse:
     properties:
@@ -597,6 +1013,15 @@ definitions:
         type: string
       user_id:
         type: string
+    required:
+    - days
+    - description
+    - email
+    - id
+    - organizer
+    - phone
+    - service_id
+    - user_id
     type: object
   volunteer_service.ServiceDetailResponse:
     properties:
@@ -612,6 +1037,12 @@ definitions:
         type: array
       type:
         type: string
+    required:
+    - id
+    - image
+    - name
+    - services
+    - type
     type: object
   volunteer_service.ServiceResponse:
     properties:
@@ -623,6 +1054,11 @@ definitions:
         type: string
       type:
         type: string
+    required:
+    - id
+    - image
+    - name
+    - type
     type: object
   volunteer_service.UpdateDayInput:
     properties:
@@ -633,7 +1069,12 @@ definitions:
       notes:
         type: string
       user:
-        $ref: '#/definitions/volunteer_service.UserResponse'
+        $ref: '#/definitions/volunteer_service.UserInput'
+    required:
+    - date
+    - id
+    - notes
+    - user
     type: object
   volunteer_service.UpdateDayResponse:
     properties:
@@ -645,6 +1086,18 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/volunteer_service.UserResponse'
+    required:
+    - date
+    - id
+    - notes
+    - user
+    type: object
+  volunteer_service.UserInput:
+    properties:
+      id:
+        type: string
+    required:
+    - id
     type: object
   volunteer_service.UserResponse:
     properties:
@@ -661,6 +1114,13 @@ definitions:
         type: array
       phone:
         type: string
+    required:
+    - createdOn
+    - email
+    - fullname
+    - id
+    - meals
+    - phone
     type: object
   volunteer_service.VolunteerServiceDayResponse:
     properties:
@@ -672,6 +1132,11 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/volunteer_service.UserResponse'
+    required:
+    - date
+    - id
+    - notes
+    - user
     type: object
   volunteer_service.VolunteerServiceResponse:
     properties:
@@ -693,6 +1158,15 @@ definitions:
         type: string
       user_id:
         type: string
+    required:
+    - days
+    - description
+    - email
+    - id
+    - organizer
+    - phone
+    - service_id
+    - user_id
     type: object
 host: services.momentumchurch.dev
 info:
@@ -794,7 +1268,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/meal.Input'
+            $ref: '#/definitions/meal.CreateResponse'
         "400":
           description: Bad Request
           schema:
@@ -834,7 +1308,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/meal.Input'
+            $ref: '#/definitions/meal.UpdateResponse'
         "400":
           description: Bad Request
           schema:
@@ -919,7 +1393,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/meal.VolunteerAssignmentInput'
+            $ref: '#/definitions/meal.VolunteerAssignmentResponse'
         "400":
           description: Bad Request
           schema:
@@ -963,7 +1437,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/meal.UpdateVolunteeredMealInput'
+            $ref: '#/definitions/meal.UpdateVolunteeredMealResponse'
         "400":
           description: Bad Request
           schema:
@@ -1208,7 +1682,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/message.CreateNoteInput'
+            $ref: '#/definitions/message.CreateNoteResponse'
         "400":
           description: Bad Request
           schema:
@@ -1241,7 +1715,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/message.NoteResponse'
+          $ref: '#/definitions/message.UpdateNoteInput'
       produces:
       - application/json
       responses:
@@ -1368,7 +1842,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/notification.Input'
+            $ref: '#/definitions/notification.Response'
         "400":
           description: Bad Request
           schema:

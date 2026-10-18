@@ -7,12 +7,12 @@ import (
 	domainmeal "Momentum/domain/meal"
 )
 
-func (service *Service) AssignVolunteer(ctx context.Context, input VolunteerAssignmentInput) (VolunteerAssignmentInput, error) {
+func (service *Service) AssignVolunteer(ctx context.Context, input VolunteerAssignmentInput) (VolunteerAssignmentResponse, error) {
 	if service == nil || service.repository == nil ||
 		input.MealID == "" ||
 		input.VolunteeredMeal.ID == "" ||
 		input.VolunteeredMeal.User.ID == "" {
-		return VolunteerAssignmentInput{}, ErrInvalidInput
+		return VolunteerAssignmentResponse{}, ErrInvalidInput
 	}
 
 	_, err := service.repository.AssignVolunteer(ctx, domainmeal.AssignVolunteerParams{
@@ -24,13 +24,24 @@ func (service *Service) AssignVolunteer(ctx context.Context, input VolunteerAssi
 	})
 	if err != nil {
 		if errors.Is(err, domainmeal.ErrNotFound) {
-			return VolunteerAssignmentInput{}, ErrNotFound
+			return VolunteerAssignmentResponse{}, ErrNotFound
 		}
 		if errors.Is(err, domainmeal.ErrVolunteeredMealNotFound) {
-			return VolunteerAssignmentInput{}, ErrVolunteeredMealNotFound
+			return VolunteerAssignmentResponse{}, ErrVolunteeredMealNotFound
 		}
-		return VolunteerAssignmentInput{}, err
+		return VolunteerAssignmentResponse{}, err
 	}
 
-	return input, service.invalidateCache(ctx)
+	return VolunteerAssignmentResponse{
+		MealID: input.MealID,
+		VolunteeredMeal: VolunteeredMealResponse{
+			ID:          input.VolunteeredMeal.ID,
+			CreatedOn:   input.VolunteeredMeal.CreatedOn,
+			Description: input.VolunteeredMeal.Description,
+			Notes:       input.VolunteeredMeal.Notes,
+			Date:        input.VolunteeredMeal.Date,
+			User:        UserResponse{ID: input.VolunteeredMeal.User.ID},
+			Updates:     input.VolunteeredMeal.Updates,
+		},
+	}, service.invalidateCache(ctx)
 }

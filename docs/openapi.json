@@ -28,6 +28,16 @@
             "type": "string"
           }
         },
+        "required": [
+          "all_day_event",
+          "ends_at",
+          "image_url",
+          "name",
+          "open_graph_description",
+          "recurrence_description",
+          "recurring",
+          "starts_at"
+        ],
         "type": "object"
       },
       "event.Event": {
@@ -39,6 +49,10 @@
             "type": "string"
           }
         },
+        "required": [
+          "attributes",
+          "id"
+        ],
         "type": "object"
       },
       "event.Response": {
@@ -50,6 +64,9 @@
             "type": "array"
           }
         },
+        "required": [
+          "data"
+        ],
         "type": "object"
       },
       "http.ErrorResponse": {
@@ -63,6 +80,84 @@
             "type": "string"
           }
         },
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object"
+      },
+      "meal.CreateResponse": {
+        "properties": {
+          "allergies": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "favourites": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "least_favourites": {
+            "type": "string"
+          },
+          "meals": {
+            "items": {
+              "$ref": "#/components/schemas/meal.MealVolunteeredRequest"
+            },
+            "type": "array"
+          },
+          "num_of_adults": {
+            "type": "integer"
+          },
+          "number_of_kids": {
+            "type": "integer"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "preferred_time": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "allergies",
+          "city",
+          "email",
+          "favourites",
+          "id",
+          "instructions",
+          "least_favourites",
+          "meals",
+          "num_of_adults",
+          "number_of_kids",
+          "phone",
+          "preferred_time",
+          "reason",
+          "recipient",
+          "street",
+          "user_id"
+        ],
         "type": "object"
       },
       "meal.Input": {
@@ -119,6 +214,23 @@
             "type": "string"
           }
         },
+        "required": [
+          "allergies",
+          "city",
+          "email",
+          "favourites",
+          "instructions",
+          "least_favourites",
+          "meals",
+          "num_of_adults",
+          "number_of_kids",
+          "phone",
+          "preferred_time",
+          "reason",
+          "recipient",
+          "street",
+          "user_id"
+        ],
         "type": "object"
       },
       "meal.MealVolunteeredRequest": {
@@ -139,6 +251,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "date"
+        ],
         "type": "object"
       },
       "meal.ParticipantResponse": {
@@ -150,6 +265,10 @@
             "$ref": "#/components/schemas/meal.UserResponse"
           }
         },
+        "required": [
+          "id",
+          "user"
+        ],
         "type": "object"
       },
       "meal.Response": {
@@ -212,9 +331,28 @@
             "$ref": "#/components/schemas/meal.UserResponse"
           }
         },
+        "required": [
+          "allergies",
+          "city",
+          "email",
+          "favourites",
+          "id",
+          "instructions",
+          "least_favourites",
+          "meals",
+          "num_of_adults",
+          "number_of_kids",
+          "participants",
+          "phone",
+          "preferred_time",
+          "reason",
+          "recipient",
+          "street",
+          "user"
+        ],
         "type": "object"
       },
-      "meal.UpdateResponse": {
+      "meal.UpdateEntryResponse": {
         "properties": {
           "id": {
             "type": "string"
@@ -223,6 +361,84 @@
             "type": "string"
           }
         },
+        "required": [
+          "id",
+          "message"
+        ],
+        "type": "object"
+      },
+      "meal.UpdateResponse": {
+        "properties": {
+          "allergies": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "favourites": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "least_favourites": {
+            "type": "string"
+          },
+          "meals": {
+            "items": {
+              "$ref": "#/components/schemas/meal.MealVolunteeredRequest"
+            },
+            "type": "array"
+          },
+          "num_of_adults": {
+            "type": "integer"
+          },
+          "number_of_kids": {
+            "type": "integer"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "preferred_time": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "allergies",
+          "city",
+          "email",
+          "favourites",
+          "id",
+          "instructions",
+          "least_favourites",
+          "meals",
+          "num_of_adults",
+          "number_of_kids",
+          "phone",
+          "preferred_time",
+          "reason",
+          "recipient",
+          "street",
+          "user_id"
+        ],
         "type": "object"
       },
       "meal.UpdateVolunteeredMealInput": {
@@ -237,6 +453,41 @@
             "type": "string"
           }
         },
+        "required": [
+          "description",
+          "id",
+          "notes"
+        ],
+        "type": "object"
+      },
+      "meal.UpdateVolunteeredMealResponse": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "description",
+          "id",
+          "notes"
+        ],
+        "type": "object"
+      },
+      "meal.UserInput": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
         "type": "object"
       },
       "meal.UserResponse": {
@@ -257,6 +508,13 @@
             "type": "string"
           }
         },
+        "required": [
+          "createdOn",
+          "email",
+          "fullname",
+          "id",
+          "phone"
+        ],
         "type": "object"
       },
       "meal.VolunteerAssignmentInput": {
@@ -268,6 +526,25 @@
             "$ref": "#/components/schemas/meal.VolunteeredMealInput"
           }
         },
+        "required": [
+          "meal_id",
+          "volunteered_meal"
+        ],
+        "type": "object"
+      },
+      "meal.VolunteerAssignmentResponse": {
+        "properties": {
+          "meal_id": {
+            "type": "string"
+          },
+          "volunteered_meal": {
+            "$ref": "#/components/schemas/meal.VolunteeredMealResponse"
+          }
+        },
+        "required": [
+          "meal_id",
+          "volunteered_meal"
+        ],
         "type": "object"
       },
       "meal.VolunteeredMealInput": {
@@ -289,14 +566,18 @@
           },
           "updates": {
             "items": {
-              "$ref": "#/components/schemas/meal.UpdateResponse"
+              "$ref": "#/components/schemas/meal.UpdateEntryResponse"
             },
             "type": "array"
           },
           "user": {
-            "$ref": "#/components/schemas/meal.UserResponse"
+            "$ref": "#/components/schemas/meal.UserInput"
           }
         },
+        "required": [
+          "id",
+          "user"
+        ],
         "type": "object"
       },
       "meal.VolunteeredMealResponse": {
@@ -318,7 +599,7 @@
           },
           "updates": {
             "items": {
-              "$ref": "#/components/schemas/meal.UpdateResponse"
+              "$ref": "#/components/schemas/meal.UpdateEntryResponse"
             },
             "type": "array"
           },
@@ -326,6 +607,15 @@
             "$ref": "#/components/schemas/meal.UserResponse"
           }
         },
+        "required": [
+          "created_on",
+          "date",
+          "description",
+          "id",
+          "notes",
+          "updates",
+          "user"
+        ],
         "type": "object"
       },
       "message.CreateInput": {
@@ -352,6 +642,14 @@
             "type": "string"
           }
         },
+        "required": [
+          "date",
+          "passages",
+          "preacher",
+          "series",
+          "thumbnail",
+          "title"
+        ],
         "type": "object"
       },
       "message.CreateNoteInput": {
@@ -366,6 +664,30 @@
             "type": "string"
           }
         },
+        "required": [
+          "content",
+          "passageId",
+          "userId"
+        ],
+        "type": "object"
+      },
+      "message.CreateNoteResponse": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "id",
+          "userId"
+        ],
         "type": "object"
       },
       "message.CreatePassageInput": {
@@ -386,6 +708,10 @@
             "type": "string"
           }
         },
+        "required": [
+          "order",
+          "type"
+        ],
         "type": "object"
       },
       "message.MessageListResponse": {
@@ -397,6 +723,9 @@
             "type": "array"
           }
         },
+        "required": [
+          "data"
+        ],
         "type": "object"
       },
       "message.MessageResponse": {
@@ -435,6 +764,18 @@
             "type": "string"
           }
         },
+        "required": [
+          "createdOn",
+          "date",
+          "hasOrder",
+          "id",
+          "passages",
+          "preacher",
+          "published",
+          "series",
+          "thumbnail",
+          "title"
+        ],
         "type": "object"
       },
       "message.NoteResponse": {
@@ -449,6 +790,11 @@
             "type": "string"
           }
         },
+        "required": [
+          "content",
+          "id",
+          "userId"
+        ],
         "type": "object"
       },
       "message.PassageResponse": {
@@ -478,6 +824,15 @@
             "type": "string"
           }
         },
+        "required": [
+          "header",
+          "id",
+          "message",
+          "notes",
+          "order",
+          "type",
+          "verse"
+        ],
         "type": "object"
       },
       "message.UpdateInput": {
@@ -510,6 +865,31 @@
             "type": "string"
           }
         },
+        "required": [
+          "date",
+          "id",
+          "passages",
+          "preacher",
+          "published",
+          "series",
+          "thumbnail",
+          "title"
+        ],
+        "type": "object"
+      },
+      "message.UpdateNoteInput": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "id"
+        ],
         "type": "object"
       },
       "message.UpdatePassageInput": {
@@ -527,6 +907,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "id"
+        ],
         "type": "object"
       },
       "notification.Input": {
@@ -541,6 +924,30 @@
             "type": "string"
           }
         },
+        "required": [
+          "body",
+          "title",
+          "topic"
+        ],
+        "type": "object"
+      },
+      "notification.Response": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "title",
+          "topic"
+        ],
         "type": "object"
       },
       "payment.Input": {
@@ -558,6 +965,12 @@
             "type": "string"
           }
         },
+        "required": [
+          "amount",
+          "email",
+          "fullname",
+          "phone"
+        ],
         "type": "object"
       },
       "payment.Response": {
@@ -575,6 +988,12 @@
             "type": "string"
           }
         },
+        "required": [
+          "customer",
+          "ephemeralKey",
+          "paymentIntent",
+          "publishableKey"
+        ],
         "type": "object"
       },
       "sermon.Response": {
@@ -611,6 +1030,11 @@
                 },
                 "url": {}
               },
+              "required": [
+                "active",
+                "label",
+                "url"
+              ],
               "type": "object"
             },
             "type": "array"
@@ -632,6 +1056,21 @@
             "type": "string"
           }
         },
+        "required": [
+          "current_page",
+          "data",
+          "first_page_url",
+          "from",
+          "last_page",
+          "last_page_url",
+          "links",
+          "next_page_url",
+          "path",
+          "per_page",
+          "prev_page_url",
+          "to",
+          "total"
+        ],
         "type": "object"
       },
       "sermon.Sermon": {
@@ -646,6 +1085,10 @@
                 "type": "string"
               }
             },
+            "required": [
+              "carbon",
+              "date"
+            ],
             "type": "object"
           },
           "detail_url": {
@@ -663,6 +1106,10 @@
                 "type": "integer"
               }
             },
+            "required": [
+              "likes",
+              "shares"
+            ],
             "type": "object"
           },
           "interactive_note": {},
@@ -680,6 +1127,14 @@
                 "type": "string"
               }
             },
+            "required": [
+              "audio",
+              "embed",
+              "image",
+              "notes",
+              "video",
+              "video_thumbnail"
+            ],
             "type": "object"
           },
           "passages": {
@@ -700,6 +1155,12 @@
                 "type": "string"
               }
             },
+            "required": [
+              "description",
+              "image",
+              "slug",
+              "title"
+            ],
             "type": "object"
           },
           "slug": {
@@ -711,6 +1172,23 @@
             "type": "string"
           }
         },
+        "required": [
+          "categories",
+          "date",
+          "detail_url",
+          "id",
+          "interactions",
+          "interactive_note",
+          "keywords",
+          "media",
+          "passages",
+          "preacher",
+          "series",
+          "slug",
+          "summary",
+          "text",
+          "title"
+        ],
         "type": "object"
       },
       "transaction.Input": {
@@ -740,6 +1218,11 @@
             "type": "string"
           }
         },
+        "required": [
+          "amount",
+          "date",
+          "description"
+        ],
         "type": "object"
       },
       "transaction.Response": {
@@ -763,6 +1246,14 @@
             "$ref": "#/components/schemas/transaction.UserResponse"
           }
         },
+        "required": [
+          "amount",
+          "createdOn",
+          "date",
+          "description",
+          "id",
+          "user"
+        ],
         "type": "object"
       },
       "transaction.UserResponse": {
@@ -783,6 +1274,13 @@
             "type": "string"
           }
         },
+        "required": [
+          "createdOn",
+          "email",
+          "fullname",
+          "id",
+          "phone"
+        ],
         "type": "object"
       },
       "user.CreateInput": {
@@ -800,6 +1298,12 @@
             "type": "string"
           }
         },
+        "required": [
+          "email",
+          "fullname",
+          "id",
+          "phone"
+        ],
         "type": "object"
       },
       "user.Response": {
@@ -820,6 +1324,13 @@
             "type": "string"
           }
         },
+        "required": [
+          "createdOn",
+          "email",
+          "fullname",
+          "id",
+          "phone"
+        ],
         "type": "object"
       },
       "user.UpdateInput": {
@@ -837,6 +1348,12 @@
             "type": "string"
           }
         },
+        "required": [
+          "email",
+          "fullname",
+          "id",
+          "phone"
+        ],
         "type": "object"
       },
       "volunteer_service.CreateDayInput": {
@@ -845,6 +1362,9 @@
             "type": "string"
           }
         },
+        "required": [
+          "date"
+        ],
         "type": "object"
       },
       "volunteer_service.CreateInput": {
@@ -877,6 +1397,15 @@
             "type": "string"
           }
         },
+        "required": [
+          "days",
+          "description",
+          "email",
+          "organizer",
+          "phone",
+          "service_id",
+          "user_id"
+        ],
         "type": "object"
       },
       "volunteer_service.CreateResponse": {
@@ -909,6 +1438,16 @@
             "type": "string"
           }
         },
+        "required": [
+          "days",
+          "description",
+          "email",
+          "id",
+          "organizer",
+          "phone",
+          "service_id",
+          "user_id"
+        ],
         "type": "object"
       },
       "volunteer_service.ServiceDetailResponse": {
@@ -932,6 +1471,13 @@
             "type": "string"
           }
         },
+        "required": [
+          "id",
+          "image",
+          "name",
+          "services",
+          "type"
+        ],
         "type": "object"
       },
       "volunteer_service.ServiceResponse": {
@@ -949,6 +1495,12 @@
             "type": "string"
           }
         },
+        "required": [
+          "id",
+          "image",
+          "name",
+          "type"
+        ],
         "type": "object"
       },
       "volunteer_service.UpdateDayInput": {
@@ -963,9 +1515,15 @@
             "type": "string"
           },
           "user": {
-            "$ref": "#/components/schemas/volunteer_service.UserResponse"
+            "$ref": "#/components/schemas/volunteer_service.UserInput"
           }
         },
+        "required": [
+          "date",
+          "id",
+          "notes",
+          "user"
+        ],
         "type": "object"
       },
       "volunteer_service.UpdateDayResponse": {
@@ -983,6 +1541,23 @@
             "$ref": "#/components/schemas/volunteer_service.UserResponse"
           }
         },
+        "required": [
+          "date",
+          "id",
+          "notes",
+          "user"
+        ],
+        "type": "object"
+      },
+      "volunteer_service.UserInput": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
         "type": "object"
       },
       "volunteer_service.UserResponse": {
@@ -1007,6 +1582,14 @@
             "type": "string"
           }
         },
+        "required": [
+          "createdOn",
+          "email",
+          "fullname",
+          "id",
+          "meals",
+          "phone"
+        ],
         "type": "object"
       },
       "volunteer_service.VolunteerServiceDayResponse": {
@@ -1024,6 +1607,12 @@
             "$ref": "#/components/schemas/volunteer_service.UserResponse"
           }
         },
+        "required": [
+          "date",
+          "id",
+          "notes",
+          "user"
+        ],
         "type": "object"
       },
       "volunteer_service.VolunteerServiceResponse": {
@@ -1056,6 +1645,16 @@
             "type": "string"
           }
         },
+        "required": [
+          "days",
+          "description",
+          "email",
+          "id",
+          "organizer",
+          "phone",
+          "service_id",
+          "user_id"
+        ],
         "type": "object"
       }
     },
@@ -1230,7 +1829,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/meal.Input"
+                  "$ref": "#/components/schemas/meal.CreateResponse"
                 }
               }
             },
@@ -1307,7 +1906,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/meal.Input"
+                  "$ref": "#/components/schemas/meal.UpdateResponse"
                 }
               }
             },
@@ -1396,7 +1995,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/meal.VolunteerAssignmentInput"
+                  "$ref": "#/components/schemas/meal.VolunteerAssignmentResponse"
                 }
               }
             },
@@ -1483,7 +2082,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/meal.UpdateVolunteeredMealInput"
+                  "$ref": "#/components/schemas/meal.UpdateVolunteeredMealResponse"
                 }
               }
             },
@@ -1871,7 +2470,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/message.CreateNoteInput"
+                  "$ref": "#/components/schemas/message.CreateNoteResponse"
                 }
               }
             },
@@ -1935,7 +2534,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/message.NoteResponse"
+                "$ref": "#/components/schemas/message.UpdateNoteInput"
               }
             }
           },
@@ -2342,7 +2941,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/notification.Input"
+                  "$ref": "#/components/schemas/notification.Response"
                 }
               }
             },

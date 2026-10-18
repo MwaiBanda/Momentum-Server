@@ -2,6 +2,7 @@ import type { AxiosInstance } from "axios";
 import type { Message, MessageRequest } from "@/domain/message/entity";
 import type { MessageListResponse, MessageRepository } from "@/domain/message/repository";
 import type { components } from "@/infrastructure/http/generated/openapi";
+import { schemas } from "@/infrastructure/http/generated/schemas";
 
 type ApiCreateInput = components["schemas"]["message.CreateInput"];
 type ApiMessageListResponse = components["schemas"]["message.MessageListResponse"];
@@ -13,45 +14,47 @@ export class HttpRepository implements MessageRepository {
 
     public async listAdmin(): Promise<MessageListResponse> {
         const response = await this.client.get<ApiMessageListResponse>("/api/v1/messages/admin");
-        return mapMessageListResponse(response.data);
+        return mapMessageListResponse(schemas.message_MessageListResponse.parse(response.data));
     }
 
     public async listUnpublished(): Promise<MessageListResponse> {
         const response = await this.client.get<ApiMessageListResponse>("/api/v1/messages/unpublished");
-        return mapMessageListResponse(response.data);
+        return mapMessageListResponse(schemas.message_MessageListResponse.parse(response.data));
     }
 
     public async create(input: MessageRequest): Promise<void> {
-        await this.client.post<ApiMessageResponse>("/api/v1/messages", toCreateInput(input));
+        const response = await this.client.post<ApiMessageResponse>("/api/v1/messages", toCreateInput(input));
+        schemas.message_MessageResponse.parse(response.data);
     }
 
     public async update(input: Message): Promise<void> {
-        await this.client.put<ApiMessageResponse>("/api/v1/messages", toUpdateInput(input));
+        const response = await this.client.put<ApiMessageResponse>("/api/v1/messages", toUpdateInput(input));
+        schemas.message_MessageResponse.parse(response.data);
     }
 }
 
 function mapMessageListResponse(response: ApiMessageListResponse): MessageListResponse {
     return {
-        data: (response.data ?? []).map(mapMessage),
+        data: response.data.map(mapMessage),
     };
 }
 
 function mapMessage(response: ApiMessageResponse): Message {
     return {
-        id: response.id ?? "",
-        preacher: response.preacher ?? "",
-        series: response.series ?? "",
-        thumbnail: response.thumbnail ?? "",
-        title: response.title ?? "",
-        date: response.date ?? "",
-        published: response.published ?? false,
-        passages: (response.passages ?? []).map((passage) => ({
+        id: response.id,
+        preacher: response.preacher,
+        series: response.series,
+        thumbnail: response.thumbnail,
+        title: response.title,
+        date: response.date,
+        published: response.published,
+        passages: response.passages.map((passage) => ({
             id: passage.id,
             header: passage.header,
             verse: passage.verse,
             message: passage.message,
-            type: passage.type ?? "",
-            order: passage.order ?? 0,
+            type: passage.type,
+            order: passage.order,
         })),
     };
 }
@@ -82,11 +85,16 @@ function toUpdateInput(input: Message): ApiUpdateInput {
         title: input.title,
         date: input.date,
         published: input.published,
-        passages: input.passages.map((passage) => ({
-            id: passage.id,
-            header: passage.header,
-            verse: passage.verse,
-            message: passage.message,
-        })),
+        passages: input.passages.map((passage) => {
+            if (!passage.id) {
+                throw new Error("Cannot update a message passage without an ID.");
+            }
+            return {
+                id: passage.id,
+                header: passage.header,
+                verse: passage.verse,
+                message: passage.message,
+            };
+        }),
     };
 }

@@ -211,7 +211,7 @@ func TestUpdateDayReturnsExplicitResponse(t *testing.T) {
 		ID:    "day-1",
 		Notes: "Updated notes",
 		Date:  "2026-04-01",
-		User:  UserResponse{ID: "user-1"},
+		User:  UserInput{ID: "user-1"},
 	}
 
 	response, err := service.UpdateDay(context.Background(), input)
@@ -222,7 +222,7 @@ func TestUpdateDayReturnsExplicitResponse(t *testing.T) {
 		ID:    input.ID,
 		Notes: input.Notes,
 		Date:  input.Date,
-		User:  input.User,
+		User:  UserResponse{ID: input.User.ID},
 	}
 	if !reflect.DeepEqual(response, expected) {
 		t.Fatalf("UpdateDay() response = %#v, want %#v", response, expected)

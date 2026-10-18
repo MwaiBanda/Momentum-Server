@@ -8,25 +8,26 @@ import (
 	"github.com/lucsky/cuid"
 )
 
-func (service *Service) CreateNote(ctx context.Context, input CreateNoteInput) (CreateNoteInput, error) {
+func (service *Service) CreateNote(ctx context.Context, input CreateNoteInput) (CreateNoteResponse, error) {
 	if input.PassageID == "" || input.UserID == "" {
-		return CreateNoteInput{}, ErrInvalidInput
+		return CreateNoteResponse{}, ErrInvalidInput
 	}
 
+	id := cuid.New()
 	if err := service.repository.CreateNote(ctx, domainmessage.CreateNoteParams{
-		ID:        cuid.New(),
+		ID:        id,
 		Content:   input.Content,
 		UserID:    input.UserID,
 		PassageID: input.PassageID,
 	}); err != nil {
-		return CreateNoteInput{}, err
+		return CreateNoteResponse{}, err
 	}
 
 	service.bumpMessageCacheVersion(ctx)
-	return input, nil
+	return CreateNoteResponse{ID: id, Content: input.Content, UserID: input.UserID}, nil
 }
 
-func (service *Service) UpdateNote(ctx context.Context, input NoteResponse) (NoteResponse, error) {
+func (service *Service) UpdateNote(ctx context.Context, input UpdateNoteInput) (NoteResponse, error) {
 	if input.ID == "" {
 		return NoteResponse{}, ErrInvalidInput
 	}
@@ -43,7 +44,7 @@ func (service *Service) UpdateNote(ctx context.Context, input NoteResponse) (Not
 	}
 
 	service.bumpMessageCacheVersion(ctx)
-	return input, nil
+	return NoteResponse{ID: input.ID, Content: input.Content}, nil
 }
 
 func (service *Service) DeleteNote(ctx context.Context, id string) (NoteResponse, error) {

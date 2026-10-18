@@ -21,8 +21,8 @@ type fakeUseCase struct {
 	create          func(context.Context, applicationmessage.CreateInput) (applicationmessage.MessageResponse, error)
 	update          func(context.Context, applicationmessage.UpdateInput) (applicationmessage.MessageResponse, error)
 	delete          func(context.Context, string) (applicationmessage.MessageResponse, error)
-	createNote      func(context.Context, applicationmessage.CreateNoteInput) (applicationmessage.CreateNoteInput, error)
-	updateNote      func(context.Context, applicationmessage.NoteResponse) (applicationmessage.NoteResponse, error)
+	createNote      func(context.Context, applicationmessage.CreateNoteInput) (applicationmessage.CreateNoteResponse, error)
+	updateNote      func(context.Context, applicationmessage.UpdateNoteInput) (applicationmessage.NoteResponse, error)
 	deleteNote      func(context.Context, string) (applicationmessage.NoteResponse, error)
 }
 
@@ -61,14 +61,14 @@ func (fake *fakeUseCase) Delete(ctx context.Context, id string) (applicationmess
 	return fake.delete(ctx, id)
 }
 
-func (fake *fakeUseCase) CreateNote(ctx context.Context, input applicationmessage.CreateNoteInput) (applicationmessage.CreateNoteInput, error) {
+func (fake *fakeUseCase) CreateNote(ctx context.Context, input applicationmessage.CreateNoteInput) (applicationmessage.CreateNoteResponse, error) {
 	if fake.createNote == nil {
-		return applicationmessage.CreateNoteInput{}, nil
+		return applicationmessage.CreateNoteResponse{}, nil
 	}
 	return fake.createNote(ctx, input)
 }
 
-func (fake *fakeUseCase) UpdateNote(ctx context.Context, input applicationmessage.NoteResponse) (applicationmessage.NoteResponse, error) {
+func (fake *fakeUseCase) UpdateNote(ctx context.Context, input applicationmessage.UpdateNoteInput) (applicationmessage.NoteResponse, error) {
 	if fake.updateNote == nil {
 		return applicationmessage.NoteResponse{}, nil
 	}
@@ -199,9 +199,12 @@ func TestListUnpublishedReturnsMessageListContract(t *testing.T) {
 
 func TestCreateBindsRequest(t *testing.T) {
 	input := applicationmessage.CreateInput{
-		Title:    "Message",
-		Preacher: "Preacher",
-		Passages: []applicationmessage.CreatePassageInput{{Type: "header", Header: "Intro", Order: 1}},
+		Title:     "Message",
+		Series:    "Series",
+		Thumbnail: "thumbnail",
+		Preacher:  "Preacher",
+		Date:      "2026-10-18",
+		Passages:  []applicationmessage.CreatePassageInput{{Type: "header", Header: "Intro", Order: 1}},
 	}
 	var received applicationmessage.CreateInput
 	messages := &fakeUseCase{
@@ -216,7 +219,7 @@ func TestCreateBindsRequest(t *testing.T) {
 		newTestApp(messages),
 		http.MethodPost,
 		"/messages",
-		`{"title":"Message","preacher":"Preacher","passages":[{"type":"header","header":"Intro","order":1}]}`,
+		`{"title":"Message","series":"Series","thumbnail":"thumbnail","preacher":"Preacher","date":"2026-10-18","passages":[{"type":"header","header":"Intro","order":1}]}`,
 	)
 	if response.StatusCode != http.StatusOK {
 		t.Fatalf("status = %d, want %d", response.StatusCode, http.StatusOK)

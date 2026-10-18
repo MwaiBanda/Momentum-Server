@@ -7,77 +7,88 @@ import (
 )
 
 type MessageListResponse struct {
-	Data []MessageResponse `json:"data"`
+	Data []MessageResponse `json:"data" binding:"required"`
 }
 
 type CreateInput struct {
-	Thumbnail string               `json:"thumbnail"`
-	Series    string               `json:"series"`
-	Title     string               `json:"title"`
-	Preacher  string               `json:"preacher"`
-	Date      string               `json:"date"`
-	Passages  []CreatePassageInput `json:"passages"`
+	Thumbnail string               `json:"thumbnail" binding:"required"`
+	Series    string               `json:"series" binding:"required"`
+	Title     string               `json:"title" binding:"required"`
+	Preacher  string               `json:"preacher" binding:"required"`
+	Date      string               `json:"date" binding:"required"`
+	Passages  []CreatePassageInput `json:"passages" binding:"required"`
 }
 
 type CreatePassageInput struct {
 	Header  string `json:"header"`
 	Verse   string `json:"verse"`
 	Message string `json:"message"`
-	Type    string `json:"type"`
-	Order   int    `json:"order"`
+	Type    string `json:"type" binding:"required"`
+	Order   int    `json:"order" binding:"required"`
 }
 
 type UpdateInput struct {
-	ID        string               `json:"id"`
-	Thumbnail string               `json:"thumbnail"`
-	Series    string               `json:"series"`
-	Title     string               `json:"title"`
-	Preacher  string               `json:"preacher"`
-	Date      string               `json:"date"`
-	Published bool                 `json:"published"`
-	Passages  []UpdatePassageInput `json:"passages"`
+	ID        string               `json:"id" binding:"required"`
+	Thumbnail string               `json:"thumbnail" binding:"required"`
+	Series    string               `json:"series" binding:"required"`
+	Title     string               `json:"title" binding:"required"`
+	Preacher  string               `json:"preacher" binding:"required"`
+	Date      string               `json:"date" binding:"required"`
+	Published bool                 `json:"published" binding:"required"`
+	Passages  []UpdatePassageInput `json:"passages" binding:"required"`
 }
 
 type UpdatePassageInput struct {
-	ID      string `json:"id"`
+	ID      string `json:"id" binding:"required"`
 	Header  string `json:"header"`
 	Verse   string `json:"verse"`
 	Message string `json:"message"`
 }
 
 type MessageResponse struct {
-	ID        string            `json:"id"`
-	Thumbnail string            `json:"thumbnail"`
-	Series    string            `json:"series"`
-	Title     string            `json:"title"`
-	Preacher  string            `json:"preacher"`
-	Date      string            `json:"date"`
-	CreatedOn string            `json:"createdOn"`
-	Published bool              `json:"published"`
-	HasOrder  bool              `json:"hasOrder"`
-	Passages  []PassageResponse `json:"passages"`
+	ID        string            `json:"id" binding:"required"`
+	Thumbnail string            `json:"thumbnail" binding:"required"`
+	Series    string            `json:"series" binding:"required"`
+	Title     string            `json:"title" binding:"required"`
+	Preacher  string            `json:"preacher" binding:"required"`
+	Date      string            `json:"date" binding:"required"`
+	CreatedOn string            `json:"createdOn" binding:"required"`
+	Published bool              `json:"published" binding:"required"`
+	HasOrder  bool              `json:"hasOrder" binding:"required"`
+	Passages  []PassageResponse `json:"passages" binding:"required"`
 }
 
 type PassageResponse struct {
-	ID      string         `json:"id"`
-	Header  string         `json:"header"`
-	Verse   string         `json:"verse"`
-	Message string         `json:"message"`
-	Type    string         `json:"type"`
-	Order   int            `json:"order"`
-	Notes   []NoteResponse `json:"notes"`
+	ID      string         `json:"id" binding:"required"`
+	Header  string         `json:"header" binding:"required"`
+	Verse   string         `json:"verse" binding:"required"`
+	Message string         `json:"message" binding:"required"`
+	Type    string         `json:"type" binding:"required"`
+	Order   int            `json:"order" binding:"required"`
+	Notes   []NoteResponse `json:"notes" binding:"required"`
 }
 
 type NoteResponse struct {
-	ID      string `json:"id"`
-	Content string `json:"content"`
-	UserID  string `json:"userId"`
+	ID      string `json:"id" binding:"required"`
+	Content string `json:"content" binding:"required"`
+	UserID  string `json:"userId" binding:"required"`
+}
+
+type UpdateNoteInput struct {
+	ID      string `json:"id" binding:"required"`
+	Content string `json:"content" binding:"required"`
 }
 
 type CreateNoteInput struct {
-	PassageID string `json:"passageId"`
-	UserID    string `json:"userId"`
-	Content   string `json:"content"`
+	PassageID string `json:"passageId" binding:"required"`
+	UserID    string `json:"userId" binding:"required"`
+	Content   string `json:"content" binding:"required"`
+}
+
+type CreateNoteResponse struct {
+	ID      string `json:"id" binding:"required"`
+	Content string `json:"content" binding:"required"`
+	UserID  string `json:"userId" binding:"required"`
 }
 
 func messageResponseFromCreateInput(input CreateInput, id string) MessageResponse {

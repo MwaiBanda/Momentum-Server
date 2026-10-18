@@ -2,14 +2,14 @@ package notification
 
 import "context"
 
-func (service *Service) Send(ctx context.Context, input Input) (Input, error) {
+func (service *Service) Send(ctx context.Context, input Input) (Response, error) {
 	if service == nil || service.sender == nil {
-		return Input{}, ErrUnavailable
+		return Response{}, ErrUnavailable
 	}
 
 	if err := service.sender.Send(ctx, input); err != nil {
-		return Input{}, err
+		return Response{}, err
 	}
 
-	return input, nil
+	return Response{Title: input.Title, Body: input.Body, Topic: input.Topic}, nil
 }

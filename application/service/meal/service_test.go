@@ -96,8 +96,9 @@ func TestCreatePreservesRequestResponseAndGeneratesPersistenceIDs(t *testing.T) 
 	if err != nil {
 		t.Fatalf("Create() error = %v", err)
 	}
-	if !reflect.DeepEqual(response, input) {
-		t.Fatalf("Create() response = %#v, want request-shaped %#v", response, input)
+	if response.Recipient != input.Recipient || response.Reason != input.Reason ||
+		!reflect.DeepEqual(response.Meals, input.Meals) {
+		t.Fatalf("Create() response = %#v, want response-shaped values from %#v", response, input)
 	}
 	if repository.createdParams.ID == "" {
 		t.Fatal("Create() did not generate a meal ID")
@@ -158,7 +159,7 @@ func TestAssignVolunteerMapsNestedUser(t *testing.T) {
 			ID:          "volunteered-meal-1",
 			Description: "Delivered",
 			Notes:       "Leave at door",
-			User:        UserResponse{ID: "user-1"},
+			User:        UserInput{ID: "user-1"},
 		},
 	}
 
@@ -166,8 +167,12 @@ func TestAssignVolunteerMapsNestedUser(t *testing.T) {
 	if err != nil {
 		t.Fatalf("AssignVolunteer() error = %v", err)
 	}
-	if !reflect.DeepEqual(response, input) {
-		t.Fatalf("AssignVolunteer() response = %#v, want request-shaped %#v", response, input)
+	if response.MealID != input.MealID ||
+		response.VolunteeredMeal.ID != input.VolunteeredMeal.ID ||
+		response.VolunteeredMeal.Description != input.VolunteeredMeal.Description ||
+		response.VolunteeredMeal.Notes != input.VolunteeredMeal.Notes ||
+		response.VolunteeredMeal.User.ID != input.VolunteeredMeal.User.ID {
+		t.Fatalf("AssignVolunteer() response = %#v, want mapped response values from %#v", response, input)
 	}
 	if repository.assignParams.MealID != input.MealID ||
 		repository.assignParams.VolunteeredMealID != input.VolunteeredMeal.ID ||

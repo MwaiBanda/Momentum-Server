@@ -226,7 +226,7 @@ func TestUpdateDayMapsErrors(t *testing.T) {
 				},
 			}
 
-			response := performRequest(t, newTestApp(services), http.MethodPut, "/services/day", `{"id":"day-1"}`)
+			response := performRequest(t, newTestApp(services), http.MethodPut, "/services/day", `{"id":"day-1","notes":"Updated","date":"2026-10-18","user":{"id":"user-1"}}`)
 			if response.StatusCode != test.want {
 				t.Fatalf("status = %d, want %d", response.StatusCode, test.want)
 			}

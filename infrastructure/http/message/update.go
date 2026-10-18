@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationmessage "Momentum/application/service/message"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -30,9 +31,9 @@ func (handler *Handler) Update(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationmessage.UpdateInput
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationmessage.UpdateInput](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.messages.Update(ctx.Context(), input)

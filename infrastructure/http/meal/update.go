@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationmeal "Momentum/application/service/meal"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -19,7 +20,7 @@ import (
 //	@Param			data			body	meal.Input	true	"Update a meal"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	meal.Input
+//	@Success		200	{object}	meal.UpdateResponse
 //	@Failure		400	{object} http.ErrorResponse
 //	@Failure		404	{object} http.ErrorResponse
 //	@Failure		500	{object} http.ErrorResponse
@@ -30,9 +31,9 @@ func (handler *Handler) Update(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationmeal.Input
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationmeal.Input](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.meals.Update(ctx.Context(), input)

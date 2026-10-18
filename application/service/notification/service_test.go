@@ -16,7 +16,7 @@ func (sender *fakeSender) Send(_ context.Context, input Input) error {
 	return sender.err
 }
 
-func TestSendForwardsInputAndReturnsLegacyResponse(t *testing.T) {
+func TestSendForwardsInputAndReturnsResponse(t *testing.T) {
 	sender := &fakeSender{}
 	service := GetInstance(sender)
 	input := Input{Title: "Title", Body: "Body", Topic: "all-users"}
@@ -25,8 +25,9 @@ func TestSendForwardsInputAndReturnsLegacyResponse(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Send() error = %v", err)
 	}
-	if response != input {
-		t.Fatalf("Send() response = %#v, want %#v", response, input)
+	wantResponse := Response{Title: input.Title, Body: input.Body, Topic: input.Topic}
+	if response != wantResponse {
+		t.Fatalf("Send() response = %#v, want %#v", response, wantResponse)
 	}
 	if sender.input != input {
 		t.Fatalf("sender input = %#v, want %#v", sender.input, input)

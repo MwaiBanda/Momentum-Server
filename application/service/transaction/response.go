@@ -8,9 +8,9 @@ import (
 
 type Input struct {
 	ID          string  `json:"id"`
-	Amount      int     `json:"amount"`
-	Date        string  `json:"date"`
-	Description string  `json:"description"`
+	Amount      int     `json:"amount" binding:"required"`
+	Date        string  `json:"date" binding:"required"`
+	Description string  `json:"description" binding:"required"`
 	Fullname    *string `json:"fullname"`
 	Email       *string `json:"email"`
 	Phone       *string `json:"phone"`
@@ -18,20 +18,20 @@ type Input struct {
 }
 
 type Response struct {
-	ID          string       `json:"id"`
-	Amount      int          `json:"amount"`
-	Date        string       `json:"date"`
-	CreatedOn   string       `json:"createdOn"`
-	Description string       `json:"description"`
-	User        UserResponse `json:"user"`
+	ID          string       `json:"id" binding:"required"`
+	Amount      int          `json:"amount" binding:"required"`
+	Date        string       `json:"date" binding:"required"`
+	CreatedOn   string       `json:"createdOn" binding:"required"`
+	Description string       `json:"description" binding:"required"`
+	User        UserResponse `json:"user" binding:"required"`
 }
 
 type UserResponse struct {
-	ID        string `json:"id"`
-	Email     string `json:"email"`
-	Fullname  string `json:"fullname"`
-	Phone     string `json:"phone"`
-	CreatedOn string `json:"createdOn"`
+	ID        string `json:"id" binding:"required"`
+	Email     string `json:"email" binding:"required"`
+	Fullname  string `json:"fullname" binding:"required"`
+	Phone     string `json:"phone" binding:"required"`
+	CreatedOn string `json:"createdOn" binding:"required"`
 }
 
 type MailInput struct {

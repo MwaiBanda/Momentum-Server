@@ -171,6 +171,8 @@ make openapi
 make openapi-check
 make cms-api-types
 make cms-api-types-check
+make cms-api-schemas
+make cms-api-schemas-check
 make fmt
 make check
 make docker-build
@@ -180,13 +182,18 @@ The Go handler annotations remain the source of API documentation. `make
 openapi` regenerates the Swagger 2.0 files used by the existing Swagger UI and
 converts the same generated contract into the validated OpenAPI 3 document at
 [`docs/openapi.json`](./docs/openapi.json). The OpenAPI document is generated,
-not manually edited, and is the future source for client tooling such as CMS
-transport type generation.
+not manually edited, and is the source for generated CMS transport types and
+runtime Zod schemas.
+
+JSON request handlers use a shared request binder and validator before calling
+application services. It rejects malformed JSON and missing DTO fields marked
+with `binding:"required"` while preserving explicit zero and false values.
 
 GitHub Actions runs `go test ./...`, verifies Go modules, and runs
 `make openapi-check` so generated API documents cannot drift from the Go
 annotations and DTOs. It also verifies generated CMS transport types, lints
-the CMS, and builds the production frontend.
+the CMS runtime schemas and transport types, lints the CMS, and builds the
+production frontend.
 
 Build the CMS before starting the Go server:
 

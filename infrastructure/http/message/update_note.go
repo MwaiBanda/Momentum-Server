@@ -4,6 +4,7 @@ import (
 	"log"
 
 	applicationmessage "Momentum/application/service/message"
+	"Momentum/infrastructure/http/request"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -16,7 +17,7 @@ import (
 //	@Param			Authorization	header	string	true	"Provide a bearer token"	example(******
 //	@Security	BearerAuth
 //	@Failure	401	{object} http.ErrorResponse
-//	@Param			data			body	message.NoteResponse	true	"Update a note"
+//	@Param			data			body	message.UpdateNoteInput	true	"Update a note"
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	message.NoteResponse
@@ -30,9 +31,9 @@ func (handler *Handler) UpdateNote(ctx fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	var input applicationmessage.NoteResponse
-	if err := ctx.Bind().Body(&input); err != nil {
-		return fiber.ErrBadRequest
+	input, err := request.BindAndValidate[applicationmessage.UpdateNoteInput](ctx)
+	if err != nil {
+		return err
 	}
 
 	response, err := handler.messages.UpdateNote(ctx.Context(), input)

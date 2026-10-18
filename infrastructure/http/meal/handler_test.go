@@ -14,22 +14,22 @@ import (
 
 type fakeUseCase struct {
 	list                  func(context.Context) ([]applicationmeal.Response, error)
-	create                func(context.Context, applicationmeal.Input) (applicationmeal.Input, error)
-	update                func(context.Context, applicationmeal.Input) (applicationmeal.Input, error)
+	create                func(context.Context, applicationmeal.Input) (applicationmeal.CreateResponse, error)
+	update                func(context.Context, applicationmeal.Input) (applicationmeal.UpdateResponse, error)
 	delete                func(context.Context, string) (applicationmeal.Response, error)
-	assignVolunteer       func(context.Context, applicationmeal.VolunteerAssignmentInput) (applicationmeal.VolunteerAssignmentInput, error)
-	updateVolunteeredMeal func(context.Context, applicationmeal.UpdateVolunteeredMealInput) (applicationmeal.UpdateVolunteeredMealInput, error)
+	assignVolunteer       func(context.Context, applicationmeal.VolunteerAssignmentInput) (applicationmeal.VolunteerAssignmentResponse, error)
+	updateVolunteeredMeal func(context.Context, applicationmeal.UpdateVolunteeredMealInput) (applicationmeal.UpdateVolunteeredMealResponse, error)
 }
 
 func (fake *fakeUseCase) List(ctx context.Context) ([]applicationmeal.Response, error) {
 	return fake.list(ctx)
 }
 
-func (fake *fakeUseCase) Create(ctx context.Context, input applicationmeal.Input) (applicationmeal.Input, error) {
+func (fake *fakeUseCase) Create(ctx context.Context, input applicationmeal.Input) (applicationmeal.CreateResponse, error) {
 	return fake.create(ctx, input)
 }
 
-func (fake *fakeUseCase) Update(ctx context.Context, input applicationmeal.Input) (applicationmeal.Input, error) {
+func (fake *fakeUseCase) Update(ctx context.Context, input applicationmeal.Input) (applicationmeal.UpdateResponse, error) {
 	return fake.update(ctx, input)
 }
 
@@ -37,20 +37,20 @@ func (fake *fakeUseCase) Delete(ctx context.Context, id string) (applicationmeal
 	return fake.delete(ctx, id)
 }
 
-func (fake *fakeUseCase) AssignVolunteer(ctx context.Context, input applicationmeal.VolunteerAssignmentInput) (applicationmeal.VolunteerAssignmentInput, error) {
+func (fake *fakeUseCase) AssignVolunteer(ctx context.Context, input applicationmeal.VolunteerAssignmentInput) (applicationmeal.VolunteerAssignmentResponse, error) {
 	return fake.assignVolunteer(ctx, input)
 }
 
-func (fake *fakeUseCase) UpdateVolunteeredMeal(ctx context.Context, input applicationmeal.UpdateVolunteeredMealInput) (applicationmeal.UpdateVolunteeredMealInput, error) {
+func (fake *fakeUseCase) UpdateVolunteeredMeal(ctx context.Context, input applicationmeal.UpdateVolunteeredMealInput) (applicationmeal.UpdateVolunteeredMealResponse, error) {
 	return fake.updateVolunteeredMeal(ctx, input)
 }
 
 func TestCreateRejectsMalformedBody(t *testing.T) {
 	app := fiber.New()
 	app.Post("/meals", GetInstance(&fakeUseCase{
-		create: func(context.Context, applicationmeal.Input) (applicationmeal.Input, error) {
+		create: func(context.Context, applicationmeal.Input) (applicationmeal.CreateResponse, error) {
 			t.Fatal("Create use case was called")
-			return applicationmeal.Input{}, nil
+			return applicationmeal.CreateResponse{}, nil
 		},
 	}).Create)
 
@@ -90,9 +90,15 @@ func TestAssignVolunteerPassesRequest(t *testing.T) {
 	var received applicationmeal.VolunteerAssignmentInput
 	app := fiber.New()
 	app.Post("/meals/meal", GetInstance(&fakeUseCase{
-		assignVolunteer: func(_ context.Context, input applicationmeal.VolunteerAssignmentInput) (applicationmeal.VolunteerAssignmentInput, error) {
+		assignVolunteer: func(_ context.Context, input applicationmeal.VolunteerAssignmentInput) (applicationmeal.VolunteerAssignmentResponse, error) {
 			received = input
-			return input, nil
+			return applicationmeal.VolunteerAssignmentResponse{
+				MealID: input.MealID,
+				VolunteeredMeal: applicationmeal.VolunteeredMealResponse{
+					ID:   input.VolunteeredMeal.ID,
+					User: applicationmeal.UserResponse{ID: input.VolunteeredMeal.User.ID},
+				},
+			}, nil
 		},
 	}).AssignVolunteer)
 

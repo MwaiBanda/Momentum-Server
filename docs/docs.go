@@ -162,7 +162,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/meal.Input"
+                            "$ref": "#/definitions/meal.UpdateResponse"
                         }
                     },
                     "400": {
@@ -230,7 +230,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/meal.Input"
+                            "$ref": "#/definitions/meal.CreateResponse"
                         }
                     },
                     "400": {
@@ -294,7 +294,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/meal.UpdateVolunteeredMealInput"
+                            "$ref": "#/definitions/meal.UpdateVolunteeredMealResponse"
                         }
                     },
                     "400": {
@@ -362,7 +362,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/meal.VolunteerAssignmentInput"
+                            "$ref": "#/definitions/meal.VolunteerAssignmentResponse"
                         }
                     },
                     "400": {
@@ -667,7 +667,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/message.NoteResponse"
+                            "$ref": "#/definitions/message.UpdateNoteInput"
                         }
                     }
                 ],
@@ -743,7 +743,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/message.CreateNoteInput"
+                            "$ref": "#/definitions/message.CreateNoteResponse"
                         }
                     },
                     "400": {
@@ -1054,7 +1054,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/notification.Input"
+                            "$ref": "#/definitions/notification.Response"
                         }
                     },
                     "400": {
@@ -1967,6 +1967,16 @@ const docTemplate = `{
     "definitions": {
         "event.Attributes": {
             "type": "object",
+            "required": [
+                "all_day_event",
+                "ends_at",
+                "image_url",
+                "name",
+                "open_graph_description",
+                "recurrence_description",
+                "recurring",
+                "starts_at"
+            ],
             "properties": {
                 "all_day_event": {
                     "type": "boolean"
@@ -1996,6 +2006,10 @@ const docTemplate = `{
         },
         "event.Event": {
             "type": "object",
+            "required": [
+                "attributes",
+                "id"
+            ],
             "properties": {
                 "attributes": {
                     "$ref": "#/definitions/event.Attributes"
@@ -2007,6 +2021,9 @@ const docTemplate = `{
         },
         "event.Response": {
             "type": "object",
+            "required": [
+                "data"
+            ],
             "properties": {
                 "data": {
                     "type": "array",
@@ -2018,6 +2035,10 @@ const docTemplate = `{
         },
         "http.ErrorResponse": {
             "type": "object",
+            "required": [
+                "code",
+                "message"
+            ],
             "properties": {
                 "code": {
                     "type": "integer",
@@ -2029,8 +2050,99 @@ const docTemplate = `{
                 }
             }
         },
+        "meal.CreateResponse": {
+            "type": "object",
+            "required": [
+                "allergies",
+                "city",
+                "email",
+                "favourites",
+                "id",
+                "instructions",
+                "least_favourites",
+                "meals",
+                "num_of_adults",
+                "number_of_kids",
+                "phone",
+                "preferred_time",
+                "reason",
+                "recipient",
+                "street",
+                "user_id"
+            ],
+            "properties": {
+                "allergies": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "favourites": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "instructions": {
+                    "type": "string"
+                },
+                "least_favourites": {
+                    "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/meal.MealVolunteeredRequest"
+                    }
+                },
+                "num_of_adults": {
+                    "type": "integer"
+                },
+                "number_of_kids": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "preferred_time": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "meal.Input": {
             "type": "object",
+            "required": [
+                "allergies",
+                "city",
+                "email",
+                "favourites",
+                "instructions",
+                "least_favourites",
+                "meals",
+                "num_of_adults",
+                "number_of_kids",
+                "phone",
+                "preferred_time",
+                "reason",
+                "recipient",
+                "street",
+                "user_id"
+            ],
             "properties": {
                 "allergies": {
                     "type": "string"
@@ -2087,6 +2199,9 @@ const docTemplate = `{
         },
         "meal.MealVolunteeredRequest": {
             "type": "object",
+            "required": [
+                "date"
+            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -2107,6 +2222,10 @@ const docTemplate = `{
         },
         "meal.ParticipantResponse": {
             "type": "object",
+            "required": [
+                "id",
+                "user"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -2118,6 +2237,25 @@ const docTemplate = `{
         },
         "meal.Response": {
             "type": "object",
+            "required": [
+                "allergies",
+                "city",
+                "email",
+                "favourites",
+                "id",
+                "instructions",
+                "least_favourites",
+                "meals",
+                "num_of_adults",
+                "number_of_kids",
+                "participants",
+                "phone",
+                "preferred_time",
+                "reason",
+                "recipient",
+                "street",
+                "user"
+            ],
             "properties": {
                 "allergies": {
                     "type": "string"
@@ -2178,8 +2316,12 @@ const docTemplate = `{
                 }
             }
         },
-        "meal.UpdateResponse": {
+        "meal.UpdateEntryResponse": {
             "type": "object",
+            "required": [
+                "id",
+                "message"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -2189,8 +2331,87 @@ const docTemplate = `{
                 }
             }
         },
+        "meal.UpdateResponse": {
+            "type": "object",
+            "required": [
+                "allergies",
+                "city",
+                "email",
+                "favourites",
+                "id",
+                "instructions",
+                "least_favourites",
+                "meals",
+                "num_of_adults",
+                "number_of_kids",
+                "phone",
+                "preferred_time",
+                "reason",
+                "recipient",
+                "street",
+                "user_id"
+            ],
+            "properties": {
+                "allergies": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "favourites": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "instructions": {
+                    "type": "string"
+                },
+                "least_favourites": {
+                    "type": "string"
+                },
+                "meals": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/meal.MealVolunteeredRequest"
+                    }
+                },
+                "num_of_adults": {
+                    "type": "integer"
+                },
+                "number_of_kids": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "preferred_time": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "meal.UpdateVolunteeredMealInput": {
             "type": "object",
+            "required": [
+                "description",
+                "id",
+                "notes"
+            ],
             "properties": {
                 "description": {
                     "type": "string"
@@ -2203,8 +2424,45 @@ const docTemplate = `{
                 }
             }
         },
+        "meal.UpdateVolunteeredMealResponse": {
+            "type": "object",
+            "required": [
+                "description",
+                "id",
+                "notes"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                }
+            }
+        },
+        "meal.UserInput": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "meal.UserResponse": {
             "type": "object",
+            "required": [
+                "createdOn",
+                "email",
+                "fullname",
+                "id",
+                "phone"
+            ],
             "properties": {
                 "createdOn": {
                     "type": "string"
@@ -2225,6 +2483,10 @@ const docTemplate = `{
         },
         "meal.VolunteerAssignmentInput": {
             "type": "object",
+            "required": [
+                "meal_id",
+                "volunteered_meal"
+            ],
             "properties": {
                 "meal_id": {
                     "type": "string"
@@ -2234,8 +2496,27 @@ const docTemplate = `{
                 }
             }
         },
+        "meal.VolunteerAssignmentResponse": {
+            "type": "object",
+            "required": [
+                "meal_id",
+                "volunteered_meal"
+            ],
+            "properties": {
+                "meal_id": {
+                    "type": "string"
+                },
+                "volunteered_meal": {
+                    "$ref": "#/definitions/meal.VolunteeredMealResponse"
+                }
+            }
+        },
         "meal.VolunteeredMealInput": {
             "type": "object",
+            "required": [
+                "id",
+                "user"
+            ],
             "properties": {
                 "created_on": {
                     "type": "string"
@@ -2255,16 +2536,25 @@ const docTemplate = `{
                 "updates": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/meal.UpdateResponse"
+                        "$ref": "#/definitions/meal.UpdateEntryResponse"
                     }
                 },
                 "user": {
-                    "$ref": "#/definitions/meal.UserResponse"
+                    "$ref": "#/definitions/meal.UserInput"
                 }
             }
         },
         "meal.VolunteeredMealResponse": {
             "type": "object",
+            "required": [
+                "created_on",
+                "date",
+                "description",
+                "id",
+                "notes",
+                "updates",
+                "user"
+            ],
             "properties": {
                 "created_on": {
                     "type": "string"
@@ -2284,7 +2574,7 @@ const docTemplate = `{
                 "updates": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/meal.UpdateResponse"
+                        "$ref": "#/definitions/meal.UpdateEntryResponse"
                     }
                 },
                 "user": {
@@ -2294,6 +2584,14 @@ const docTemplate = `{
         },
         "message.CreateInput": {
             "type": "object",
+            "required": [
+                "date",
+                "passages",
+                "preacher",
+                "series",
+                "thumbnail",
+                "title"
+            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -2320,6 +2618,11 @@ const docTemplate = `{
         },
         "message.CreateNoteInput": {
             "type": "object",
+            "required": [
+                "content",
+                "passageId",
+                "userId"
+            ],
             "properties": {
                 "content": {
                     "type": "string"
@@ -2332,8 +2635,31 @@ const docTemplate = `{
                 }
             }
         },
+        "message.CreateNoteResponse": {
+            "type": "object",
+            "required": [
+                "content",
+                "id",
+                "userId"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "message.CreatePassageInput": {
             "type": "object",
+            "required": [
+                "order",
+                "type"
+            ],
             "properties": {
                 "header": {
                     "type": "string"
@@ -2354,6 +2680,9 @@ const docTemplate = `{
         },
         "message.MessageListResponse": {
             "type": "object",
+            "required": [
+                "data"
+            ],
             "properties": {
                 "data": {
                     "type": "array",
@@ -2365,6 +2694,18 @@ const docTemplate = `{
         },
         "message.MessageResponse": {
             "type": "object",
+            "required": [
+                "createdOn",
+                "date",
+                "hasOrder",
+                "id",
+                "passages",
+                "preacher",
+                "published",
+                "series",
+                "thumbnail",
+                "title"
+            ],
             "properties": {
                 "createdOn": {
                     "type": "string"
@@ -2403,6 +2744,11 @@ const docTemplate = `{
         },
         "message.NoteResponse": {
             "type": "object",
+            "required": [
+                "content",
+                "id",
+                "userId"
+            ],
             "properties": {
                 "content": {
                     "type": "string"
@@ -2417,6 +2763,15 @@ const docTemplate = `{
         },
         "message.PassageResponse": {
             "type": "object",
+            "required": [
+                "header",
+                "id",
+                "message",
+                "notes",
+                "order",
+                "type",
+                "verse"
+            ],
             "properties": {
                 "header": {
                     "type": "string"
@@ -2446,6 +2801,16 @@ const docTemplate = `{
         },
         "message.UpdateInput": {
             "type": "object",
+            "required": [
+                "date",
+                "id",
+                "passages",
+                "preacher",
+                "published",
+                "series",
+                "thumbnail",
+                "title"
+            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -2476,8 +2841,26 @@ const docTemplate = `{
                 }
             }
         },
+        "message.UpdateNoteInput": {
+            "type": "object",
+            "required": [
+                "content",
+                "id"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "message.UpdatePassageInput": {
             "type": "object",
+            "required": [
+                "id"
+            ],
             "properties": {
                 "header": {
                     "type": "string"
@@ -2495,6 +2878,30 @@ const docTemplate = `{
         },
         "notification.Input": {
             "type": "object",
+            "required": [
+                "body",
+                "title",
+                "topic"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "topic": {
+                    "type": "string"
+                }
+            }
+        },
+        "notification.Response": {
+            "type": "object",
+            "required": [
+                "body",
+                "title",
+                "topic"
+            ],
             "properties": {
                 "body": {
                     "type": "string"
@@ -2509,6 +2916,12 @@ const docTemplate = `{
         },
         "payment.Input": {
             "type": "object",
+            "required": [
+                "amount",
+                "email",
+                "fullname",
+                "phone"
+            ],
             "properties": {
                 "amount": {
                     "type": "integer"
@@ -2526,6 +2939,12 @@ const docTemplate = `{
         },
         "payment.Response": {
             "type": "object",
+            "required": [
+                "customer",
+                "ephemeralKey",
+                "paymentIntent",
+                "publishableKey"
+            ],
             "properties": {
                 "customer": {
                     "type": "string"
@@ -2543,6 +2962,21 @@ const docTemplate = `{
         },
         "sermon.Response": {
             "type": "object",
+            "required": [
+                "current_page",
+                "data",
+                "first_page_url",
+                "from",
+                "last_page",
+                "last_page_url",
+                "links",
+                "next_page_url",
+                "path",
+                "per_page",
+                "prev_page_url",
+                "to",
+                "total"
+            ],
             "properties": {
                 "current_page": {
                     "type": "integer"
@@ -2569,6 +3003,11 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "object",
+                        "required": [
+                            "active",
+                            "label",
+                            "url"
+                        ],
                         "properties": {
                             "active": {
                                 "type": "boolean"
@@ -2600,10 +3039,31 @@ const docTemplate = `{
         },
         "sermon.Sermon": {
             "type": "object",
+            "required": [
+                "categories",
+                "date",
+                "detail_url",
+                "id",
+                "interactions",
+                "interactive_note",
+                "keywords",
+                "media",
+                "passages",
+                "preacher",
+                "series",
+                "slug",
+                "summary",
+                "text",
+                "title"
+            ],
             "properties": {
                 "categories": {},
                 "date": {
                     "type": "object",
+                    "required": [
+                        "carbon",
+                        "date"
+                    ],
                     "properties": {
                         "carbon": {
                             "type": "string"
@@ -2621,6 +3081,10 @@ const docTemplate = `{
                 },
                 "interactions": {
                     "type": "object",
+                    "required": [
+                        "likes",
+                        "shares"
+                    ],
                     "properties": {
                         "likes": {
                             "type": "integer"
@@ -2634,6 +3098,14 @@ const docTemplate = `{
                 "keywords": {},
                 "media": {
                     "type": "object",
+                    "required": [
+                        "audio",
+                        "embed",
+                        "image",
+                        "notes",
+                        "video",
+                        "video_thumbnail"
+                    ],
                     "properties": {
                         "audio": {},
                         "embed": {},
@@ -2656,6 +3128,12 @@ const docTemplate = `{
                 },
                 "series": {
                     "type": "object",
+                    "required": [
+                        "description",
+                        "image",
+                        "slug",
+                        "title"
+                    ],
                     "properties": {
                         "description": {},
                         "image": {},
@@ -2679,6 +3157,11 @@ const docTemplate = `{
         },
         "transaction.Input": {
             "type": "object",
+            "required": [
+                "amount",
+                "date",
+                "description"
+            ],
             "properties": {
                 "amount": {
                     "type": "integer"
@@ -2708,6 +3191,14 @@ const docTemplate = `{
         },
         "transaction.Response": {
             "type": "object",
+            "required": [
+                "amount",
+                "createdOn",
+                "date",
+                "description",
+                "id",
+                "user"
+            ],
             "properties": {
                 "amount": {
                     "type": "integer"
@@ -2731,6 +3222,13 @@ const docTemplate = `{
         },
         "transaction.UserResponse": {
             "type": "object",
+            "required": [
+                "createdOn",
+                "email",
+                "fullname",
+                "id",
+                "phone"
+            ],
             "properties": {
                 "createdOn": {
                     "type": "string"
@@ -2751,6 +3249,12 @@ const docTemplate = `{
         },
         "user.CreateInput": {
             "type": "object",
+            "required": [
+                "email",
+                "fullname",
+                "id",
+                "phone"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
@@ -2768,6 +3272,13 @@ const docTemplate = `{
         },
         "user.Response": {
             "type": "object",
+            "required": [
+                "createdOn",
+                "email",
+                "fullname",
+                "id",
+                "phone"
+            ],
             "properties": {
                 "createdOn": {
                     "type": "string"
@@ -2788,6 +3299,12 @@ const docTemplate = `{
         },
         "user.UpdateInput": {
             "type": "object",
+            "required": [
+                "email",
+                "fullname",
+                "id",
+                "phone"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
@@ -2805,6 +3322,9 @@ const docTemplate = `{
         },
         "volunteer_service.CreateDayInput": {
             "type": "object",
+            "required": [
+                "date"
+            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -2813,6 +3333,15 @@ const docTemplate = `{
         },
         "volunteer_service.CreateInput": {
             "type": "object",
+            "required": [
+                "days",
+                "description",
+                "email",
+                "organizer",
+                "phone",
+                "service_id",
+                "user_id"
+            ],
             "properties": {
                 "days": {
                     "type": "array",
@@ -2845,6 +3374,16 @@ const docTemplate = `{
         },
         "volunteer_service.CreateResponse": {
             "type": "object",
+            "required": [
+                "days",
+                "description",
+                "email",
+                "id",
+                "organizer",
+                "phone",
+                "service_id",
+                "user_id"
+            ],
             "properties": {
                 "days": {
                     "type": "array",
@@ -2877,6 +3416,13 @@ const docTemplate = `{
         },
         "volunteer_service.ServiceDetailResponse": {
             "type": "object",
+            "required": [
+                "id",
+                "image",
+                "name",
+                "services",
+                "type"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -2900,6 +3446,12 @@ const docTemplate = `{
         },
         "volunteer_service.ServiceResponse": {
             "type": "object",
+            "required": [
+                "id",
+                "image",
+                "name",
+                "type"
+            ],
             "properties": {
                 "id": {
                     "type": "string"
@@ -2917,6 +3469,12 @@ const docTemplate = `{
         },
         "volunteer_service.UpdateDayInput": {
             "type": "object",
+            "required": [
+                "date",
+                "id",
+                "notes",
+                "user"
+            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -2928,12 +3486,18 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/volunteer_service.UserResponse"
+                    "$ref": "#/definitions/volunteer_service.UserInput"
                 }
             }
         },
         "volunteer_service.UpdateDayResponse": {
             "type": "object",
+            "required": [
+                "date",
+                "id",
+                "notes",
+                "user"
+            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -2949,8 +3513,27 @@ const docTemplate = `{
                 }
             }
         },
+        "volunteer_service.UserInput": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "volunteer_service.UserResponse": {
             "type": "object",
+            "required": [
+                "createdOn",
+                "email",
+                "fullname",
+                "id",
+                "meals",
+                "phone"
+            ],
             "properties": {
                 "createdOn": {
                     "type": "string"
@@ -2975,6 +3558,12 @@ const docTemplate = `{
         },
         "volunteer_service.VolunteerServiceDayResponse": {
             "type": "object",
+            "required": [
+                "date",
+                "id",
+                "notes",
+                "user"
+            ],
             "properties": {
                 "date": {
                     "type": "string"
@@ -2992,6 +3581,16 @@ const docTemplate = `{
         },
         "volunteer_service.VolunteerServiceResponse": {
             "type": "object",
+            "required": [
+                "days",
+                "description",
+                "email",
+                "id",
+                "organizer",
+                "phone",
+                "service_id",
+                "user_id"
+            ],
             "properties": {
                 "days": {
                     "type": "array",

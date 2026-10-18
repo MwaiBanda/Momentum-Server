@@ -8,7 +8,7 @@ type UseCase interface {
 	Create(ctx context.Context, input CreateInput) (MessageResponse, error)
 	Update(ctx context.Context, input UpdateInput) (MessageResponse, error)
 	Delete(ctx context.Context, id string) (MessageResponse, error)
-	CreateNote(ctx context.Context, input CreateNoteInput) (CreateNoteInput, error)
-	UpdateNote(ctx context.Context, input NoteResponse) (NoteResponse, error)
+	CreateNote(ctx context.Context, input CreateNoteInput) (CreateNoteResponse, error)
+	UpdateNote(ctx context.Context, input UpdateNoteInput) (NoteResponse, error)
 	DeleteNote(ctx context.Context, id string) (NoteResponse, error)
 }
