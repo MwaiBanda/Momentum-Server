@@ -186,6 +186,21 @@ on a single VPS/server for one infrastructure bill. The API, OpenTelemetry
 Collector, Jaeger, and Prometheus remain separate containers for operational
 isolation, but they do not require separate hosted monitoring subscriptions.
 
+Grafana is included as the consolidated dashboard. It is provisioned with
+Prometheus and Jaeger data sources plus a Momentum API overview dashboard.
+For local access, set `GRAFANA_ADMIN_PASSWORD` and start the local override:
+
+```bash
+docker compose \
+  -f docker-compose.observability.yml \
+  -f docker-compose.observability.local.yml \
+  up -d
+```
+
+Then open `http://localhost:3000`. Use Grafana panels for traffic, errors, and
+latency; use Grafana Explore with the Jaeger data source for individual trace
+waterfalls.
+
 ### Production reverse proxy
 
 Production can add [Caddy](https://caddyserver.com/) as the public edge
@@ -210,6 +225,7 @@ export DOMAIN=services.example.com
 export UPTIME_USERNAME=operations
 export UPTIME_PASSWORD_HASH='replace-with-the-generated-caddy-hash'
 export PROMETHEUS_BEARER_TOKEN='the API_KEY value used by the collector'
+export GRAFANA_ADMIN_PASSWORD='replace-with-a-grafana-admin-password'
 ```
 
 Start the API, Caddy, and observability containers together:
@@ -222,8 +238,11 @@ docker compose \
 ```
 
 The public proxy serves the CMS and API, `/uptime` requires the Caddy
-operations credentials, and `/metrics` is not exposed through Caddy. The
-collector reaches `/metrics` privately over the Docker network.
+operations credentials, and `/metrics` is not exposed through Caddy. Grafana
+is available at `https://grafana.services.example.com` behind the same Caddy
+operations credentials and its own Grafana login. The collector reaches
+`/metrics` privately over the Docker network. Do not expose Jaeger or
+Prometheus ports directly on the public internet.
 
 ### Architecture style
 

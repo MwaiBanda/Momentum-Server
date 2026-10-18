@@ -29,11 +29,16 @@ services:
       - caddy-config:/config
     depends_on:
       - api
+      - grafana
     restart: unless-stopped
 
   otel-collector:
     environment:
       PROMETHEUS_API_TARGET: api:8080
+
+  grafana:
+    environment:
+      GF_SERVER_ROOT_URL: https://grafana.${DOMAIN:?set DOMAIN before starting the production stack}
 
 volumes:
   caddy-data:

@@ -18,3 +18,13 @@
 		reverse_proxy api:8080
 	}
 }
+
+grafana.{$DOMAIN} {
+	encode gzip zstd
+
+	basic_auth {
+		{$UPTIME_USERNAME} {$UPTIME_PASSWORD_HASH}
+	}
+
+	reverse_proxy grafana:3000
+}
