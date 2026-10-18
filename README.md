@@ -169,6 +169,8 @@ make test-postgres
 make swagger
 make openapi
 make openapi-check
+make cms-api-types
+make cms-api-types-check
 make fmt
 make check
 make docker-build
@@ -183,7 +185,8 @@ transport type generation.
 
 GitHub Actions runs `go test ./...`, verifies Go modules, and runs
 `make openapi-check` so generated API documents cannot drift from the Go
-annotations and DTOs.
+annotations and DTOs. It also verifies generated CMS transport types, lints
+the CMS, and builds the production frontend.
 
 Build the CMS before starting the Go server:
 

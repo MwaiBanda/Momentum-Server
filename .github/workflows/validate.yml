@@ -30,3 +30,39 @@ jobs:
 
       - name: Verify generated API documents
         run: make openapi-check
+
+  cms:
+    name: CMS validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: cms/yarn.lock
+
+      - name: Install CMS dependencies
+        working-directory: cms
+        run: yarn install --frozen-lockfile
+
+      - name: Verify generated CMS transport types
+        run: make cms-api-types-check
+
+      - name: Lint CMS
+        working-directory: cms
+        run: yarn lint
+
+      - name: Build CMS
+        working-directory: cms
+        run: yarn build

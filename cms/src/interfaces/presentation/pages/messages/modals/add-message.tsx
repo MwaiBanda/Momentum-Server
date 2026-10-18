@@ -1,10 +1,11 @@
-import { Modal, Button, ModalBody, ModalHeader } from "flowbite-react"
+import { Alert, Modal, Button, ModalBody, ModalHeader } from "flowbite-react"
 import { RefObject, createRef, useRef, useState } from "react"
 import { useMutation } from "@tanstack/react-query";
 import { useApplication } from "@/interfaces/presentation/application-context";
-import { MessageRequest } from "@/domain/message/entity";
+import type { MessageRequest } from "@/domain/message/entity";
 import { TextField } from "@/interfaces/presentation/components/textfield";
 import { TextArea } from "@/interfaces/presentation/components/textarea";
+import { createMessageSchema } from "@/interfaces/presentation/pages/messages/validation";
 
 enum PassageType {
     Header,
@@ -26,13 +27,54 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
     const preacherInputRef = useRef<HTMLInputElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const dateInputRef = useRef<HTMLInputElement>(null);
+    const [submitMessage, setSubmitMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     const mutation = useMutation({
         mutationFn: (data: MessageRequest) => application.message.create(data),
         onSuccess: () => {
-            alert("Message posted successfully")
-        }
+            alert("Message posted successfully");
+            setSubmitMessage(null);
+            setOpenModal(false);
+        },
+        onError: () => {
+            setSubmitMessage({ type: "error", text: "Message could not be posted. Please try again." });
+        },
     })
+
+    const submit = () => {
+        const result = createMessageSchema.safeParse({
+            title: titleInputRef.current?.value ?? "",
+            series: seriesInputRef.current?.value ?? "",
+            preacher: preacherInputRef.current?.value ?? "",
+            thumbnail: imageInputRef.current?.value ?? "",
+            date: dateInputRef.current?.value ?? "",
+            passages: refs.map((passage, index) => {
+                switch (passage.type) {
+                    case PassageType.Header:
+                        return {
+                            header: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
+                            type: "header",
+                            order: index,
+                        };
+                    case PassageType.Message:
+                        return {
+                            verse: (passage.text as RefObject<HTMLInputElement>).current?.value ?? "",
+                            message: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
+                            type: "message",
+                            order: index,
+                        };
+                }
+            }),
+        });
+
+        if (!result.success) {
+            setSubmitMessage({ type: "error", text: result.error.issues[0]?.message ?? "Please check the message details." });
+            return;
+        }
+
+        setSubmitMessage(null);
+        mutation.mutate(result.data);
+    };
 
     return (
         <Modal show={openModal} size="md" popup onClose={() => setOpenModal(false)} initialFocus={titleInputRef}>
@@ -40,6 +82,11 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
             <ModalBody>
                 <div className="space-y-6">
                     <h3 className="text-xl font-medium text-gray-900 dark:text-white">Add Message</h3>
+                    {submitMessage && (
+                        <Alert color={submitMessage.type === "error" ? "failure" : "success"} role="alert">
+                            {submitMessage.text}
+                        </Alert>
+                    )}
                     <TextField
                         reference={titleInputRef}
                         title="Title"
@@ -106,33 +153,13 @@ export default function AddMessageModal({ openModal, setOpenModal }: { openModal
                     }
                     )}
                     <div className="w-full flex justify-between">
-                        <Button className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
-                            mutation.mutate({
-                                title: titleInputRef.current?.value ?? "",
-                                series: seriesInputRef.current?.value ?? "",
-                                preacher: preacherInputRef.current?.value ?? "",
-                                thumbnail: imageInputRef.current?.value ?? "",
-                                date: dateInputRef.current?.value ?? "",
-                                passages: refs.map((passage, index) => {
-                                    switch (passage.type) {
-                                        case PassageType.Header:
-                                            return {
-                                                header: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
-                                                type: "header",
-                                                order: index
-                                            }
-                                        case PassageType.Message:
-                                            return {
-                                                verse: (passage.text as RefObject<HTMLInputElement>).current?.value ?? "",
-                                                message: (passage.area as RefObject<HTMLTextAreaElement>).current?.value ?? "",
-                                                type: "message",
-                                                order: index
-                                            }
-                                    }
-                                })
-                            })
-                            setOpenModal(false)
-                        }}>Submit</Button>
+                        <Button
+                            className="bg-momentum-orange hover:bg-momentum-orange enabled:hover:bg-momentum-orange"
+                            disabled={mutation.isPending}
+                            onClick={submit}
+                        >
+                            {mutation.isPending ? "Submitting..." : "Submit"}
+                        </Button>
                         <div className="flex">
                             <Button className="bg-momentum-orange hover:bg-momentum-orange active:bg-momentum-orange enabled:hover:bg-momentum-orange" onClick={() => {
                                 setRefs([...refs, { type: PassageType.Header, text: createRef(), area: createRef() }])

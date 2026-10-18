@@ -5,6 +5,7 @@ import { useApplication } from "@/interfaces/presentation/application-context";
 import { Alert, Button, Modal, ModalBody, ModalFooter, ModalHeader, ToggleSwitch } from "flowbite-react";
 import { Fragment, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateMessageSchema } from "@/interfaces/presentation/pages/messages/validation";
 
 export default function EditMessageModal({ message, openModal, setOpenModal }: { message: Message | null, openModal: boolean, setOpenModal: (open: boolean) => void }) {
     const application = useApplication();
@@ -59,22 +60,24 @@ export default function EditMessageModal({ message, openModal, setOpenModal }: {
             return;
         }
 
-        if (!title.trim() || !series.trim() || !preacher.trim() || !date.trim()) {
-            setSubmitMessage({ type: "error", text: "Title, series, preacher, and date are required." });
+        const result = updateMessageSchema.safeParse({
+            id: message.id,
+            title,
+            series,
+            preacher,
+            thumbnail: image,
+            date,
+            passages: passagesToUpdate,
+            published,
+        });
+
+        if (!result.success) {
+            setSubmitMessage({ type: "error", text: result.error.issues[0]?.message ?? "Please check the message details." });
             return;
         }
 
         setSubmitMessage(null);
-        mutation.mutate({
-            id: message.id,
-            title: title.trim(),
-            series: series.trim(),
-            preacher: preacher.trim(),
-            thumbnail: image.trim(),
-            date: date.trim(),
-            passages: passagesToUpdate,
-            published,
-        });
+        mutation.mutate(result.data);
     };
 
     const updatePassage = (index: number, updatedPassage: Passage) => {
