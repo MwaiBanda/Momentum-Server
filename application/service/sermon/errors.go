@@ -1,8 +1,12 @@
 package sermon
 
-import "errors"
+import apperrors "Momentum/application/errors"
 
 var (
-	ErrInvalidPage = errors.New("invalid sermon page")
-	ErrUnavailable = errors.New("sermon provider unavailable")
+	ErrInvalidPage = apperrors.New(apperrors.CodeInvalidInput, 400, "invalid sermon page")
+	ErrUnavailable = apperrors.New(
+		apperrors.CodeDependencyUnavailable,
+		503,
+		"sermon provider unavailable",
+	)
 )

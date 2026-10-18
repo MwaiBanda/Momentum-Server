@@ -31,7 +31,11 @@ func TestErrorHandlerReturnsUnifiedResponse(t *testing.T) {
 	if response.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want %d", response.StatusCode, http.StatusNotFound)
 	}
-	if body != (ErrorResponse{Code: http.StatusNotFound, Message: http.StatusText(http.StatusNotFound)}) {
+	if body != (ErrorResponse{
+		Code:    http.StatusNotFound,
+		Error:   "not_found",
+		Message: http.StatusText(http.StatusNotFound),
+	}) {
 		t.Fatalf("body = %#v, want unified not found response", body)
 	}
 	if !strings.HasPrefix(response.Header.Get("Content-Type"), fiber.MIMEApplicationJSON) {

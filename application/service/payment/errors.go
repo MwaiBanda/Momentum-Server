@@ -1,5 +1,9 @@
 package payment
 
-import "errors"
+import apperrors "Momentum/application/errors"
 
-var ErrInvalidInput = errors.New("invalid payment input")
+var ErrInvalidInput = apperrors.New(
+	apperrors.CodeInvalidInput,
+	400,
+	"invalid payment input",
+)

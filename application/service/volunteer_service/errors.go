@@ -1,9 +1,9 @@
 package volunteer_service
 
-import "errors"
+import apperrors "Momentum/application/errors"
 
 var (
-	ErrServiceNotFound = errors.New("service not found")
-	ErrDayNotFound     = errors.New("volunteer service day not found")
-	ErrInvalidInput    = errors.New("invalid volunteer service input")
+	ErrServiceNotFound = apperrors.New(apperrors.CodeNotFound, 404, "service not found")
+	ErrDayNotFound     = apperrors.New(apperrors.CodeNotFound, 404, "volunteer service day not found")
+	ErrInvalidInput    = apperrors.New(apperrors.CodeInvalidInput, 400, "invalid volunteer service input")
 )

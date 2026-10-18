@@ -15,7 +15,7 @@ var dashboardRoutes = []string{
 
 func configureFiles(app *fiber.App) {
 	app.Use("/assets", static.New("cms/dist/assets", static.Config{
-		Browse: true,
+		Browse: false,
 	}))
 
 	for _, route := range dashboardRoutes {
@@ -27,7 +27,7 @@ func configureFiles(app *fiber.App) {
 		})
 
 		app.Use(route, static.New("cms/dist", static.Config{
-			Browse: true,
+			Browse: false,
 		}))
 	}
 }

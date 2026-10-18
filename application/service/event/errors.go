@@ -1,5 +1,9 @@
 package event
 
-import "errors"
+import apperrors "Momentum/application/errors"
 
-var ErrUnavailable = errors.New("event provider unavailable")
+var ErrUnavailable = apperrors.New(
+	apperrors.CodeDependencyUnavailable,
+	503,
+	"event provider unavailable",
+)

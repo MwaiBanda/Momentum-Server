@@ -1,9 +1,9 @@
 package meal
 
-import "errors"
+import apperrors "Momentum/application/errors"
 
 var (
-	ErrNotFound                = errors.New("meal not found")
-	ErrVolunteeredMealNotFound = errors.New("volunteered meal not found")
-	ErrInvalidInput            = errors.New("invalid meal input")
+	ErrNotFound                = apperrors.New(apperrors.CodeNotFound, 404, "meal not found")
+	ErrVolunteeredMealNotFound = apperrors.New(apperrors.CodeNotFound, 404, "volunteered meal not found")
+	ErrInvalidInput            = apperrors.New(apperrors.CodeInvalidInput, 400, "invalid meal input")
 )

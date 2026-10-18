@@ -1,5 +1,5 @@
 package user
 
-import "errors"
+import apperrors "Momentum/application/errors"
 
-var ErrNotFound = errors.New("user not found")
+var ErrNotFound = apperrors.New(apperrors.CodeNotFound, 404, "user not found")

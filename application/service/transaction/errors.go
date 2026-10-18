@@ -1,8 +1,8 @@
 package transaction
 
-import "errors"
+import apperrors "Momentum/application/errors"
 
 var (
-	ErrInvalidInput = errors.New("invalid transaction input")
-	ErrNotFound     = errors.New("transaction not found")
+	ErrInvalidInput = apperrors.New(apperrors.CodeInvalidInput, 400, "invalid transaction input")
+	ErrNotFound     = apperrors.New(apperrors.CodeNotFound, 404, "transaction not found")
 )
