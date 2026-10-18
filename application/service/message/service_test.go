@@ -112,14 +112,13 @@ func (store *fakeCache) Increment(_ context.Context, key string) (int64, error) 
 func TestCreatePreservesLegacyResponseAndGeneratesPersistenceIDs(t *testing.T) {
 	repository := &fakeRepository{}
 	service := GetInstance(repository, nil)
-	input := MessageInput{
-		ID:        "request-id",
+	input := CreateInput{
 		Thumbnail: "thumbnail.png",
 		Series:    "Series",
 		Title:     "Message",
 		Preacher:  "Preacher",
 		Date:      "2026-10-16",
-		Passages: []PassageResponse{
+		Passages: []CreatePassageInput{
 			{Type: "header", Header: "Introduction", Order: 1},
 			{Type: "message", Verse: "John 1:1", Message: "In the beginning", Order: 2},
 			{Type: "ignored", Message: "not persisted", Order: 3},
@@ -130,8 +129,11 @@ func TestCreatePreservesLegacyResponseAndGeneratesPersistenceIDs(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Create() error = %v", err)
 	}
-	if !reflect.DeepEqual(response, input) {
-		t.Fatalf("Create() response = %#v, want request-shaped %#v", response, input)
+	if response.ID == "" {
+		t.Fatal("Create() response has no generated message ID")
+	}
+	if response.Title != input.Title || response.Preacher != input.Preacher {
+		t.Fatalf("Create() response = %#v, want fields from request %#v", response, input)
 	}
 	if repository.createParams.ID == "" {
 		t.Fatal("Create() did not generate a message ID")
@@ -204,7 +206,7 @@ func TestUpdateMapsNotFound(t *testing.T) {
 	repository := &fakeRepository{updateErr: domainmessage.ErrMessageNotFound}
 	service := GetInstance(repository, nil)
 
-	_, err := service.Update(context.Background(), MessageInput{ID: "message-1"})
+	_, err := service.Update(context.Background(), UpdateInput{ID: "message-1"})
 	if !errors.Is(err, ErrMessageNotFound) {
 		t.Fatalf("Update() error = %v, want %v", err, ErrMessageNotFound)
 	}

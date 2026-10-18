@@ -4,7 +4,7 @@ GO ?= go
 GOFLAGS ?= -mod=mod
 SWAG_VERSION ?= v1.16.6
 
-.PHONY: help run build test test-postgres swagger fmt check docker-build
+.PHONY: help run build test test-postgres swagger openapi openapi-check fmt check docker-build
 
 help: ## Show available commands
 	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  %-16s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -23,6 +23,12 @@ test-postgres: ## Run PostgreSQL integration tests
 
 swagger: ## Regenerate Swagger documentation
 	$(GO) run github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION) init --parseDependency --parseInternal
+
+openapi: swagger ## Generate the OpenAPI 3 document from Swagger
+	$(GO) run ./tools/openapi --input docs/swagger.json --output docs/openapi.json
+
+openapi-check: openapi ## Verify generated API documents are current
+	git diff --exit-code -- docs/docs.go docs/swagger.json docs/swagger.yaml docs/openapi.json
 
 fmt: ## Format Go source files
 	gofmt -w $$(find . -type f -name '*.go' -not -path './cms/*' -not -path './vendor/*')

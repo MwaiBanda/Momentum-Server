@@ -214,6 +214,23 @@ definitions:
       user:
         $ref: '#/definitions/meal.UserResponse'
     type: object
+  message.CreateInput:
+    properties:
+      date:
+        type: string
+      passages:
+        items:
+          $ref: '#/definitions/message.CreatePassageInput'
+        type: array
+      preacher:
+        type: string
+      series:
+        type: string
+      thumbnail:
+        type: string
+      title:
+        type: string
+    type: object
   message.CreateNoteInput:
     properties:
       content:
@@ -223,29 +240,17 @@ definitions:
       userId:
         type: string
     type: object
-  message.MessageInput:
+  message.CreatePassageInput:
     properties:
-      createdOn:
+      header:
         type: string
-      date:
+      message:
         type: string
-      hasOrder:
-        type: boolean
-      id:
+      order:
+        type: integer
+      type:
         type: string
-      passages:
-        items:
-          $ref: '#/definitions/message.PassageResponse'
-        type: array
-      preacher:
-        type: string
-      published:
-        type: boolean
-      series:
-        type: string
-      thumbnail:
-        type: string
-      title:
+      verse:
         type: string
     type: object
   message.MessageListResponse:
@@ -304,6 +309,38 @@ definitions:
       order:
         type: integer
       type:
+        type: string
+      verse:
+        type: string
+    type: object
+  message.UpdateInput:
+    properties:
+      date:
+        type: string
+      id:
+        type: string
+      passages:
+        items:
+          $ref: '#/definitions/message.UpdatePassageInput'
+        type: array
+      preacher:
+        type: string
+      published:
+        type: boolean
+      series:
+        type: string
+      thumbnail:
+        type: string
+      title:
+        type: string
+    type: object
+  message.UpdatePassageInput:
+    properties:
+      header:
+        type: string
+      id:
+        type: string
+      message:
         type: string
       verse:
         type: string
@@ -922,7 +959,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/message.MessageInput'
+          $ref: '#/definitions/message.CreateInput'
       produces:
       - application/json
       responses:
@@ -956,7 +993,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/message.MessageInput'
+          $ref: '#/definitions/message.UpdateInput'
       produces:
       - application/json
       responses:

@@ -18,8 +18,8 @@ import (
 type fakeUseCase struct {
 	listPublished   func(context.Context, string) (applicationmessage.MessageListResponse, error)
 	listUnpublished func(context.Context) (applicationmessage.MessageListResponse, error)
-	create          func(context.Context, applicationmessage.MessageInput) (applicationmessage.MessageResponse, error)
-	update          func(context.Context, applicationmessage.MessageInput) (applicationmessage.MessageResponse, error)
+	create          func(context.Context, applicationmessage.CreateInput) (applicationmessage.MessageResponse, error)
+	update          func(context.Context, applicationmessage.UpdateInput) (applicationmessage.MessageResponse, error)
 	delete          func(context.Context, string) (applicationmessage.MessageResponse, error)
 	createNote      func(context.Context, applicationmessage.CreateNoteInput) (applicationmessage.CreateNoteInput, error)
 	updateNote      func(context.Context, applicationmessage.NoteResponse) (applicationmessage.NoteResponse, error)
@@ -40,14 +40,14 @@ func (fake *fakeUseCase) ListUnpublished(ctx context.Context) (applicationmessag
 	return fake.listUnpublished(ctx)
 }
 
-func (fake *fakeUseCase) Create(ctx context.Context, input applicationmessage.MessageInput) (applicationmessage.MessageResponse, error) {
+func (fake *fakeUseCase) Create(ctx context.Context, input applicationmessage.CreateInput) (applicationmessage.MessageResponse, error) {
 	if fake.create == nil {
 		return applicationmessage.MessageResponse{}, nil
 	}
 	return fake.create(ctx, input)
 }
 
-func (fake *fakeUseCase) Update(ctx context.Context, input applicationmessage.MessageInput) (applicationmessage.MessageResponse, error) {
+func (fake *fakeUseCase) Update(ctx context.Context, input applicationmessage.UpdateInput) (applicationmessage.MessageResponse, error) {
 	if fake.update == nil {
 		return applicationmessage.MessageResponse{}, nil
 	}
@@ -197,17 +197,17 @@ func TestListUnpublishedReturnsMessageListContract(t *testing.T) {
 	}
 }
 
-func TestCreatePreservesLegacyResponse(t *testing.T) {
-	input := applicationmessage.MessageInput{
+func TestCreateBindsRequest(t *testing.T) {
+	input := applicationmessage.CreateInput{
 		Title:    "Message",
 		Preacher: "Preacher",
-		Passages: []applicationmessage.PassageResponse{{Type: "header", Header: "Intro", Order: 1}},
+		Passages: []applicationmessage.CreatePassageInput{{Type: "header", Header: "Intro", Order: 1}},
 	}
-	var received applicationmessage.MessageInput
+	var received applicationmessage.CreateInput
 	messages := &fakeUseCase{
-		create: func(_ context.Context, actual applicationmessage.MessageInput) (applicationmessage.MessageResponse, error) {
+		create: func(_ context.Context, actual applicationmessage.CreateInput) (applicationmessage.MessageResponse, error) {
 			received = actual
-			return actual, nil
+			return applicationmessage.MessageResponse{Title: actual.Title, Preacher: actual.Preacher}, nil
 		},
 	}
 
@@ -229,7 +229,7 @@ func TestCreatePreservesLegacyResponse(t *testing.T) {
 func TestCreateRejectsMalformedBody(t *testing.T) {
 	called := false
 	messages := &fakeUseCase{
-		create: func(context.Context, applicationmessage.MessageInput) (applicationmessage.MessageResponse, error) {
+		create: func(context.Context, applicationmessage.CreateInput) (applicationmessage.MessageResponse, error) {
 			called = true
 			return applicationmessage.MessageResponse{}, nil
 		},

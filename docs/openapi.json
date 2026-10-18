@@ -1,0 +1,3021 @@
+{
+  "components": {
+    "schemas": {
+      "event.Attributes": {
+        "properties": {
+          "all_day_event": {
+            "type": "boolean"
+          },
+          "ends_at": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "open_graph_description": {
+            "type": "string"
+          },
+          "recurrence_description": {
+            "type": "string"
+          },
+          "recurring": {
+            "type": "boolean"
+          },
+          "starts_at": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "event.Event": {
+        "properties": {
+          "attributes": {
+            "$ref": "#/components/schemas/event.Attributes"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "event.Response": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/event.Event"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "http.ErrorResponse": {
+        "properties": {
+          "code": {
+            "example": 400,
+            "type": "integer"
+          },
+          "message": {
+            "example": "Bad Request",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "meal.Input": {
+        "properties": {
+          "allergies": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "favourites": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "least_favourites": {
+            "type": "string"
+          },
+          "meals": {
+            "items": {
+              "$ref": "#/components/schemas/meal.MealVolunteeredRequest"
+            },
+            "type": "array"
+          },
+          "num_of_adults": {
+            "type": "integer"
+          },
+          "number_of_kids": {
+            "type": "integer"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "preferred_time": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "meal.MealVolunteeredRequest": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "meal_id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "meal.ParticipantResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/meal.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "meal.Response": {
+        "properties": {
+          "allergies": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "favourites": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "least_favourites": {
+            "type": "string"
+          },
+          "meals": {
+            "items": {
+              "$ref": "#/components/schemas/meal.VolunteeredMealResponse"
+            },
+            "type": "array"
+          },
+          "num_of_adults": {
+            "type": "integer"
+          },
+          "number_of_kids": {
+            "type": "integer"
+          },
+          "participants": {
+            "items": {
+              "$ref": "#/components/schemas/meal.ParticipantResponse"
+            },
+            "type": "array"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "preferred_time": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "recipient": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/meal.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "meal.UpdateResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "meal.UpdateVolunteeredMealInput": {
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "meal.UserResponse": {
+        "properties": {
+          "createdOn": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "meal.VolunteerAssignmentInput": {
+        "properties": {
+          "meal_id": {
+            "type": "string"
+          },
+          "volunteered_meal": {
+            "$ref": "#/components/schemas/meal.VolunteeredMealInput"
+          }
+        },
+        "type": "object"
+      },
+      "meal.VolunteeredMealInput": {
+        "properties": {
+          "created_on": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "updates": {
+            "items": {
+              "$ref": "#/components/schemas/meal.UpdateResponse"
+            },
+            "type": "array"
+          },
+          "user": {
+            "$ref": "#/components/schemas/meal.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "meal.VolunteeredMealResponse": {
+        "properties": {
+          "created_on": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "updates": {
+            "items": {
+              "$ref": "#/components/schemas/meal.UpdateResponse"
+            },
+            "type": "array"
+          },
+          "user": {
+            "$ref": "#/components/schemas/meal.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "message.CreateInput": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/message.CreatePassageInput"
+            },
+            "type": "array"
+          },
+          "preacher": {
+            "type": "string"
+          },
+          "series": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "message.CreateNoteInput": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "passageId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "message.CreatePassageInput": {
+        "properties": {
+          "header": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "verse": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "message.MessageListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/message.MessageResponse"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "message.MessageResponse": {
+        "properties": {
+          "createdOn": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "hasOrder": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/message.PassageResponse"
+            },
+            "type": "array"
+          },
+          "preacher": {
+            "type": "string"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "series": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "message.NoteResponse": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "message.PassageResponse": {
+        "properties": {
+          "header": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "notes": {
+            "items": {
+              "$ref": "#/components/schemas/message.NoteResponse"
+            },
+            "type": "array"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "verse": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "message.UpdateInput": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/message.UpdatePassageInput"
+            },
+            "type": "array"
+          },
+          "preacher": {
+            "type": "string"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "series": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "message.UpdatePassageInput": {
+        "properties": {
+          "header": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "verse": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "notification.Input": {
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "payment.Input": {
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "payment.Response": {
+        "properties": {
+          "customer": {
+            "type": "string"
+          },
+          "ephemeralKey": {
+            "type": "string"
+          },
+          "paymentIntent": {
+            "type": "string"
+          },
+          "publishableKey": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "sermon.Response": {
+        "properties": {
+          "current_page": {
+            "type": "integer"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/sermon.Sermon"
+            },
+            "type": "array"
+          },
+          "first_page_url": {
+            "type": "string"
+          },
+          "from": {
+            "type": "integer"
+          },
+          "last_page": {
+            "type": "integer"
+          },
+          "last_page_url": {
+            "type": "string"
+          },
+          "links": {
+            "items": {
+              "properties": {
+                "active": {
+                  "type": "boolean"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "url": {}
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "next_page_url": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "prev_page_url": {},
+          "to": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "sermon.Sermon": {
+        "properties": {
+          "categories": {},
+          "date": {
+            "properties": {
+              "carbon": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "detail_url": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "interactions": {
+            "properties": {
+              "likes": {
+                "type": "integer"
+              },
+              "shares": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "interactive_note": {},
+          "keywords": {},
+          "media": {
+            "properties": {
+              "audio": {},
+              "embed": {},
+              "image": {},
+              "notes": {},
+              "video": {
+                "type": "string"
+              },
+              "video_thumbnail": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "passages": {
+            "items": {},
+            "type": "array"
+          },
+          "preacher": {
+            "type": "string"
+          },
+          "series": {
+            "properties": {
+              "description": {},
+              "image": {},
+              "slug": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "summary": {},
+          "text": {},
+          "title": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "transaction.Input": {
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "transaction.Response": {
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/transaction.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "transaction.UserResponse": {
+        "properties": {
+          "createdOn": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "user.CreateInput": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "user.Response": {
+        "properties": {
+          "createdOn": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "user.UpdateInput": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.CreateDayInput": {
+        "properties": {
+          "date": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.CreateInput": {
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/volunteer_service.CreateDayInput"
+            },
+            "type": "array"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organizer": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "service_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.CreateResponse": {
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/volunteer_service.CreateDayInput"
+            },
+            "type": "array"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organizer": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "service_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.ServiceDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/volunteer_service.VolunteerServiceResponse"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.ServiceResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.UpdateDayInput": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/volunteer_service.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.UpdateDayResponse": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/volunteer_service.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.UserResponse": {
+        "properties": {
+          "createdOn": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "meals": {
+            "items": {},
+            "type": "array"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.VolunteerServiceDayResponse": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/volunteer_service.UserResponse"
+          }
+        },
+        "type": "object"
+      },
+      "volunteer_service.VolunteerServiceResponse": {
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/volunteer_service.VolunteerServiceDayResponse"
+            },
+            "type": "array"
+          },
+          "description": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organizer": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "service_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "bandamwai@gmail.com",
+      "name": "Mwai Banda"
+    },
+    "description": "This is a backend service to process payments and provide some CRUD functionality",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "termsOfService": "https://momentumindiana.org/statement-of-faith/",
+    "title": "Momentum API",
+    "version": "v1"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/api/v1/events": {
+      "get": {
+        "description": "Get all events scheduled on the church calendar",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/event.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get all calendar events",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/api/v1/meals": {
+      "get": {
+        "description": "Get all meals and their volunteer assignments",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/meal.Response"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get all meals",
+        "tags": [
+          "Meals"
+        ]
+      },
+      "post": {
+        "description": "Create a meal and its requested volunteer dates",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/meal.Input"
+              }
+            }
+          },
+          "description": "Post a meal",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/meal.Input"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Post a meal",
+        "tags": [
+          "Meals"
+        ]
+      },
+      "put": {
+        "description": "Update a meal",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/meal.Input"
+              }
+            }
+          },
+          "description": "Update a meal",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/meal.Input"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update a meal",
+        "tags": [
+          "Meals"
+        ]
+      }
+    },
+    "/api/v1/meals/meal": {
+      "post": {
+        "description": "Update a volunteered meal and assign its volunteer",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/meal.VolunteerAssignmentInput"
+              }
+            }
+          },
+          "description": "Assign a volunteer",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/meal.VolunteerAssignmentInput"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Assign a volunteer to a meal",
+        "tags": [
+          "Meals"
+        ]
+      },
+      "put": {
+        "description": "Update a volunteered meal's description and notes",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/meal.UpdateVolunteeredMealInput"
+              }
+            }
+          },
+          "description": "Update a volunteered meal",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/meal.UpdateVolunteeredMealInput"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update a volunteered meal",
+        "tags": [
+          "Meals"
+        ]
+      }
+    },
+    "/api/v1/meals/{mealId}": {
+      "delete": {
+        "description": "Delete a meal by ID",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide meal ID",
+            "in": "path",
+            "name": "mealId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/meal.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete a meal",
+        "tags": [
+          "Meals"
+        ]
+      }
+    },
+    "/api/v1/messages": {
+      "post": {
+        "description": "Used to post a message",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/message.CreateInput"
+              }
+            }
+          },
+          "description": "Post a message",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.MessageResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Post a Message",
+        "tags": [
+          "Messages"
+        ]
+      },
+      "put": {
+        "description": "Used to update a message",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/message.UpdateInput"
+              }
+            }
+          },
+          "description": "Update a message",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.MessageResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update a Message",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/v1/messages/admin": {
+      "get": {
+        "description": "get published messages without user-specific passage notes",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.MessageListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Show all published messages for the CMS",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/v1/messages/notes": {
+      "post": {
+        "description": "Used to add user notes to a passage",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/message.CreateNoteInput"
+              }
+            }
+          },
+          "description": "Post a note",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.CreateNoteInput"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Add a Note to a Passage",
+        "tags": [
+          "Messages"
+        ]
+      },
+      "put": {
+        "description": "Used to update a user note in a passage",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/message.NoteResponse"
+              }
+            }
+          },
+          "description": "Update a note",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.NoteResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update a Note in a Passage",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/v1/messages/notes/{noteId}": {
+      "delete": {
+        "description": "Delete a note's information by providing an Id",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide note Id",
+            "in": "path",
+            "name": "noteId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.NoteResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete note information by Id",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/v1/messages/unpublished": {
+      "get": {
+        "description": "get unpublished messages and passages",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.MessageListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Show unpublished messages",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/v1/messages/{messageId}": {
+      "delete": {
+        "description": "Delete a message and its passages and notes",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide message Id",
+            "in": "path",
+            "name": "messageId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.MessageResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete message information",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/v1/messages/{userId}": {
+      "get": {
+        "description": "get published messages and that user's passage notes",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide user Id",
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message.MessageListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Show published messages available for a user",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/api/v1/notifications": {
+      "post": {
+        "description": "Used by clients to request a notification to be sent to a topic",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/notification.Input"
+              }
+            }
+          },
+          "description": "Post a notification",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/notification.Input"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Post a notification",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/payments": {
+      "post": {
+        "description": "Create a Stripe payment intent for a contribution",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/payment.Input"
+              }
+            }
+          },
+          "description": "Create a payment",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/payment.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Create a payment",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/sermons": {
+      "get": {
+        "description": "Get a paginated list of sermons",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Provide a page number",
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/sermon.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Show a list of sermons",
+        "tags": [
+          "Sermons"
+        ]
+      }
+    },
+    "/api/v1/services": {
+      "get": {
+        "description": "get a list of volunteer services available",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/volunteer_service.ServiceResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Show a list of volunteer services available",
+        "tags": [
+          "Services"
+        ]
+      },
+      "post": {
+        "description": "Used to post a volunteer service",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/volunteer_service.CreateInput"
+              }
+            }
+          },
+          "description": "Post a volunteer service",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/volunteer_service.CreateResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Post a volunteer service",
+        "tags": [
+          "Services"
+        ]
+      }
+    },
+    "/api/v1/services/day": {
+      "put": {
+        "description": "Update a volunteered service day",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/volunteer_service.UpdateDayInput"
+              }
+            }
+          },
+          "description": "Update a day",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/volunteer_service.UpdateDayResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update a volunteered service day",
+        "tags": [
+          "Services"
+        ]
+      }
+    },
+    "/api/v1/services/{type}": {
+      "get": {
+        "description": "get a service by its type",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide service type",
+            "in": "path",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/volunteer_service.ServiceDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get Service By Type",
+        "tags": [
+          "Services"
+        ]
+      }
+    },
+    "/api/v1/transactions": {
+      "get": {
+        "description": "Get all transactions",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/transaction.Response"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Show a list of all transactions",
+        "tags": [
+          "Transactions"
+        ]
+      },
+      "post": {
+        "description": "Used to post a transaction",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/transaction.Input"
+              }
+            }
+          },
+          "description": "Post a transaction",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transaction.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Post a transaction",
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/transactions/{transactionId}": {
+      "delete": {
+        "description": "Delete a transaction by ID",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide transaction Id",
+            "in": "path",
+            "name": "transactionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transaction.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete a transaction",
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/transactions/{userId}": {
+      "get": {
+        "description": "Get transactions belonging to a user",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide user Id",
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/transaction.Response"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Show a user's transactions",
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/users": {
+      "post": {
+        "description": "Used to post a user",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user.CreateInput"
+              }
+            }
+          },
+          "description": "Post a user",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Post a user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "put": {
+        "description": "Used to update a user",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user.UpdateInput"
+              }
+            }
+          },
+          "description": "Update a user",
+          "required": true,
+          "x-originalParamName": "data"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update a user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/v1/users/{userId}": {
+      "delete": {
+        "description": "Delete a user's information by providing an Id",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide user Id",
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete user information by Id",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "description": "get a user information by providing an Id",
+        "parameters": [
+          {
+            "description": "Provide a bearer token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "provide user Id",
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user.Response"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/http.ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get user information by Id",
+        "tags": [
+          "Users"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://services.momentumchurch.dev/"
+    }
+  ]
+}

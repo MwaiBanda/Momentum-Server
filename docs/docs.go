@@ -404,7 +404,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/message.MessageInput"
+                            "$ref": "#/definitions/message.UpdateInput"
                         }
                     }
                 ],
@@ -461,7 +461,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/message.MessageInput"
+                            "$ref": "#/definitions/message.CreateInput"
                         }
                     }
                 ],
@@ -1951,6 +1951,32 @@ const docTemplate = `{
                 }
             }
         },
+        "message.CreateInput": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "passages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/message.CreatePassageInput"
+                    }
+                },
+                "preacher": {
+                    "type": "string"
+                },
+                "series": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "message.CreateNoteInput": {
             "type": "object",
             "properties": {
@@ -1965,40 +1991,22 @@ const docTemplate = `{
                 }
             }
         },
-        "message.MessageInput": {
+        "message.CreatePassageInput": {
             "type": "object",
             "properties": {
-                "createdOn": {
+                "header": {
                     "type": "string"
                 },
-                "date": {
+                "message": {
                     "type": "string"
                 },
-                "hasOrder": {
-                    "type": "boolean"
+                "order": {
+                    "type": "integer"
                 },
-                "id": {
+                "type": {
                     "type": "string"
                 },
-                "passages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/message.PassageResponse"
-                    }
-                },
-                "preacher": {
-                    "type": "string"
-                },
-                "published": {
-                    "type": "boolean"
-                },
-                "series": {
-                    "type": "string"
-                },
-                "thumbnail": {
-                    "type": "string"
-                },
-                "title": {
+                "verse": {
                     "type": "string"
                 }
             }
@@ -2088,6 +2096,55 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "type": {
+                    "type": "string"
+                },
+                "verse": {
+                    "type": "string"
+                }
+            }
+        },
+        "message.UpdateInput": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "passages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/message.UpdatePassageInput"
+                    }
+                },
+                "preacher": {
+                    "type": "string"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "series": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "message.UpdatePassageInput": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "message": {
                     "type": "string"
                 },
                 "verse": {

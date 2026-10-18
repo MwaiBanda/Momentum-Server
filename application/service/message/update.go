@@ -7,7 +7,7 @@ import (
 	domainmessage "Momentum/domain/message"
 )
 
-func (service *Service) Update(ctx context.Context, input MessageInput) (MessageResponse, error) {
+func (service *Service) Update(ctx context.Context, input UpdateInput) (MessageResponse, error) {
 	if input.ID == "" {
 		return MessageResponse{}, ErrInvalidInput
 	}
@@ -46,5 +46,5 @@ func (service *Service) Update(ctx context.Context, input MessageInput) (Message
 	}
 
 	service.bumpMessageCacheVersion(ctx)
-	return input, nil
+	return messageResponseFromUpdateInput(input), nil
 }

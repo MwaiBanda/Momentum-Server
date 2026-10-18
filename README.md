@@ -167,10 +167,19 @@ make build
 make test
 make test-postgres
 make swagger
+make openapi
+make openapi-check
 make fmt
 make check
 make docker-build
 ```
+
+The Go handler annotations remain the source of API documentation. `make
+openapi` regenerates the Swagger 2.0 files used by the existing Swagger UI and
+converts the same generated contract into the validated OpenAPI 3 document at
+[`docs/openapi.json`](./docs/openapi.json). The OpenAPI document is generated,
+not manually edited, and is the future source for client tooling such as CMS
+transport type generation.
 
 Build the CMS before starting the Go server:
 

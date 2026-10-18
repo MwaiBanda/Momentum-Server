@@ -7,7 +7,7 @@ import (
 	"github.com/lucsky/cuid"
 )
 
-func (service *Service) Create(ctx context.Context, input MessageInput) (MessageResponse, error) {
+func (service *Service) Create(ctx context.Context, input CreateInput) (MessageResponse, error) {
 	passages := make([]domainmessage.CreatePassageParams, 0, len(input.Passages))
 	for _, passage := range input.Passages {
 		switch passage.Type {
@@ -30,8 +30,9 @@ func (service *Service) Create(ctx context.Context, input MessageInput) (Message
 		}
 	}
 
+	messageID := cuid.New()
 	if err := service.repository.Create(ctx, domainmessage.CreateParams{
-		ID:        cuid.New(),
+		ID:        messageID,
 		Thumbnail: input.Thumbnail,
 		Series:    input.Series,
 		Title:     input.Title,
@@ -43,5 +44,6 @@ func (service *Service) Create(ctx context.Context, input MessageInput) (Message
 	}
 
 	service.bumpMessageCacheVersion(ctx)
-	return input, nil
+
+	return messageResponseFromCreateInput(input, messageID), nil
 }
