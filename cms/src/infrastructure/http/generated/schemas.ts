@@ -17,7 +17,12 @@ const event_Event = z
   .passthrough();
 const event_Response = z.object({ data: z.array(event_Event) }).passthrough();
 const http_ErrorResponse = z
-  .object({ code: z.number().int(), message: z.string() })
+  .object({
+    code: z.number().int(),
+    error: z.string(),
+    message: z.string(),
+    requestId: z.string().optional(),
+  })
   .passthrough();
 const meal_UpdateEntryResponse = z
   .object({ id: z.string(), message: z.string() })

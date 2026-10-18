@@ -52,11 +52,18 @@ definitions:
       code:
         example: 400
         type: integer
+      error:
+        example: invalid_request
+        type: string
       message:
         example: Bad Request
         type: string
+      requestId:
+        example: a1b2c3d4
+        type: string
     required:
     - code
+    - error
     - message
     type: object
   meal.CreateResponse:

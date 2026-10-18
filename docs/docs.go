@@ -2037,6 +2037,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "code",
+                "error",
                 "message"
             ],
             "properties": {
@@ -2044,9 +2045,17 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 400
                 },
+                "error": {
+                    "type": "string",
+                    "example": "invalid_request"
+                },
                 "message": {
                     "type": "string",
                     "example": "Bad Request"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "a1b2c3d4"
                 }
             }
         },

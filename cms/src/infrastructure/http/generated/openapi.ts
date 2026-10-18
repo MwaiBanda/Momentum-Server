@@ -2182,8 +2182,12 @@ export interface components {
         "http.ErrorResponse": {
             /** @example 400 */
             code: number;
+            /** @example invalid_request */
+            error: string;
             /** @example Bad Request */
             message: string;
+            /** @example a1b2c3d4 */
+            requestId?: string;
         };
         "meal.CreateResponse": {
             allergies: string;
