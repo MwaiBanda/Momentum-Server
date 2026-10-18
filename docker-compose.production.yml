@@ -23,6 +23,7 @@ services:
       - "80:80"
       - "443:443"
       - "443:443/udp"
+      - "16686:16686"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
@@ -30,6 +31,7 @@ services:
     depends_on:
       - api
       - grafana
+      - jaeger
     restart: unless-stopped
 
   otel-collector:

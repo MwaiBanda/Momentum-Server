@@ -1,8 +1,6 @@
 services:
   jaeger:
     image: jaegertracing/all-in-one:1.68.0
-    ports:
-      - "16686:16686"
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.123.0

@@ -197,8 +197,9 @@ docker compose \
   up -d
 ```
 
-Then open `http://localhost:3000`. Use Grafana panels for traffic, errors, and
-latency; use Grafana Explore with the Jaeger data source for individual trace
+Then open `http://localhost:3000`. Jaeger is also available locally at
+`http://localhost:16686`. Use Grafana panels for traffic, errors, and latency;
+use Grafana Explore with the Jaeger data source for individual trace
 waterfalls.
 
 ### Production reverse proxy
@@ -240,9 +241,11 @@ docker compose \
 The public proxy serves the CMS and API, `/uptime` requires the Caddy
 operations credentials, and `/metrics` is not exposed through Caddy. Grafana
 is available at `https://grafana.services.example.com` behind the same Caddy
-operations credentials and its own Grafana login. The collector reaches
-`/metrics` privately over the Docker network. Do not expose Jaeger or
-Prometheus ports directly on the public internet.
+operations credentials and its own Grafana login. Jaeger is available at
+`https://services.example.com:16686` through the same Caddy credentials. Allow
+TCP port `16686` through the VPS firewall if you use the direct Jaeger
+endpoint. The collector reaches `/metrics` privately over the Docker network;
+Prometheus remains private.
 
 ### Architecture style
 

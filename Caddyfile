@@ -28,3 +28,13 @@ grafana.{$DOMAIN} {
 
 	reverse_proxy grafana:3000
 }
+
+https://{$DOMAIN}:16686 {
+	encode gzip zstd
+
+	basic_auth {
+		{$UPTIME_USERNAME} {$UPTIME_PASSWORD_HASH}
+	}
+
+	reverse_proxy jaeger:16686
+}
