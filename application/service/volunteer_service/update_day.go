@@ -4,10 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"Momentum/application/telemetry"
 	domainservice "Momentum/domain/volunteer_service"
 )
 
 func (service *Service) UpdateDay(ctx context.Context, input UpdateDayInput) (UpdateDayResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.volunteer_service.update_day")
+	defer span.End()
+
 	if input.ID == "" {
 		return UpdateDayResponse{}, ErrInvalidInput
 	}

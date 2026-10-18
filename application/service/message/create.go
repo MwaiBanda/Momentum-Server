@@ -3,11 +3,15 @@ package message
 import (
 	"context"
 
+	"Momentum/application/telemetry"
 	domainmessage "Momentum/domain/message"
 	"github.com/lucsky/cuid"
 )
 
 func (service *Service) Create(ctx context.Context, input CreateInput) (MessageResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.message.create")
+	defer span.End()
+
 	passages := make([]domainmessage.CreatePassageParams, 0, len(input.Passages))
 	for _, passage := range input.Passages {
 		switch passage.Type {

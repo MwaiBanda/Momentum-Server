@@ -18,7 +18,9 @@ func TestRequestIDPreservesSafeIncomingID(t *testing.T) {
 		return ctx.SendStatus(http.StatusNoContent)
 	})
 
-	response, err := app.Test(httptest.NewRequest(http.MethodGet, "/", nil))
+	request := httptest.NewRequest(http.MethodGet, "/", nil)
+	request.Header.Set(RequestIDHeader, "request-123")
+	response, err := app.Test(request)
 	if err != nil {
 		t.Fatalf("app.Test() error = %v", err)
 	}

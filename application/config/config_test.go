@@ -21,6 +21,9 @@ func TestLoadConfigFromAppliesDefaultsAndOptionalValues(t *testing.T) {
 	if configuration.Port != "8080" {
 		t.Fatalf("Port = %q, want %q", configuration.Port, "8080")
 	}
+	if configuration.Host != "127.0.0.1" {
+		t.Fatalf("Host = %q, want %q", configuration.Host, "127.0.0.1")
+	}
 	if configuration.Firebase.ProjectID != "" {
 		t.Fatalf("Firebase.ProjectID = %q, want empty", configuration.Firebase.ProjectID)
 	}
@@ -45,6 +48,7 @@ func TestLoadConfigFromRequiresCoreValues(t *testing.T) {
 func TestLoadConfigFromLoadsConfiguredValues(t *testing.T) {
 	configuration, err := LoadConfigFrom(mapLookup(map[string]string{
 		"ENVIRONMENT":               "production",
+		"HOST":                      "0.0.0.0",
 		"PORT":                      "9090",
 		"DATABASE_URL":              "postgres://database",
 		"REDIS_URL":                 "redis://cache",
@@ -62,6 +66,9 @@ func TestLoadConfigFromLoadsConfiguredValues(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadConfigFrom() error = %v", err)
 	}
+	if configuration.Host != "0.0.0.0" {
+		t.Fatalf("Host = %q, want %q", configuration.Host, "0.0.0.0")
+	}
 
 	if configuration.Stripe.PublishableKey != "stripe-publishable" {
 		t.Fatalf("Stripe.PublishableKey = %q, want configured value", configuration.Stripe.PublishableKey)
@@ -74,6 +81,33 @@ func TestLoadConfigFromLoadsConfiguredValues(t *testing.T) {
 	}
 	if configuration.Email.AppPassword != "email-password" {
 		t.Fatalf("Email.AppPassword = %q, want configured value", configuration.Email.AppPassword)
+	}
+}
+
+func TestLoadConfigFromRejectsInvalidObservabilityValues(t *testing.T) {
+	_, err := LoadConfigFrom(mapLookup(map[string]string{
+		"DATABASE_URL":                         "postgres://database",
+		"REDIS_URL":                            "redis://cache",
+		"API_KEY":                              "secret",
+		"FIBER_UPTIME_RETENTION_DAYS":          "thirty",
+		"FIBER_UPTIME_SAMPLE_INTERVAL_SECONDS": "sixty",
+	}))
+	if err == nil || !strings.Contains(err.Error(), "FIBER_UPTIME_RETENTION_DAYS") {
+		t.Fatalf("LoadConfigFrom() error = %v, want invalid uptime configuration error", err)
+	}
+}
+
+func TestLoadConfigFromDefaultsUptimeBearerAuthenticationToEnabled(t *testing.T) {
+	configuration, err := LoadConfigFrom(mapLookup(map[string]string{
+		"DATABASE_URL": "postgres://database",
+		"REDIS_URL":    "redis://cache",
+		"API_KEY":      "secret",
+	}))
+	if err != nil {
+		t.Fatalf("LoadConfigFrom() error = %v", err)
+	}
+	if !configuration.Uptime.RequireBearer {
+		t.Fatal("Uptime.RequireBearer = false, want true by default")
 	}
 }
 

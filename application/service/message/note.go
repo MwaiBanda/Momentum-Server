@@ -4,11 +4,15 @@ import (
 	"context"
 	"errors"
 
+	"Momentum/application/telemetry"
 	domainmessage "Momentum/domain/message"
 	"github.com/lucsky/cuid"
 )
 
 func (service *Service) CreateNote(ctx context.Context, input CreateNoteInput) (CreateNoteResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.message.create_note")
+	defer span.End()
+
 	if input.PassageID == "" || input.UserID == "" {
 		return CreateNoteResponse{}, ErrInvalidInput
 	}
@@ -28,6 +32,9 @@ func (service *Service) CreateNote(ctx context.Context, input CreateNoteInput) (
 }
 
 func (service *Service) UpdateNote(ctx context.Context, input UpdateNoteInput) (NoteResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.message.update_note")
+	defer span.End()
+
 	if input.ID == "" {
 		return NoteResponse{}, ErrInvalidInput
 	}
@@ -48,6 +55,9 @@ func (service *Service) UpdateNote(ctx context.Context, input UpdateNoteInput) (
 }
 
 func (service *Service) DeleteNote(ctx context.Context, id string) (NoteResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.message.delete_note")
+	defer span.End()
+
 	if id == "" {
 		return NoteResponse{}, ErrInvalidInput
 	}

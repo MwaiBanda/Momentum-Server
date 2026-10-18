@@ -49,4 +49,4 @@ check: ## Check whitespace errors in the Git diff
 	git diff --check
 
 docker-build: ## Build the API Docker image
-	docker build -t momentum-server .
+	docker build -t $${IMAGE:-momentum-server} .

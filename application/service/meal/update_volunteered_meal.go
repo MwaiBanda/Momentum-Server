@@ -5,10 +5,14 @@ import (
 	"errors"
 	"log"
 
+	"Momentum/application/telemetry"
 	domainmeal "Momentum/domain/meal"
 )
 
 func (service *Service) UpdateVolunteeredMeal(ctx context.Context, input UpdateVolunteeredMealInput) (UpdateVolunteeredMealResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.meal.update_volunteered_meal")
+	defer span.End()
+
 	if service == nil || service.repository == nil || input.ID == "" {
 		return UpdateVolunteeredMealResponse{}, ErrInvalidInput
 	}

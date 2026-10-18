@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/XSAM/otelsql"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 const driverName = "pgx"
@@ -16,10 +18,17 @@ func Open(ctx context.Context, databaseURL string) (*sqlx.DB, error) {
 		return nil, fmt.Errorf("database URL is required")
 	}
 
-	db, err := sqlx.Open(driverName, databaseURL)
+	rawDB, err := otelsql.Open(
+		driverName,
+		databaseURL,
+		otelsql.WithAttributes(
+			attribute.String("db.system.name", "postgresql"),
+		),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("open database: %w", err)
 	}
+	db := sqlx.NewDb(rawDB, driverName)
 
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(5)

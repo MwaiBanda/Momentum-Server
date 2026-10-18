@@ -6,10 +6,14 @@ import (
 	"log"
 
 	"Momentum/application/cache"
+	"Momentum/application/telemetry"
 	domainuser "Momentum/domain/user"
 )
 
 func (service *Service) GetByID(ctx context.Context, id string) (Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.user.get_by_id")
+	defer span.End()
+
 	if service.cacheStore != nil {
 		cachedUser, found, err := cache.Get[domainuser.User](ctx, service.cacheStore, userCacheKeyPrefix+id)
 		if err != nil {

@@ -1,0 +1,20 @@
+{$DOMAIN} {
+	encode gzip zstd
+
+	@uptime path /uptime /uptime/*
+	handle @uptime {
+		basic_auth {
+			{$UPTIME_USERNAME} {$UPTIME_PASSWORD_HASH}
+		}
+		reverse_proxy api:8080
+	}
+
+	@metrics path /metrics
+	handle @metrics {
+		respond 404
+	}
+
+	handle {
+		reverse_proxy api:8080
+	}
+}

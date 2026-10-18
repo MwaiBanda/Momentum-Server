@@ -1,8 +1,15 @@
 package payment
 
-import "context"
+import (
+	"context"
+
+	"Momentum/application/telemetry"
+)
 
 func (service *Service) Create(ctx context.Context, input Input) (Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.payment.create")
+	defer span.End()
+
 	if service == nil || service.provider == nil || input.Amount <= 0 || input.Email == "" {
 		return Response{}, ErrInvalidInput
 	}

@@ -3,10 +3,14 @@ package transaction
 import (
 	"context"
 
+	"Momentum/application/telemetry"
 	domaintransaction "Momentum/domain/transaction"
 )
 
 func (service *Service) List(ctx context.Context) ([]Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.transaction.list")
+	defer span.End()
+
 	if service == nil || service.repository == nil {
 		return nil, ErrInvalidInput
 	}
@@ -19,6 +23,9 @@ func (service *Service) List(ctx context.Context) ([]Response, error) {
 }
 
 func (service *Service) ListByUser(ctx context.Context, userID string) ([]Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.transaction.list_by_user")
+	defer span.End()
+
 	if service == nil || service.repository == nil || userID == "" {
 		return nil, ErrInvalidInput
 	}

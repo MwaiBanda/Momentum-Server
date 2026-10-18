@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"Momentum/application/cache"
+	"Momentum/application/telemetry"
 )
 
 const (
@@ -18,6 +19,9 @@ const (
 )
 
 func (service *Service) List(ctx context.Context, page string) (Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.sermon.list")
+	defer span.End()
+
 	if service == nil {
 		return Response{}, ErrUnavailable
 	}

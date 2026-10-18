@@ -4,10 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"Momentum/application/telemetry"
 	domainservice "Momentum/domain/volunteer_service"
 )
 
 func (service *Service) GetByType(ctx context.Context, serviceType string) (ServiceDetailResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.volunteer_service.get_by_type")
+	defer span.End()
+
 	if serviceType == "" {
 		return ServiceDetailResponse{}, ErrInvalidInput
 	}

@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 
+	"Momentum/application/telemetry"
 	domainuser "Momentum/domain/user"
 )
 
@@ -14,6 +15,9 @@ type UpdateInput struct {
 }
 
 func (service *Service) Update(ctx context.Context, input UpdateInput) (Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.user.update")
+	defer span.End()
+
 	userEntity, err := service.repository.Update(ctx, domainuser.UpdateParams{
 		ID:       input.ID,
 		Email:    input.Email,

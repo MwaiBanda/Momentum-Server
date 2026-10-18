@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"Momentum/application/cache"
+	"Momentum/application/telemetry"
 )
 
 const (
@@ -14,6 +15,9 @@ const (
 )
 
 func (service *Service) List(ctx context.Context) ([]Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.meal.list")
+	defer span.End()
+
 	if service == nil || service.repository == nil {
 		return nil, ErrInvalidInput
 	}

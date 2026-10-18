@@ -3,10 +3,14 @@ package meal
 import (
 	"context"
 
+	"Momentum/application/telemetry"
 	domainmeal "Momentum/domain/meal"
 )
 
 func (service *Service) Update(ctx context.Context, input Input) (UpdateResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.meal.update")
+	defer span.End()
+
 	if service == nil || service.repository == nil || input.ID == "" {
 		return UpdateResponse{}, ErrInvalidInput
 	}

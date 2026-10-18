@@ -1,8 +1,15 @@
 package notification
 
-import "context"
+import (
+	"context"
+
+	"Momentum/application/telemetry"
+)
 
 func (service *Service) Send(ctx context.Context, input Input) (Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.notification.send")
+	defer span.End()
+
 	if service == nil || service.sender == nil {
 		return Response{}, ErrUnavailable
 	}

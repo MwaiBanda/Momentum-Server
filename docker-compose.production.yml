@@ -1,0 +1,40 @@
+services:
+  api:
+    build: .
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: production
+      HOST: "0.0.0.0"
+      PORT: "8080"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      FIBER_UPTIME_REQUIRE_BEARER_AUTH: "false"
+    expose:
+      - "8080"
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.10-alpine
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN before starting the production stack}
+      UPTIME_USERNAME: ${UPTIME_USERNAME:?set UPTIME_USERNAME before starting the production stack}
+      UPTIME_PASSWORD_HASH: ${UPTIME_PASSWORD_HASH:?set UPTIME_PASSWORD_HASH before starting the production stack}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  otel-collector:
+    environment:
+      PROMETHEUS_API_TARGET: api:8080
+
+volumes:
+  caddy-data:
+  caddy-config:

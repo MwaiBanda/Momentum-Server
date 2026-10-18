@@ -14,6 +14,7 @@ import (
 	_ "Momentum/docs"
 	httpHandler "Momentum/infrastructure/http"
 	eventHTTP "Momentum/infrastructure/http/event"
+	healthHTTP "Momentum/infrastructure/http/health"
 	mealHTTP "Momentum/infrastructure/http/meal"
 	messageHTTP "Momentum/infrastructure/http/message"
 	httpMiddleware "Momentum/infrastructure/http/middleware"
@@ -29,6 +30,7 @@ import (
 	stripeIntegration "Momentum/infrastructure/integration/stripe"
 	emailMessaging "Momentum/infrastructure/messaging/email"
 	firebaseClient "Momentum/infrastructure/messaging/firebase"
+	"Momentum/infrastructure/observability"
 	database "Momentum/infrastructure/persistence/db"
 	redisCache "Momentum/infrastructure/persistence/redis"
 	mealRepository "Momentum/infrastructure/persistence/repository/meal"
@@ -42,7 +44,10 @@ import (
 
 	"firebase.google.com/go/v4/messaging"
 	"github.com/gofiber/contrib/v3/swaggo"
+	"github.com/gofiber/contrib/v3/uptime"
 	"github.com/gofiber/fiber/v3"
+	fiberredis "github.com/gofiber/storage/redis/v3"
+	"github.com/redis/go-redis/extra/redisotel/v9"
 )
 
 /* PROD host			services.momentumchurch.dev */
@@ -73,6 +78,23 @@ func main() {
 	startupContext, cancelStartup := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancelStartup()
 
+	telemetryProviders, err := observability.Setup(
+		startupContext,
+		configuration.Telemetry.ServiceName,
+		configuration.Environment,
+		configuration.Telemetry.OTLPEndpoint,
+	)
+	if err != nil {
+		log.Fatalf("initialize OpenTelemetry: %v", err)
+	}
+	defer func() {
+		shutdownContext, cancelShutdown := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancelShutdown()
+		if err := telemetryProviders.Shutdown(shutdownContext); err != nil {
+			log.Printf("shutdown OpenTelemetry: %v", err)
+		}
+	}()
+
 	sqlDatabase, err := database.Open(startupContext, configuration.Database.URL)
 	if err != nil {
 		log.Fatalf("open SQL database: %v", err)
@@ -90,6 +112,12 @@ func main() {
 	redisClient, err := redisCache.Open(configuration.Redis.URL)
 	if err != nil {
 		log.Fatalf("open Redis client: %v", err)
+	}
+	if err := redisotel.InstrumentTracing(redisClient); err != nil {
+		log.Fatalf("instrument Redis tracing: %v", err)
+	}
+	if err := redisotel.InstrumentMetrics(redisClient); err != nil {
+		log.Fatalf("instrument Redis metrics: %v", err)
 	}
 	defer func() {
 		if err := redisClient.Close(); err != nil {
@@ -164,13 +192,44 @@ func main() {
 	)
 	app := fiber.New(fiber.Config{ErrorHandler: httpHandler.ErrorHandler})
 	httpMiddleware.ConfigureAppMiddleware(app)
+	app.Use("/metrics", httpMiddleware.BearerTokenAuthentication(configuration.Security.APIKey))
+	app.Use(httpMiddleware.Prometheus(configuration.Telemetry.ServiceName))
+
+	healthHandlers := healthHTTP.New(
+		func(ctx context.Context) error {
+			return sqlDatabase.PingContext(ctx)
+		},
+		func(ctx context.Context) error {
+			return redisClient.Ping(ctx).Err()
+		},
+	)
+	app.Get("/healthz", healthHandlers.Liveness)
+	app.Get("/readyz", healthHandlers.Readiness)
+
+	uptimeStore := fiberredis.NewFromConnection(redisClient)
+	defer func() {
+		if err := uptimeStore.Close(); err != nil {
+			log.Printf("close Fiber Uptime store: %v", err)
+		}
+	}()
+	if configuration.Uptime.RequireBearer {
+		app.Use("/uptime", httpMiddleware.BearerTokenAuthentication(configuration.Security.APIKey))
+	}
+	app.Use(uptime.New(uptime.Config{
+		App:              app,
+		ServiceID:        configuration.Uptime.ServiceID,
+		ServiceName:      configuration.Uptime.ServiceName,
+		Store:            uptimeStore,
+		StorageKeyPrefix: configuration.Uptime.KeyPrefix,
+		RetentionDays:    configuration.Uptime.RetentionDays,
+		SampleInterval:   time.Duration(configuration.Uptime.SampleIntervalS) * time.Second,
+	}))
 
 	api := app.Group("/api", func(c fiber.Ctx) error {
 		c.Response().Header.Set("Cache-Control", "no-cache")
 		return c.Next()
 	})
 
-	api.Get("/metrics", httpMiddleware.Monitor())
 	v1 := api.Group("/v1", httpMiddleware.BearerTokenAuthentication(configuration.Security.APIKey))
 
 	v1.Post("/meals", httpHandlers.Meal.Create)
@@ -222,5 +281,7 @@ func main() {
 		DocExpansion: "none",
 	}))
 
-	log.Fatal(app.Listen(":" + configuration.Port))
+	if err := app.Listen(configuration.Host + ":" + configuration.Port); err != nil {
+		log.Fatalf("listen: %v", err)
+	}
 }

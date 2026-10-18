@@ -16,8 +16,8 @@ Events, and Volunteer Services functionality.
 
 The backend uses PostgreSQL with `pgx`/`sqlx` and Goose migrations, Stripe for
 payments, and Redis for caching. Every `/api/v1` route requires bearer-token
-authentication. API errors use a consistent JSON response with `code` and
-`message` fields.
+authentication. API errors use a consistent JSON response with `code`, `error`,
+`message`, and `requestId` fields.
 
 -----
 
@@ -111,8 +111,8 @@ flowchart TB
     integrations["Stripe<br/>Firebase<br/>SermonCloud<br/>Planning Center"]
     contract["OpenAPI contract<br/>Swagger -> OpenAPI 3"]
     generated["Generated CMS transport types<br/>Runtime Zod schemas"]
-    telemetry["Cross-cutting observability<br/>Request logs + metrics<br/>Request IDs + traces + error reporting"]
-    telemetryBackend["Logs / metrics / traces backend"]
+    telemetry["Cross-cutting observability<br/>Request IDs + JSON logs<br/>Prometheus HTTP metrics + OTel traces/dependency metrics"]
+    telemetryBackend["OTel Collector -> Jaeger<br/>Prometheus"]
 
     mobile --> api
     browser --> cmsInterfaces
@@ -148,10 +148,82 @@ flowchart TB
     telemetry -. "exports" .-> telemetryBackend
 ```
 
-Observability is cross-cutting rather than a dependency layer. Request logging
-and Fiber monitoring are available today; request correlation, distributed
-tracing, and centralized error reporting are extension points for future
-instrumentation.
+Observability is cross-cutting rather than a dependency layer. Every request
+gets a request ID and structured JSON log fields. Fiber Prometheus exposes
+bounded HTTP metrics at the protected `/metrics` endpoint. OpenTelemetry
+records Fiber and application-service traces, PostgreSQL spans, Redis spans,
+and outbound HTTP spans. When `OTEL_EXPORTER_OTLP_ENDPOINT` is configured,
+traces and dependency metrics are exported through an OTLP collector; without
+that setting, the API remains functional with local no-op OpenTelemetry
+providers.
+
+The health endpoints are intentionally separate from readiness:
+
+- `GET /healthz` is a process-only liveness check.
+- `GET /readyz` checks PostgreSQL and Redis and returns `503` until both are
+  available.
+- `GET /metrics` is a bearer-authenticated Prometheus scrape endpoint.
+- Fiber Uptime is always enabled. Its bearer-authenticated dashboard is
+  available at `/uptime` and stores history in Redis under a dedicated key
+  prefix.
+
+For a self-hosted Jaeger, Prometheus, and OpenTelemetry Collector stack on one
+machine:
+
+```bash
+export PROMETHEUS_BEARER_TOKEN='the same value configured as API_KEY for the API'
+docker compose -f docker-compose.observability.yml up -d
+```
+
+Set `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` in the API
+environment. The collector scrapes the protected API metrics endpoint using
+`PROMETHEUS_BEARER_TOKEN`, exports traces to Jaeger, and exposes collector
+metrics for Prometheus. Keep the token in the shell environment or a local
+secret manager; do not add it to the Compose file.
+
+This can run locally at no software cost or as one Docker Compose deployment
+on a single VPS/server for one infrastructure bill. The API, OpenTelemetry
+Collector, Jaeger, and Prometheus remain separate containers for operational
+isolation, but they do not require separate hosted monitoring subscriptions.
+
+### Production reverse proxy
+
+Production can add [Caddy](https://caddyserver.com/) as the public edge
+container. Caddy provides free automatic HTTPS, protects `/uptime` with
+browser-compatible Basic Auth, and keeps the API container private on the
+Docker network. The Fiber bearer check for Uptime is disabled only when the
+service is bound to loopback for local development or when Caddy becomes the
+authentication boundary in production. Keep the bearer check enabled if the
+development server is exposed beyond the local machine.
+
+Generate a password hash for the Caddy credentials:
+
+```bash
+docker run --rm caddy:2.10-alpine \
+  caddy hash-password --plaintext 'replace-with-an-operations-password'
+```
+
+Set these values in the shell or a local deployment environment:
+
+```bash
+export DOMAIN=services.example.com
+export UPTIME_USERNAME=operations
+export UPTIME_PASSWORD_HASH='replace-with-the-generated-caddy-hash'
+export PROMETHEUS_BEARER_TOKEN='the API_KEY value used by the collector'
+```
+
+Start the API, Caddy, and observability containers together:
+
+```bash
+docker compose \
+  -f docker-compose.observability.yml \
+  -f docker-compose.production.yml \
+  up -d --build
+```
+
+The public proxy serves the CMS and API, `/uptime` requires the Caddy
+operations credentials, and `/metrics` is not exposed through Caddy. The
+collector reaches `/metrics` privately over the Docker network.
 
 ### Architecture style
 
@@ -195,36 +267,17 @@ The application uses PostgreSQL connection settings from `DATABASE_URL`.
 
 ### Application configuration
 
-Create a `.env` file in the repository root for local development:
+Copy the committed environment template for local development:
 
-```dotenv
-ENVIRONMENT=development
-PORT=8080
-DATABASE_URL=postgres://user:password@localhost:5432/momentum
-REDIS_URL=redis://localhost:6379
-API_KEY=replace-with-a-local-development-key
+```bash
+cp .env.example .env
 ```
 
-Required:
+Replace the placeholders with your local values. See
+[`.env.example`](./.env.example) for the complete list of settings.
 
-- `DATABASE_URL`
-- `REDIS_URL`
-- `API_KEY`
 
-Optional:
-
-- `FIREBASE_PROJECT_ID`
-- `SERMONCLOUD_URL`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_PUBLISHABLE_KEY`
-- `STRIPE_VERSION`
-- `PLANNING_CENTER_URL`
-- `PLANNING_CENTER_TOKEN_URL`
-- `EMAIL_APP_PASSWORD`
-
-`PORT` defaults to `8080`. Never commit real credentials. The browser-facing
-API key is client configuration and is not a secret; backend authorization
-remains authoritative.
+Never commit real credentials.
 
 ### Developer commands
 
@@ -275,6 +328,10 @@ yarn build
 cd ..
 make run
 ```
+
+`make run` is the normal local development workflow. It runs the Go API
+directly on the host and expects the required values from `.env`, including
+the local or separately hosted PostgreSQL and Redis URLs.
 
 The local dashboard is served at:
 
@@ -463,10 +520,13 @@ The CMS routes are:
 
 The multi-stage [Dockerfile](./Dockerfile) installs the CMS dependencies,
 builds the React assets, copies `cms/dist` into the Go image, and compiles the
-single production binary.
+single production binary into a minimal non-root runtime image. The image
+includes the `/healthz` container health check and listens on port `8080` by
+default.
 
 ```bash
 make docker-build
+docker run --env-file .env -p 8080:8080 momentum-server
 ```
 
 The generated CMS `dist` directory is intentionally ignored by Git and created

@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 
+	"Momentum/application/telemetry"
 	domainuser "Momentum/domain/user"
 )
 
@@ -14,6 +15,9 @@ type CreateInput struct {
 }
 
 func (service *Service) Create(ctx context.Context, input CreateInput) (Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.user.create")
+	defer span.End()
+
 	userEntity, err := service.repository.Create(ctx, domainuser.CreateParams{
 		ID:       input.ID,
 		Email:    input.Email,

@@ -4,10 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"Momentum/application/telemetry"
 	domainmessage "Momentum/domain/message"
 )
 
 func (service *Service) Delete(ctx context.Context, id string) (MessageResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.message.delete")
+	defer span.End()
+
 	if id == "" {
 		return MessageResponse{}, ErrInvalidInput
 	}

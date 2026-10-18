@@ -5,12 +5,16 @@ import (
 	"log"
 	"strings"
 
+	"Momentum/application/telemetry"
 	domaintransaction "Momentum/domain/transaction"
 
 	"github.com/lucsky/cuid"
 )
 
 func (service *Service) Create(ctx context.Context, input Input) (Response, error) {
+	ctx, span := telemetry.Start(ctx, "application.transaction.create")
+	defer span.End()
+
 	if service == nil || service.repository == nil || input.Amount < 0 {
 		return Response{}, ErrInvalidInput
 	}

@@ -4,10 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"Momentum/application/telemetry"
 	domainmeal "Momentum/domain/meal"
 )
 
 func (service *Service) AssignVolunteer(ctx context.Context, input VolunteerAssignmentInput) (VolunteerAssignmentResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.meal.assign_volunteer")
+	defer span.End()
+
 	if service == nil || service.repository == nil ||
 		input.MealID == "" ||
 		input.VolunteeredMeal.ID == "" ||

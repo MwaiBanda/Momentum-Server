@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"Momentum/application/cache"
+	"Momentum/application/telemetry"
 )
 
 const (
@@ -14,6 +15,9 @@ const (
 )
 
 func (service *Service) ListServices(ctx context.Context) ([]ServiceResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.volunteer_service.list_services")
+	defer span.End()
+
 	if service.cacheStore != nil {
 		cached, found, err := cache.Get[[]ServiceResponse](ctx, service.cacheStore, servicesCacheKey)
 		if err != nil {

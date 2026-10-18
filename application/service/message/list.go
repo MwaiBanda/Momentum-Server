@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"Momentum/application/cache"
+	"Momentum/application/telemetry"
 )
 
 const (
@@ -16,6 +17,9 @@ const (
 )
 
 func (service *Service) ListPublishedByUser(ctx context.Context, userID string) (MessageListResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.message.list_published_by_user")
+	defer span.End()
+
 	if userID == "" {
 		return MessageListResponse{}, ErrInvalidInput
 	}
@@ -46,6 +50,9 @@ func (service *Service) ListPublishedByUser(ctx context.Context, userID string) 
 }
 
 func (service *Service) ListUnpublished(ctx context.Context) (MessageListResponse, error) {
+	ctx, span := telemetry.Start(ctx, "application.message.list_unpublished")
+	defer span.End()
+
 	messages, err := service.repository.ListUnpublished(ctx)
 	if err != nil {
 		return MessageListResponse{}, err
