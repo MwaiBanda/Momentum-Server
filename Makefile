@@ -4,7 +4,7 @@ GO ?= go
 GOFLAGS ?= -mod=mod
 SWAG_VERSION ?= v1.16.6
 
-.PHONY: help run build test test-postgres swagger openapi openapi-check cms-api-types cms-api-types-check cms-api-schemas cms-api-schemas-check fmt check docker-build
+.PHONY: help run build test test-postgres swagger openapi openapi-check cms-api-types cms-api-types-check cms-api-schemas cms-api-schemas-check fmt check docker-build cloudrun-build
 
 help: ## Show available commands
 	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*##/ {printf "  %-16s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -50,3 +50,10 @@ check: ## Check whitespace errors in the Git diff
 
 docker-build: ## Build the API Docker image
 	docker build -t $${IMAGE:-momentum-server} .
+
+cloudrun-build: ## Build the API and Cloud Run sidecar images
+	docker build -t $${IMAGE:-momentum-server} .
+	docker build -f cloudrun/caddy.Dockerfile -t $${CLOUDRUN_IMAGE_PREFIX:-momentum-server}-caddy .
+	docker build -f cloudrun/otel-collector.Dockerfile -t $${CLOUDRUN_IMAGE_PREFIX:-momentum-server}-otel-collector .
+	docker build -f cloudrun/prometheus.Dockerfile -t $${CLOUDRUN_IMAGE_PREFIX:-momentum-server}-prometheus .
+	docker build -f cloudrun/grafana.Dockerfile -t $${CLOUDRUN_IMAGE_PREFIX:-momentum-server}-grafana .

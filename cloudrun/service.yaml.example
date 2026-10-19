@@ -1,0 +1,119 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: momentum-server
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/container-dependencies: >-
+          {"otel-collector":["api","jaeger"],"prometheus":["otel-collector"],"grafana":["prometheus","jaeger"],"caddy":["api","otel-collector","jaeger","prometheus","grafana"]}
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        # Caddy is the only container exposed through the Cloud Run HTTPS frontend.
+        - name: caddy
+          image: REGION-docker.pkg.dev/PROJECT_ID/ARTIFACT_REPOSITORY/momentum-caddy:TAG
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: UPTIME_USERNAME
+              value: operations
+            - name: UPTIME_PASSWORD_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: momentum-uptime-password-hash
+                  key: latest
+          resources:
+            limits:
+              cpu: "1"
+              memory: 256Mi
+
+        - name: api
+          image: REGION-docker.pkg.dev/PROJECT_ID/ARTIFACT_REPOSITORY/momentum-api:TAG
+          env:
+            - name: ENVIRONMENT
+              value: production
+            - name: HOST
+              value: 127.0.0.1
+            - name: PORT
+              value: "8081"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: momentum-database-url
+                  key: latest
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: momentum-redis-url
+                  key: latest
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: momentum-api-key
+                  key: latest
+            - name: OTEL_SERVICE_NAME
+              value: momentum-api
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://127.0.0.1:4317
+            - name: FIBER_UPTIME_REQUIRE_BEARER_AUTH
+              value: "false"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+
+        - name: otel-collector
+          image: REGION-docker.pkg.dev/PROJECT_ID/ARTIFACT_REPOSITORY/momentum-otel-collector:TAG
+          env:
+            - name: PROMETHEUS_BEARER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: momentum-api-key
+                  key: latest
+          resources:
+            limits:
+              cpu: "1"
+              memory: 256Mi
+
+        - name: jaeger
+          image: jaegertracing/all-in-one:1.68.0
+          args:
+            - --collector.otlp.grpc.host-port=127.0.0.1:14317
+            - --collector.otlp.http.host-port=127.0.0.1:14318
+            - --query.base-path=/jaeger
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+
+        - name: prometheus
+          image: REGION-docker.pkg.dev/PROJECT_ID/ARTIFACT_REPOSITORY/momentum-prometheus:TAG
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+
+        - name: grafana
+          image: REGION-docker.pkg.dev/PROJECT_ID/ARTIFACT_REPOSITORY/momentum-grafana:TAG
+          env:
+            - name: GF_SECURITY_ADMIN_USER
+              value: admin
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: momentum-grafana-admin-password
+                  key: latest
+            - name: GF_USERS_ALLOW_SIGN_UP
+              value: "false"
+            - name: GF_SERVER_ROOT_URL
+              value: https://services.momentumchurch.dev/grafana/
+            - name: GF_SERVER_SERVE_FROM_SUB_PATH
+              value: "true"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi

@@ -1,0 +1,41 @@
+{
+	auto_https off
+	admin off
+}
+
+:8080 {
+	encode gzip zstd
+
+	@uptime path /uptime /uptime/*
+	handle @uptime {
+		basic_auth {
+			{$UPTIME_USERNAME} {$UPTIME_PASSWORD_HASH}
+		}
+		reverse_proxy 127.0.0.1:8081
+	}
+
+	@grafana path /grafana /grafana/*
+	handle @grafana {
+		basic_auth {
+			{$UPTIME_USERNAME} {$UPTIME_PASSWORD_HASH}
+		}
+		reverse_proxy 127.0.0.1:3000
+	}
+
+	@jaeger path /jaeger /jaeger/*
+	handle @jaeger {
+		basic_auth {
+			{$UPTIME_USERNAME} {$UPTIME_PASSWORD_HASH}
+		}
+		reverse_proxy 127.0.0.1:16686
+	}
+
+	@metrics path /metrics /metrics/*
+	handle @metrics {
+		respond 404
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:8081
+	}
+}

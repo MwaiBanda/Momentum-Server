@@ -1,0 +1,42 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 127.0.0.1:4317
+      http:
+        endpoint: 127.0.0.1:4318
+
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: momentum-api
+          scrape_interval: 15s
+          static_configs:
+            - targets:
+                - 127.0.0.1:8081
+          metrics_path: /metrics
+          authorization:
+            type: Bearer
+            credentials: ${env:PROMETHEUS_BEARER_TOKEN}
+
+processors:
+  batch:
+
+exporters:
+  otlp/jaeger:
+    endpoint: 127.0.0.1:14317
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: 127.0.0.1:8889
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/jaeger]
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [batch]
+      exporters: [prometheus]

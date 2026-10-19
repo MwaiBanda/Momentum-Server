@@ -202,7 +202,7 @@ Then open `http://localhost:3000`. Jaeger is also available locally at
 use Grafana Explore with the Jaeger data source for individual trace
 waterfalls.
 
-### Production reverse proxy
+### Production reverse proxy (VPS/Docker Compose)
 
 Production can add [Caddy](https://caddyserver.com/) as the public edge
 container. Caddy provides free automatic HTTPS, protects `/uptime` with
@@ -246,6 +246,89 @@ operations credentials and its own Grafana login. Jaeger is available at
 TCP port `16686` through the VPS firewall if you use the direct Jaeger
 endpoint. The collector reaches `/metrics` privately over the Docker network;
 Prometheus remains private.
+
+This port-based Jaeger endpoint is for a VPS only. Google Cloud Run exposes a
+service through its HTTPS frontend on port 443 and does not forward arbitrary
+ports such as `16686`.
+
+### Cloud Run sidecar deployment
+
+For Cloud Run, [cloudrun/service.yaml.example](./cloudrun/service.yaml.example)
+defines a single service with Caddy as the ingress container and the remaining
+components as localhost sidecars:
+
+- Caddy listens on Cloud Run's `$PORT` (`8080`) and routes the public API/CMS
+  to `127.0.0.1:8081`.
+- The API listens only on `127.0.0.1:8081`.
+- The OpenTelemetry Collector receives API telemetry on `127.0.0.1:4317`,
+  scrapes the protected API metrics endpoint, and exports traces to Jaeger.
+- Jaeger listens privately on `127.0.0.1:16686`. Its OTLP gRPC receiver uses
+  `127.0.0.1:14317` so it does not conflict with the Collector.
+- Prometheus scrapes the Collector on `127.0.0.1:8889`.
+- Grafana reads Prometheus and Jaeger over localhost and is mounted at
+  `/grafana/`.
+
+The resulting URLs do not use a custom port:
+
+```text
+https://services.momentumchurch.dev/grafana/
+https://services.momentumchurch.dev/jaeger/
+https://services.momentumchurch.dev/uptime
+```
+
+Grafana and Jaeger are protected by the Caddy operations credentials before
+their own application-level authentication. `/metrics` remains private and
+returns `404` at the public edge. Store the Caddy password hash, Grafana
+password, `DATABASE_URL`, `REDIS_URL`, and `API_KEY` in Secret Manager; the
+example manifest references secrets by name and never contains their values.
+
+Build the API and sidecar images in Artifact Registry, then replace the
+placeholders in a copy of the example manifest:
+
+```bash
+export REGION=replace-with-cloud-run-region
+export PROJECT_ID=replace-with-gcp-project-id
+export ARTIFACT_REPOSITORY=replace-with-artifact-registry-repository
+export TAG=$(git rev-parse --short HEAD)
+export IMAGE_PREFIX="${REGION}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REPOSITORY}"
+
+gcloud builds submit \
+  --tag "${IMAGE_PREFIX}/momentum-api:${TAG}" \
+  .
+gcloud builds submit \
+  --file cloudrun/caddy.Dockerfile \
+  --tag "${IMAGE_PREFIX}/momentum-caddy:${TAG}" \
+  .
+gcloud builds submit \
+  --file cloudrun/otel-collector.Dockerfile \
+  --tag "${IMAGE_PREFIX}/momentum-otel-collector:${TAG}" \
+  .
+gcloud builds submit \
+  --file cloudrun/prometheus.Dockerfile \
+  --tag "${IMAGE_PREFIX}/momentum-prometheus:${TAG}" \
+  .
+gcloud builds submit \
+  --file cloudrun/grafana.Dockerfile \
+  --tag "${IMAGE_PREFIX}/momentum-grafana:${TAG}" \
+  .
+
+cp cloudrun/service.yaml.example /tmp/momentum-service.yaml
+# Replace REGION, PROJECT_ID, ARTIFACT_REPOSITORY, and TAG in the copied file.
+gcloud run services replace /tmp/momentum-service.yaml \
+  --region "$REGION"
+```
+
+The service's Cloud Run identity needs Secret Manager Secret Accessor access
+for each referenced secret. The example uses `latest` secret versions so
+rotating a secret does not require changing the manifest. Update
+`GF_SERVER_ROOT_URL` if the service uses a different custom domain.
+
+Cloud Run local filesystems are ephemeral and sidecars scale together. This
+deployment therefore provides recent, low-cost operational visibility rather
+than durable telemetry retention: Prometheus time series, Jaeger traces, and
+Grafana state can disappear when an instance is replaced. Use external
+durable telemetry storage or a dedicated monitoring service if long-term
+history or cross-instance aggregation is required.
 
 ### Architecture style
 
